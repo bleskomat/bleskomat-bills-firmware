@@ -39,6 +39,7 @@ void loop() {
     if (currentCoinSignal == HIGH)
         bankValue = bankValue + coinValue;
   }
+
 }
 
 void printBankValue() {
