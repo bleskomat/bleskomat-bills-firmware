@@ -1,9 +1,13 @@
 #include <SPI.h>
 #include "mbedtls/md.h"
 #include <string>
+#include <TFT_eSPI.h>
+#include "qrcode.h"
+
+TFT_eSPI tftScreen = TFT_eSPI();
 
 /*
-	Varialbes for LNURL
+  Variables for LNURL
 */
 char key[] = "";
 String baseUrl = String("https://t1.bleskomat.com/u?");
@@ -18,7 +22,7 @@ String signature;
 int satoshis = 1;
 
 /*
-	Varialbes for Coin Acceptor 616
+  Variables for Coin Acceptor 616
 */
 const byte coinSig = 4;
 bool previousCoinSignal = false;
@@ -29,6 +33,9 @@ const float coinValue = 1.00;
 float bankValue = 0.00;
 
 void setup() {
+
+  tftScreen.begin();
+  tftScreen.fillScreen(TFT_WHITE);
   Serial.begin(115200);
   Serial.println("Setting up ...");
   pinMode(coinSig, INPUT_PULLUP);
@@ -56,12 +63,13 @@ void loop() {
   }
 }
 
-
 void printBankValue() {
+
   Serial.println(bankValue);
   create_lnurl();
   Serial.println("lnurl");
   Serial.println(lnurl);
+  showLnurl(lnurl);
 }
 
 void create_lnurl() {
@@ -104,5 +112,39 @@ void sign(char* payload, String result) {
     signature += String(str);
     Serial.println("signature");
     Serial.println(signature);
+  }
+}
+
+void showLnurl(String lnurl) {
+
+  tftScreen.fillScreen(TFT_WHITE);
+  lnurl.toUpperCase();
+  const char* data = lnurl.c_str();
+
+  int qrSize = 12;
+  int sizes[17] = { 14, 26, 42, 62, 84, 106, 122, 152, 180, 213, 251, 287, 331, 362, 412, 480, 504 };
+  int len = String(data).length();
+  for (int i = 0; i < 17; i++) {
+    if (sizes[i] > len) {
+      qrSize = i + 1;
+      break;
+    }
+  }
+
+  QRCode qrcode;
+  uint8_t qrcodeData[qrcode_getBufferSize(qrSize)];
+  qrcode_initText(&qrcode, qrcodeData, qrSize, ECC_LOW, data);
+
+  float scale = 2;
+
+  for (uint8_t y = 0; y < qrcode.size; y++) {
+    for (uint8_t x = 0; x < qrcode.size; x++) {
+      if (qrcode_getModule(&qrcode, x, y)) {
+        tftScreen.drawRect(15 + 3 + scale * x, 3 + scale * y, scale, scale, TFT_BLACK);
+      }
+      else {
+        tftScreen.drawRect(15 + 3 + scale * x, 3 + scale * y, scale, scale, TFT_WHITE);
+      }
+    }
   }
 }
