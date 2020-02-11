@@ -1,24 +1,27 @@
 #include <SPI.h>
 #include "mbedtls/md.h"
+#include "util.h"
 #include <string>
 
 /*
-	Varialbes for LNURL
+  Varialbes for LNURL
 */
 char key[] = "";
 String baseUrl = String("https://t1.bleskomat.com/u?");
+// !! IMPORTANT !!
+// Be sure to base64encode the API key ID.
 String id = String("");
 // f
 String fiatCurrency = String("CZK");
 // pd
 char defaultDescription[] = "";
-String lnurl = String();
+std::string lnurl;
 String payload;
 String signature;
 int satoshis = 1;
 
 /*
-	Varialbes for Coin Acceptor 616
+  Varialbes for Coin Acceptor 616
 */
 const byte coinSig = 4;
 bool previousCoinSignal = false;
@@ -54,6 +57,7 @@ void loop() {
     if (currentCoinSignal == HIGH)
       bankValue = bankValue + coinValue;
   }
+
 }
 
 
@@ -61,23 +65,19 @@ void printBankValue() {
   Serial.println(bankValue);
   create_lnurl();
   Serial.println("lnurl");
-  Serial.println(lnurl);
+  Serial.println(lnurl.c_str());
 }
 
 void create_lnurl() {
-
   payload = "id=" + id + "&n=" +  esp_random() + "&t=w" + "&f=" + fiatCurrency + "&pn=" + String(bankValue) + "&px=" + String(bankValue) + "&pd=";
-
   char payloadToSign[payload.length() + 1];
-
   strcpy(payloadToSign, payload.c_str());
-
   signature = "";
-
   sign(payloadToSign, signature);
-  Serial.println("signature");
-  Serial.println(signature);
-  lnurl = baseUrl + payload + "&s=" + signature;
+  std::string hrp = "lnurl";
+  std::string value = "";
+  value.append(String(baseUrl + payload + "&s=" + signature).c_str());
+  lnurl = util::bech32_encode(hrp, value);
 }
 
 void sign(char* payload, String result) {
