@@ -1,5 +1,4 @@
 #include <SPI.h>
-#include "mbedtls/md.h"
 #include "util.h"
 #include <string>
 #include <TFT_eSPI.h>
@@ -11,18 +10,12 @@ TFT_eSPI tftScreen = TFT_eSPI();
   Variables for LNURL
 */
 char key[] = "";
-String baseUrl = String("https://t1.bleskomat.com/u?");
+std::string baseUrl = "https://t1.bleskomat.com/u?";
 // !! IMPORTANT !!
 // Be sure to base64encode the API key ID.
-String id = String("");
-// f
-String fiatCurrency = String("CZK");
-// pd
-char defaultDescription[] = "";
+std::string id = "";
+std::string fiatCurrency = "CZK";
 std::string lnurl;
-String payload;
-String signature;
-int satoshis = 1;
 
 /*
   Variables for Coin Acceptor 616
@@ -73,46 +66,37 @@ void printBankValue() {
   create_lnurl();
   Serial.println("lnurl");
   Serial.println(lnurl.c_str());
-  showLnurl(lnurl);
+  showLnurl(lnurl.c_str());
 }
 
 void create_lnurl() {
-  payload = "id=" + id + "&n=" +  esp_random() + "&t=w" + "&f=" + fiatCurrency + "&pn=" + String(bankValue) + "&px=" + String(bankValue) + "&pd=";
+  std::string payload = "";
+  payload.append("id=");
+  payload.append(id);
+  payload.append("&n=");
+  payload.append(String(esp_random()).c_str());
+  payload.append("&t=w");
+  payload.append("&f=");
+  payload.append(fiatCurrency);
+  payload.append("&pn=");
+  payload.append(String(bankValue).c_str());
+  payload.append("&px=");
+  payload.append(String(bankValue).c_str());
+  payload.append("&pd=");
+
   char payloadToSign[payload.length() + 1];
-  strcpy(payloadToSign, payload.c_str());
-  signature = "";
-  sign(payloadToSign, signature);
+  std::strcpy(payloadToSign, payload.c_str());
+
+  std::string signature = util::hmac_sign(payloadToSign, key);
   std::string hrp = "lnurl";
-  std::string value = "";
-  value.append(String(baseUrl + payload + "&s=" + signature).c_str());
-  lnurl = util::bech32_encode(hrp, value);
-}
 
-void sign(char* payload, String result) {
+  std::string url = "";
+  url.append(baseUrl);
+  url.append(payload);
+  url.append("&s=");
+  url.append(signature);
 
-  byte hmacResult[32];
-
-  mbedtls_md_context_t ctx;
-  mbedtls_md_type_t md_type = MBEDTLS_MD_SHA256;
-
-  const size_t payloadLength = strlen(payload);
-  const size_t keyLength = strlen(key);
-
-  mbedtls_md_init(&ctx);
-  mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(md_type), 1);
-  mbedtls_md_hmac_starts(&ctx, (const unsigned char *) key, keyLength);
-  mbedtls_md_hmac_update(&ctx, (const unsigned char *) payload, payloadLength);
-  mbedtls_md_hmac_finish(&ctx, hmacResult);
-  mbedtls_md_free(&ctx);
-
-  for (int i = 0; i < sizeof(hmacResult); i++) {
-    char str[3];
-
-    sprintf(str, "%02x", (int)hmacResult[i]);
-    signature += String(str);
-    Serial.println("signature");
-    Serial.println(signature);
-  }
+  lnurl = util::bech32_encode(hrp, url);
 }
 
 void showLnurl(String lnurl) {
