@@ -12,7 +12,7 @@ TFT_eSPI tftScreen = TFT_eSPI();
 char key[] = "";
 std::string baseUrl = "https://t1.bleskomat.com/u?";
 // !! IMPORTANT !!
-// Be sure to base64encode the API key ID.
+// Be sure to urlEncode the API key ID.
 std::string id = "";
 std::string fiatCurrency = "CZK";
 std::string lnurl;
@@ -102,11 +102,12 @@ void create_lnurl() {
 void showLnurl(String lnurl) {
 
   tftScreen.fillScreen(TFT_WHITE);
+
   lnurl.toUpperCase();
   const char* data = lnurl.c_str();
 
   int qrSize = 12;
-  int sizes[17] = { 14, 26, 42, 62, 84, 106, 122, 152, 180, 213, 251, 287, 331, 362, 412, 480, 504 };
+  int sizes[17] = { 25, 47, 77, 114, 154, 195, 224, 279, 335, 395, 468, 535, 619, 667, 758, 854, 938 };
   int len = String(data).length();
   for (int i = 0; i < 17; i++) {
     if (sizes[i] > len) {
@@ -124,10 +125,10 @@ void showLnurl(String lnurl) {
   for (uint8_t y = 0; y < qrcode.size; y++) {
     for (uint8_t x = 0; x < qrcode.size; x++) {
       if (qrcode_getModule(&qrcode, x, y)) {
-        tftScreen.drawRect(15 + 3 + scale * x, 3 + scale * y, scale, scale, TFT_BLACK);
+        tftScreen.fillRect(15+3+scale*x, 15+3+scale*y, scale, scale, TFT_BLACK);
       }
       else {
-        tftScreen.drawRect(15 + 3 + scale * x, 3 + scale * y, scale, scale, TFT_WHITE);
+        tftScreen.fillRect(15+3+scale*x, 15+3+scale*y, scale, scale, TFT_WHITE);
       }
     }
   }
