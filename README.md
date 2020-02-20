@@ -1,5 +1,7 @@
 # Bleskomat V2
 
+The offline lightning ATM. This prototype is built with inexpensive, easily available components. The design is focused on modularity and decreasing the per unit cost as much as possible. All that plus a dead-simple UX will make this a great option for cafes, bars, and shops to on-board new users to Lightning Network.
+
 
 ## Getting started
 
