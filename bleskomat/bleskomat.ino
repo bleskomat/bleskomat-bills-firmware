@@ -1,135 +1,187 @@
 #include <SPI.h>
-#include "util.h"
+#include <iostream>
+#include "lnurl.h"
+#include <sstream>
 #include <string>
 #include <TFT_eSPI.h>
 #include "qrcode.h"
+#include "util.h"
+#define BG_COLOR 0xFFFF// WHITE
+#define TEXT_COLOR 0x0000// BLACK
 
-TFT_eSPI tftScreen = TFT_eSPI();
+TFT_eSPI tft = TFT_eSPI();
 
 /*
-  Variables for LNURL
+ *  CONFIGURATIONS
 */
-char key[] = "";
+// API ID and key that will be used to generate signed LNURLs:
+std::string apiKeyId = "";
+std::string apiKeySecret = "";
+// The base URL for the lnurl server instance:
 std::string baseUrl = "https://t1.bleskomat.com/u?";
-// !! IMPORTANT !!
-// Be sure to urlEncode the API key ID.
-std::string id = "";
+// The symbol of the fiat currency which the coin acceptor is configured to accept:
 std::string fiatCurrency = "CZK";
-std::string lnurl;
-
-/*
-  Variables for Coin Acceptor 616
-*/
+// The amount by which to increase the internal accumulated fiat value for each signal from the coin acceptor:
+const float valueIncrement = 1.00;
+// The pin to which the COIN input is connected:
 const byte coinSig = 4;
-bool previousCoinSignal = false;
-unsigned long previousUpdateMillis = 0;
-unsigned long updateInterval = 110;
-bool printOnceFlag;
-const float coinValue = 1.00;
-float bankValue = 0.00;
+/*
+ *  end of CONFIGURATIONS
+*/
+
+
+byte previousCoinSignal;
+const unsigned long bootTime = millis();// milliseconds
+const unsigned long minWaitAfterBootTime = 2000;// milliseconds
+const unsigned long minWaitTimeBetweenCoins = 7000;// milliseconds
+const unsigned long maxTimeDisplayQrCode = 60000;// milliseconds
+unsigned long lastCoinInsertedTime = 0;// milliseconds
+unsigned long lastDisplayedQrCodeTime = 0;// milliseconds
+float accumulatedValue = 0.00;
 
 void setup() {
-
-  tftScreen.begin();
-  tftScreen.fillScreen(TFT_WHITE);
   Serial.begin(115200);
-  Serial.println("Setting up ...");
+  Serial.println("Setting up...");
+  Serial.println("Serial ready");
+  tft.begin();
+  tft.fillScreen(BG_COLOR);
+  Serial.println("Screen ready");
   pinMode(coinSig, INPUT_PULLUP);
   previousCoinSignal = digitalRead(coinSig);
+  Serial.println("Coin reader ready");
+  Serial.println("Setup complete!");
 }
 
 void loop() {
-
-  byte currentCoinSignal = digitalRead(coinSig);
-  if (currentCoinSignal == HIGH) {
-    previousUpdateMillis = millis();
-    printOnceFlag = true;
-  }
-
-  if (printOnceFlag && (millis() - previousUpdateMillis >= updateInterval)) {
-    printBankValue();
-    printOnceFlag = false;
-  }
-
+  const byte currentCoinSignal = digitalRead(coinSig);
   if (currentCoinSignal != previousCoinSignal) {
     previousCoinSignal = currentCoinSignal;
-
-    if (currentCoinSignal == HIGH)
-      bankValue = bankValue + coinValue;
+    if (currentCoinSignal == HIGH && millis() - bootTime >= minWaitAfterBootTime) {
+      // A coin was inserted.
+      // This code executes once for each value unit the coin represents.
+      // For example: A coin worth 5 CZK will execute this code 5 times.
+      accumulatedValue = accumulatedValue + valueIncrement;
+//      std::ostringstream msg;
+//      msg << "ACCUMULATED VALUE: " << accumulatedValue;
+//      std::cout << msg.str() << '\n';
+      lastCoinInsertedTime = millis();
+      if (lastDisplayedQrCodeTime > 0) {
+        clear_qrcode();
+      }
+    }
   }
-
+  if (lastDisplayedQrCodeTime > 0 && millis() - lastDisplayedQrCodeTime >= maxTimeDisplayQrCode) {
+    clear_qrcode();
+  }
+  if (lastCoinInsertedTime > 0 && millis() - lastCoinInsertedTime >= minWaitTimeBetweenCoins) {
+    // The minimum required wait time between coins has passed.
+    generate_and_display_withdraw_request();
+    // Reset accumulated value counter.
+    accumulatedValue = 0.00;
+    // Reset the last coin inserted time.
+    lastCoinInsertedTime = 0;
+  }
+  update_displayed_accumulated_value();
 }
 
-void printBankValue() {
-
-  Serial.println(bankValue);
-  create_lnurl();
-  Serial.println("lnurl");
-  Serial.println(lnurl.c_str());
-  showLnurl(lnurl.c_str());
+void generate_and_display_withdraw_request() {
+  std::string req = lnurl::create_signed_withdraw_request(
+    accumulatedValue,
+    fiatCurrency,
+    apiKeyId,
+    apiKeySecret,
+    baseUrl
+  );
+  std::ostringstream msg;
+  msg << "LNURL: " << req;
+  std::cout << msg.str() << '\n';
+  display_qrcode(req);
 }
 
-void create_lnurl() {
-  std::string payload = "";
-  payload.append("id=");
-  payload.append(id);
-  payload.append("&n=");
-  payload.append(String(esp_random()).c_str());
-  payload.append("&t=w");
-  payload.append("&f=");
-  payload.append(fiatCurrency);
-  payload.append("&pn=");
-  payload.append(String(bankValue).c_str());
-  payload.append("&px=");
-  payload.append(String(bankValue).c_str());
-  payload.append("&pd=");
+float lastDisplayedAccumulatedValue = 0.00;
+unsigned long lastDisplayedAccumulatedValueTime = 0;
 
-  char payloadToSign[payload.length() + 1];
-  std::strcpy(payloadToSign, payload.c_str());
-
-  std::string signature = util::hmac_sign(payloadToSign, key);
-  std::string hrp = "lnurl";
-
-  std::string url = "";
-  url.append(baseUrl);
-  url.append(payload);
-  url.append("&s=");
-  url.append(signature);
-
-  lnurl = util::bech32_encode(hrp, url);
+void update_displayed_accumulated_value() {
+  if (
+    (lastDisplayedQrCodeTime == 0) && (
+      (lastDisplayedAccumulatedValueTime == 0) ||
+      (lastDisplayedAccumulatedValue != accumulatedValue && millis() - lastDisplayedAccumulatedValueTime >= 500)
+    )
+  ) {
+    display_accumulated_value();
+  }
 }
 
-void showLnurl(String lnurl) {
+const uint8_t baseFontCharWidth = 6;
+const uint8_t baseFontCharHeight = 8;
+const uint8_t accumulatedValue_textSize = 2;
+const uint8_t accumulatedValue_displayedTextHeight = baseFontCharHeight * accumulatedValue_textSize;
 
-  tftScreen.fillScreen(TFT_WHITE);
+void clear_accumulated_value() {
+  Serial.println("Clearing accumulated value...");
+  // Clear previous text by drawing a white rectangle over it.
+  tft.fillRect(0, accumulatedValue_displayedTextHeight, tft.width(), accumulatedValue_displayedTextHeight, BG_COLOR);
+  lastDisplayedAccumulatedValue = 0.00;
+  lastDisplayedAccumulatedValueTime = 0;
+}
 
-  lnurl.toUpperCase();
-  const char* data = lnurl.c_str();
+void display_accumulated_value() {
+  clear_accumulated_value();
+  Serial.println("Displaying accumulated value...");
+  std::ostringstream fiat;
+  fiat << accumulatedValue << " " << fiatCurrency;
+  const std::string str = fiat.str();
+  const char* text = str.c_str();
+  const uint8_t displayedTextWidth = baseFontCharWidth * accumulatedValue_textSize * str.length();
+  tft.setTextSize(accumulatedValue_textSize);
+  tft.setTextColor(TEXT_COLOR);
+  tft.setCursor((tft.width() - displayedTextWidth) / 2, accumulatedValue_displayedTextHeight);
+  tft.println(text);
+  lastDisplayedAccumulatedValue = float(accumulatedValue);
+  lastDisplayedAccumulatedValueTime = millis();
+}
 
+const uint8_t qrcode_width = 98;
+const uint8_t qrcode_height = 98;
+const uint8_t qrcode_offsetX = (tft.width() - qrcode_width) / 2;
+const uint8_t qrcode_offsetY = accumulatedValue_displayedTextHeight * 3;
+
+void clear_qrcode() {
+  Serial.println("Clearing QR code...");
+  tft.fillRect(qrcode_offsetX, qrcode_offsetY, qrcode_width, qrcode_height, BG_COLOR);
+  lastDisplayedQrCodeTime = 0;
+}
+
+std::string str_toupper(std::string s) {
+  std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return std::toupper(c); });
+  return s;
+}
+
+void display_qrcode(const std::string &dataStr) {
+  clear_qrcode();
+  Serial.println("Displaying QR code...");
+  const char* data = str_toupper(dataStr).c_str();
   int qrSize = 12;
   int sizes[17] = { 25, 47, 77, 114, 154, 195, 224, 279, 335, 395, 468, 535, 619, 667, 758, 854, 938 };
-  int len = String(data).length();
+  int len = std::string(data).length();
   for (int i = 0; i < 17; i++) {
     if (sizes[i] > len) {
       qrSize = i + 1;
       break;
     }
   }
-
   QRCode qrcode;
   uint8_t qrcodeData[qrcode_getBufferSize(qrSize)];
   qrcode_initText(&qrcode, qrcodeData, qrSize, ECC_LOW, data);
-
   float scale = 2;
-
   for (uint8_t y = 0; y < qrcode.size; y++) {
     for (uint8_t x = 0; x < qrcode.size; x++) {
       if (qrcode_getModule(&qrcode, x, y)) {
-        tftScreen.fillRect(15+3+scale*x, 15+3+scale*y, scale, scale, TFT_BLACK);
-      }
-      else {
-        tftScreen.fillRect(15+3+scale*x, 15+3+scale*y, scale, scale, TFT_WHITE);
+        tft.fillRect(qrcode_offsetX + scale*x, qrcode_offsetY + scale*y, scale, scale, TEXT_COLOR);
+      } else {
+        tft.fillRect(qrcode_offsetX + scale*x, qrcode_offsetY + scale*y, scale, scale, BG_COLOR);
       }
     }
   }
+  lastDisplayedQrCodeTime = millis();
 }
