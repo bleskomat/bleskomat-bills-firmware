@@ -20,13 +20,13 @@ Once you have installed [Arduino IDE](https://www.arduino.cc/en/Main/Software), 
 
 ### TFT screen
 
-|  ESP32  | TFT          |
-|---------|--------------|
-| VIN     | VCC          |
-| GND     | GND          |
-| CS      | GPIO5  (D5)  |
-| Reset   | GPIO16 (RX2) |
-| AO (DC) | GPIO17 (TX2) |
-| SDA     | GPIO23 (D23) |
-| SCK     | GPIO18 (D18) |
-| LED     | 3.3V (3V3)   |
+|  ESP32       | TFT      |
+|--------------|----------|
+| VIN          | VCC      |
+| GND          | GND      |
+| GPIO5  (D5)  | CS       |
+| GPIO16 (RX2) | RS       |
+| GPIO17 (TX2) | AO (DC)  |
+| GPIO23 (D23) | SDA      |
+| GPIO18 (D18) | SCK      |
+| 3.3V (3V3)   | LED (NC) |
