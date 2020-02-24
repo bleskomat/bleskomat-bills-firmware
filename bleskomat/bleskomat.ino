@@ -52,11 +52,27 @@ void setup() {
   Serial.println("Setup complete!");
 }
 
+unsigned long lastSignalChangeTime = 0;
 void loop() {
   const byte currentCoinSignal = digitalRead(coinSig);
   if (currentCoinSignal != previousCoinSignal) {
     previousCoinSignal = currentCoinSignal;
-    if (currentCoinSignal == HIGH && millis() - bootTime >= minWaitAfterBootTime) {
+    const unsigned long timeSinceLastSignalChange = millis() - lastSignalChangeTime;
+    lastSignalChangeTime = millis();
+//    if (currentCoinSignal == HIGH) {
+//      Serial.println("HIGH");
+//    } else if (currentCoinSignal == LOW) {
+//      Serial.println("LOW");
+//    }
+//    std::ostringstream msg2;
+//    msg2 << "LAST SIGNAL CHANGE WAS " << timeSinceLastSignalChange << " ms AGO";
+//    std::cout << msg2.str() << '\n';
+    if (
+      currentCoinSignal == HIGH &&
+      millis() - bootTime >= minWaitAfterBootTime &&
+      timeSinceLastSignalChange > 25 &&
+      timeSinceLastSignalChange < 35
+    ) {
       // A coin was inserted.
       // This code executes once for each value unit the coin represents.
       // For example: A coin worth 5 CZK will execute this code 5 times.
