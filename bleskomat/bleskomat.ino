@@ -25,6 +25,8 @@ std::string fiatCurrency = "CZK";
 const float valueIncrement = 1.00;
 // The pin to which the COIN input is connected:
 const byte coinSig = 4;
+// The pin to which the button is connected:
+const int buttonSig = 15;
 /*
  *  end of CONFIGURATIONS
 */
@@ -34,10 +36,14 @@ byte previousCoinSignal;
 const unsigned long bootTime = millis();// milliseconds
 const unsigned long minWaitAfterBootTime = 2000;// milliseconds
 const unsigned long minWaitTimeBetweenCoins = 7000;// milliseconds
+const unsigned long minTimeBeforeAllowClearQrCode = 5000; // milliseconds
 const unsigned long maxTimeDisplayQrCode = 60000;// milliseconds
 unsigned long lastCoinInsertedTime = 0;// milliseconds
 unsigned long lastDisplayedQrCodeTime = 0;// milliseconds
+
 float accumulatedValue = 0.00;
+int buttonState = 0;
+bool buttonWasPressed = false;
 
 void setup() {
   Serial.begin(115200);
@@ -47,6 +53,7 @@ void setup() {
   tft.fillScreen(BG_COLOR);
   Serial.println("Screen ready");
   pinMode(coinSig, INPUT_PULLUP);
+  pinMode(buttonSig, INPUT);
   previousCoinSignal = digitalRead(coinSig);
   Serial.println("Coin reader ready");
   Serial.println("Setup complete!");
@@ -55,6 +62,32 @@ void setup() {
 unsigned long lastSignalChangeTime = 0;
 void loop() {
   const byte currentCoinSignal = digitalRead(coinSig);
+
+  buttonState = digitalRead(buttonSig);
+
+  if (buttonState == HIGH) {
+    // Button was pressed.
+    Serial.println("button was pressed!");
+    buttonWasPressed = true;
+  }
+
+  // Make sure this code run only when button has been let go
+  if (buttonWasPressed && buttonState == 0) {
+    if (accumulatedValue > 0.00) {
+      Serial.println("button was released!");
+      generate_and_display_withdraw_request();
+      // Reset accumulated value counter.
+      accumulatedValue = 0.00;
+      // Reset the last coin inserted time.
+      lastCoinInsertedTime = 0;
+    } else if ((unsigned long)(millis() - lastDisplayedQrCodeTime) > minTimeBeforeAllowClearQrCode) {
+      clear_qrcode();
+    }
+
+    buttonWasPressed = false;
+  }
+
+
   if (currentCoinSignal != previousCoinSignal) {
     previousCoinSignal = currentCoinSignal;
     const unsigned long timeSinceLastSignalChange = millis() - lastSignalChangeTime;
@@ -70,8 +103,8 @@ void loop() {
     if (
       currentCoinSignal == HIGH &&
       millis() - bootTime >= minWaitAfterBootTime &&
-      timeSinceLastSignalChange > 25 &&
-      timeSinceLastSignalChange < 35
+      timeSinceLastSignalChange > 15 &&
+      timeSinceLastSignalChange < 80
     ) {
       // A coin was inserted.
       // This code executes once for each value unit the coin represents.
@@ -89,14 +122,14 @@ void loop() {
   if (lastDisplayedQrCodeTime > 0 && millis() - lastDisplayedQrCodeTime >= maxTimeDisplayQrCode) {
     clear_qrcode();
   }
-  if (lastCoinInsertedTime > 0 && millis() - lastCoinInsertedTime >= minWaitTimeBetweenCoins) {
-    // The minimum required wait time between coins has passed.
-    generate_and_display_withdraw_request();
-    // Reset accumulated value counter.
-    accumulatedValue = 0.00;
-    // Reset the last coin inserted time.
-    lastCoinInsertedTime = 0;
-  }
+  // if (lastCoinInsertedTime > 0 && millis() - lastCoinInsertedTime >= minWaitTimeBetweenCoins) {
+  //   // The minimum required wait time between coins has passed.
+  //   generate_and_display_withdraw_request();
+  //   // Reset accumulated value counter.
+  //   accumulatedValue = 0.00;
+  //   // Reset the last coin inserted time.
+  //   lastCoinInsertedTime = 0;
+  // }
   update_displayed_accumulated_value();
 }
 
@@ -193,9 +226,9 @@ void display_qrcode(const std::string &dataStr) {
   for (uint8_t y = 0; y < qrcode.size; y++) {
     for (uint8_t x = 0; x < qrcode.size; x++) {
       if (qrcode_getModule(&qrcode, x, y)) {
-        tft.fillRect(qrcode_offsetX + scale*x, qrcode_offsetY + scale*y, scale, scale, TEXT_COLOR);
+        tft.fillRect(qrcode_offsetX + scale*x, qrcode_offsetY + scale*y, scale, scale, TFT_BLACK);
       } else {
-        tft.fillRect(qrcode_offsetX + scale*x, qrcode_offsetY + scale*y, scale, scale, BG_COLOR);
+        tft.fillRect(qrcode_offsetX + scale*x, qrcode_offsetY + scale*y, scale, scale, TFT_WHITE);
       }
     }
   }
