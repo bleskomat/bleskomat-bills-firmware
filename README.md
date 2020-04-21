@@ -1,24 +1,54 @@
-# Bleskomat V2
+# bleskomat-device
 
-The offline lightning ATM. This prototype is built with inexpensive, easily available components. The design is focused on modularity and decreasing the per unit cost as much as possible. All that plus a dead-simple UX will make this a great option for cafes, bars, and shops to on-board new users to Lightning Network.
+The Lightning Network ATM with simple components and a simple setup - just plug it in and it works!
 
-
-## Getting started
-
-In order to get started with development you need:
-
-* [Arduino IDE](https://www.arduino.cc/en/Main/Software)
-
-Once you have installed [Arduino IDE](https://www.arduino.cc/en/Main/Software), you will have an `~/Arduino/libraries` folder in you user directory that you can use to include libraries:
-
-* Clone the repository of [M5Stack](https://github.com/m5stack/M5Stack) into your `~/Adurino/libraries` folder.
-* Add uncompressed `TFT_eSPI.zip` from this repository `/libraries` folder to your `~/Arduino/libraries` folder.
-* In you arduino IDE go to `File -> Preferences` and `https://dl.espressif.com/dl/package_esp32_index.json` to the input field in `Additional Boards Manager URLs`.
+* [Overview](#overview)
+* [Requirements](#requirements)
+* [Setup](#setup)
 
 
-## Cables mapping
+## Overview
 
-### TFT screen
+Key features include:
+* Works offline - no WiFi required
+* Inexpensive, easily-sourced components
+* Easily hackable and extendible
+
+The project consists of two parts:
+* __Physical Device (ATM)__ - user inserts coins, device generates a signed URL and displays as QR code, user's app (which supports lnurl-withdraw) scans QR code and makes request to HTTP server, withdraw process is completed and the user has successfully bought satoshis with fiat coins.
+* __HTTP Server__ - supports [lnurl-withdraw](https://github.com/btcontract/lnurl-rfc/blob/master/lnurl-withdraw.md) with additional request handlers for fiat-currency -> satoshi conversion and request signing.
+
+This repository contains the source and build instructions for the physical device. The source code and documentation for the HTTP server component is located in a [separate repository](https://github.com/samotari/bleskomat-server).
+
+
+## Requirements
+
+This section includes information about the requirements (software + hardware) that you will need to build the physical Bleskomat ATM. 
+
+To build the physical device:
+* Hardware:
+	* ESP32
+	* TFT screen
+	* Coin Acceptor
+	* 12V DC power adaptor
+* Software:
+	* [Arduino IDE](https://www.arduino.cc/en/Main/Software); alternative:
+		* [Sublime Text 3](https://www.sublimetext.com/3) + [Deviot (Arduino IDE)](https://packagecontrol.io/packages/Deviot%20(Arduino%20IDE))
+	* [M5Stack](https://github.com/m5stack/M5Stack) - Arduino library for the ESP32 used for this project
+	* [TFT_eSPI.zip](https://github.com/samotari/bleskomat/tree/master/atm/libraries/TFT_eSPI.zip) - Additional library needed for the TFT screen
+
+
+## Setup
+
+Install the [Arduino IDE](https://www.arduino.cc/en/Main/Software).
+
+Clone the repository of [M5Stack](https://github.com/m5stack/M5Stack) into your `~/Arduino/libraries` folder.
+
+Download and unzip [TFT_eSPI.zip](https://github.com/samotari/bleskomat/tree/master/atm/libraries/TFT_eSPI.zip) into your `~/Arduino/libraries` folder.
+
+In Arduino IDE, go to `File -> Preferences` and add `https://dl.espressif.com/dl/package_esp32_index.json` to the input field in `Additional Boards Manager URLs`.
+
+### Cable map to connect ESP32 to TFT screen
 
 |  ESP32       | TFT      |
 |--------------|----------|
