@@ -100,20 +100,6 @@ void loop() {
   update_displayed_accumulated_value();
 }
 
-void generate_and_display_withdraw_request() {
-  std::string req = lnurl::create_signed_withdraw_request(
-    accumulatedValue,
-    fiatCurrency,
-    apiKeyId,
-    apiKeySecret,
-    baseUrl
-  );
-  std::ostringstream msg;
-  msg << "LNURL: " << req;
-  std::cout << msg.str() << '\n';
-  display_qrcode(req);
-}
-
 float lastDisplayedAccumulatedValue = 0.00;
 unsigned long lastDisplayedAccumulatedValueTime = 0;
 
@@ -200,4 +186,18 @@ void display_qrcode(const std::string &dataStr) {
     }
   }
   lastDisplayedQrCodeTime = millis();
+}
+
+void generate_and_display_withdraw_request() {
+  std::string req = lnurl::create_signed_withdraw_request(
+    accumulatedValue,
+    fiatCurrency,
+    apiKeyId,
+    apiKeySecret,
+    baseUrl
+  );
+  std::ostringstream msg;
+  msg << "LNURL: " << req;
+  std::cout << msg.str() << '\n';
+  display_qrcode(req);
 }

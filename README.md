@@ -5,6 +5,8 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 * [Overview](#overview)
 * [Requirements](#requirements)
 * [Setup](#setup)
+	* [Prepare Arduino IDE](#setup-with-arduino-ide)
+	* [Prepare With SublimeText3](#setup-with-sublimetext3)
 * [License](#license)
 
 
@@ -34,12 +36,16 @@ To build the physical device:
 	* 12V DC power adaptor
 * Software:
 	* [Arduino IDE](https://www.arduino.cc/en/Main/Software); alternative:
-		* [Sublime Text 3](https://www.sublimetext.com/3) + [Deviot (Arduino IDE)](https://packagecontrol.io/packages/Deviot%20(Arduino%20IDE))
+		* [Sublime Text 3](https://www.sublimetext.com/3) + [Deviot (Arduino IDE)](https://packagecontrol.io/packages/Deviot%20(Arduino%20IDE)) + [PlatformIO](https://docs.platformio.org/)
 	* [M5Stack](https://github.com/m5stack/M5Stack) - Arduino library for the ESP32 used for this project
 	* [TFT_eSPI.zip](https://github.com/samotari/bleskomat/tree/master/atm/libraries/TFT_eSPI.zip) - Additional library needed for the TFT screen
 
 
 ## Setup
+
+The setup process begins with preparing an IDE that includes tools to compile, debug, and deploy C/C++ code to your ESP32 device. Choose your IDE and continue.
+
+### Prepare Arduino IDE
 
 Install the [Arduino IDE](https://www.arduino.cc/en/Main/Software).
 
@@ -48,6 +54,31 @@ Clone the repository of [M5Stack](https://github.com/m5stack/M5Stack) into your 
 Download and unzip [TFT_eSPI.zip](https://github.com/samotari/bleskomat/tree/master/atm/libraries/TFT_eSPI.zip) into your `~/Arduino/libraries` folder.
 
 In Arduino IDE, go to `File -> Preferences` and add `https://dl.espressif.com/dl/package_esp32_index.json` to the input field in `Additional Boards Manager URLs`.
+
+
+### Prepare SublimeText3
+
+This guide assumes you already have SublimeText3 installed.
+
+Install PlatformIO by following these [installation instructions](https://docs.platformio.org/en/latest/core/installation.html#installation-methods).
+
+Now you can install the [Deviot (Arduino IDE)](https://packagecontrol.io/packages/Deviot%20(Arduino%20IDE)) package for SublimeText3. Recommended installation method is to use the built-in Package Control of SublimeText: `Preferences` -> `Package Control` -> `Install Package` -> Type `"Deviot"` -> Click `"Deviot (Arduino IDE)"`.
+
+Clone the repository of [M5Stack](https://github.com/m5stack/M5Stack) into your `~/.platformio/lib/` folder.
+
+Download and unzip [TFT_eSPI.zip](https://github.com/samotari/bleskomat/tree/master/atm/libraries/TFT_eSPI.zip) into your `~/.platformio/lib/` folder.
+
+Install QRCode library: `Deviot` -> `Find/Install Library` -> Type `"QRCode"` -> Find and click `"QRCode"` from the list of libraries.
+
+Open the `./bleskomat/bleskomat.ino` file in SublimeText. Right-click anywhere in the file and then click `Compile` in the context menu. It will prompt you to select a board. Type `"esp32 expressif"` and then select the only board remaining: `"Espressif ESP32 Dev Module"`.
+
+If everything worked, you should see something like this in the terminal at the bottom:
+```
+========================= [SUCCESS] Took 1.97 seconds =========================
+
+[Wed May  6 19:49:55 2020]
+```
+
 
 ### Cable map to connect ESP32 to TFT screen
 
