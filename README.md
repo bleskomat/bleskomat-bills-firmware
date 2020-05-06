@@ -5,6 +5,7 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 * [Overview](#overview)
 * [Requirements](#requirements)
 * [Setup](#setup)
+* [License](#license)
 
 
 ## Overview
@@ -60,3 +61,10 @@ In Arduino IDE, go to `File -> Preferences` and add `https://dl.espressif.com/dl
 | GPIO23 (D23) | SDA      |
 | GPIO18 (D18) | SCK      |
 | 3.3V (3V3)   | LED (NC) |
+
+
+## License
+
+This project is "unlicensed" meaning all copyrights are withheld. This is the closed-source, extended version of the device for the commercial Bleskomat ATMs.
+
+There is an [open-source version](https://github.com/samotari/bleskomat) of this project that hackers and hobbyist are welcome to use as a guide to build their own Bleskomat ATMs.
