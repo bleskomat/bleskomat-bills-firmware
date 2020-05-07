@@ -80,13 +80,14 @@ namespace lnurl {
 		const std::string &fiatCurrency,
 		const std::string &apiKeyId,
 		const std::string &apiKeySecret,
-		const std::string &baseUrl
+		const std::string &callbackUrl
 	) {
 		std::string payload = construct_payload(amount, fiatCurrency, apiKeyId);
 		std::string signature = create_signature(payload, apiKeySecret);
 		std::string hrp = "lnurl";
 		std::string url = "";
-		url.append(baseUrl);
+		url.append(callbackUrl);
+		url.append("?");
 		url.append(payload);
 		url.append("&s=");
 		url.append(signature);

@@ -11,4 +11,5 @@
 
 namespace util {
 	std::string bech32_encode(const std::string& hrp, const std::string& value);
+	uint16_t hex_to_rgb565(const std::string& hexColor);
 }

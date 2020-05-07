@@ -10,6 +10,6 @@ namespace lnurl {
 		const std::string &fiatCurrency,
 		const std::string &apiKeyId,
 		const std::string &apiKeySecret,
-		const std::string &baseUrl
+		const std::string &callbackUrl
 	);
 }

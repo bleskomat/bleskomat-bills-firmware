@@ -24,4 +24,17 @@ namespace util {
 		std::string s(v.begin(), v.end());
 		return bech32::encode(hrp, tmp);
 	}
+	// http://www.barth-dev.de/about-rgb565-and-how-to-convert-into-it/
+	uint16_t hex_to_rgb565(const std::string& hexColor) {
+		uint16_t Rgb565 = 0;
+		unsigned int x;
+		std::stringstream ss;
+		ss << std::hex << hexColor;
+		ss >> x;
+		uint8_t red = (x >> 16) & 255;
+		uint8_t green = (x >> 8) & 255;
+		uint8_t blue = x & 255;
+		Rgb565 = (((red & 0xf8)<<8) + ((green & 0xfc)<<3) + (blue>>3));
+		return Rgb565;
+	}
 }

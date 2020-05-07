@@ -1,0 +1,5 @@
+.pio/
+build/
+node_modules/
+config.json
+config.json.enc
