@@ -5,9 +5,17 @@ if (!apiKeyId && !useDummyFlags) {
 	process.exit(1);
 }
 
-const config = require('../config');
-if (!config.fileExists(false)) {
-	console.error('ERROR: Unencrypted config file not found. Use `npm run config -- decrypt` to create it.');
+if (!useDummyFlags && !require('../config').fileExists(false)) {
+	// Intent to use real configuration values.
+	// Config file is required.
+	if (!require('../config').fileExists(true)) {
+		// No configuration file exists.
+		console.error('ERROR: Config file not found. Use `npm run config -- load` to create it.');
+	} else {
+		// An encrypted config file exists.
+		// But the build process requires it to be unencrypted.
+		console.error('ERROR: Unencrypted config file not found. Use `npm run config -- decrypt` to create it.');
+	}
 	process.exit(1);
 }
 
