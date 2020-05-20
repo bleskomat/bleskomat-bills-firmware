@@ -29,12 +29,17 @@
 	#error "Missing required build flag: FIAT_CURRENCY"
 #endif
 
+#include <string>
+#include "logger.h"
+
 namespace config {
-	const byte coinAcceptorPin(COIN_ACCEPTOR_PIN);
+	const uint8_t coinAcceptorPin(COIN_ACCEPTOR_PIN);
 	const std::string bgColor(BG_COLOR_HEX);
 	const std::string textColor(TEXT_COLOR_HEX);
 	const std::string apiKeyId(STRINGIFY(API_KEY_ID));
 	const std::string apiKeySecret(STRINGIFY(API_KEY_SECRET));
 	const std::string callbackUrl(STRINGIFY(CALLBACK_URL));
 	const std::string fiatCurrency(STRINGIFY(FIAT_CURRENCY));
+	void init();
+	float getValueIncrement();
 }
