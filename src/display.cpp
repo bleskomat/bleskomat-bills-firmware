@@ -9,6 +9,8 @@ namespace {
 	const uint8_t TEXT_FONT = 2;
 	int BG_COLOR;
 	int TEXT_COLOR;
+	unsigned long LAST_RENDERED_QRCODE_TIME = 0;
+	float RENDERED_AMOUNT = 0.00;
 
 	uint8_t calculateAmountTextHeight() {
 		return tft.fontHeight() * TEXT_MULTIPLIER;
@@ -39,29 +41,46 @@ namespace {
 			std::floor(maxHeight / size)
 		);
 	}
+
+	// http://www.barth-dev.de/about-rgb565-and-how-to-convert-into-it/
+	uint16_t hexToRGB565(const std::string& hexColor) {
+		uint16_t Rgb565 = 0;
+		unsigned int x;
+		std::stringstream ss;
+		ss << std::hex << hexColor;
+		ss >> x;
+		uint8_t red = (x >> 16) & 255;
+		uint8_t green = (x >> 8) & 255;
+		uint8_t blue = x & 255;
+		Rgb565 = (((red & 0xf8)<<8) + ((green & 0xfc)<<3) + (blue>>3));
+		return Rgb565;
+	}
+
+	int getPrecision(const std::string &fiatCurrency) {
+		if (fiatCurrency == "EUR") {
+			return 2;
+		}
+		return 0;
+	}
 }
 
 namespace display {
 
 	void init() {
 		tft.begin();
+		BG_COLOR = hexToRGB565(BG_COLOR_HEX);
+		TEXT_COLOR = hexToRGB565(TEXT_COLOR_HEX);
 		tft.fillScreen(BG_COLOR);
 		tft.setTextFont(TEXT_FONT);
 	}
 
-	void setBackgroundColor(const std::string &hexColor) {
-		BG_COLOR = util::hex_to_rgb565(hexColor);
-	}
-
-	void setTextColor(const std::string &hexColor) {
-		TEXT_COLOR = util::hex_to_rgb565(hexColor);
-	}
-
 	void updateAmount(const float &amount, const std::string &fiatCurrency) {
 		clearAmount();
-		std::ostringstream fiat;
-		fiat << amount << " " << fiatCurrency;
-		const std::string str = fiat.str();
+		RENDERED_AMOUNT = amount;
+		int precision = getPrecision(fiatCurrency);
+		std::ostringstream stream;
+		stream << std::fixed << std::setprecision(precision) << amount << " " << fiatCurrency;
+		const std::string str = stream.str();
     	logger::write("Update amount: " + str);
 		const char* text = str.c_str();
 		tft.setTextSize(TEXT_MULTIPLIER);
@@ -74,6 +93,10 @@ namespace display {
 	void clearAmount() {
 		// Clear previous text by drawing a white rectangle over it.
 		tft.fillRect(0, MARGIN_Y, tft.width(), calculateAmountTextHeight(), BG_COLOR);
+	}
+
+	float getRenderedAmount() {
+		return RENDERED_AMOUNT;
 	}
 
 	void renderQRCode(const std::string &dataStr) {
@@ -94,11 +117,21 @@ namespace display {
 				tft.fillRect(offsetX + scale*x, offsetY + scale*y, scale, scale, color);
 			}
 		}
+		LAST_RENDERED_QRCODE_TIME = millis();
 	}
 
 	void clearQRCode() {
     	logger::write("Clear QR code");
 		const uint8_t offsetY = calculateAmountTextHeight() + MARGIN_Y;
 		tft.fillRect(0, offsetY, tft.width(), tft.height() - offsetY, BG_COLOR);
+		LAST_RENDERED_QRCODE_TIME = 0;
+	}
+
+	bool hasRenderedQRCode() {
+		return LAST_RENDERED_QRCODE_TIME > 0;
+	}
+
+	unsigned long getTimeSinceRenderedQRCode() {
+		return LAST_RENDERED_QRCODE_TIME > 0 ? millis() - LAST_RENDERED_QRCODE_TIME : 0;
 	}
 }
