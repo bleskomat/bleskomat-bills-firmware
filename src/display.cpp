@@ -3,19 +3,15 @@
 namespace {
 
 	TFT_eSPI tft = TFT_eSPI();
-	const uint8_t baseFontCharWidth = 6;
-	const uint8_t baseFontCharHeight = 8;
-	const uint8_t amountTextSize = 2;
+	const uint8_t MARGIN_X = 4;
+	const uint8_t MARGIN_Y = 12;
+	const uint8_t TEXT_MULTIPLIER = 1;
+	const uint8_t TEXT_FONT = 2;
 	int BG_COLOR;
 	int TEXT_COLOR;
-	int MARGIN = 16;
 
-	uint8_t calculateAmountTextHeight(const bool &includeMargin = false) {
-		uint8_t textHeight = baseFontCharHeight * amountTextSize;
-		if (includeMargin) {
-			textHeight = textHeight + (MARGIN * 2);
-		}
-		return textHeight;
+	uint8_t calculateAmountTextHeight() {
+		return tft.fontHeight() * TEXT_MULTIPLIER;
 	}
 
 	std::string toUpperCase(std::string s) {
@@ -29,19 +25,18 @@ namespace {
 		int len = dataStr.length();
 		for (int i = 0; i < 17; i++) {
 			if (sizes[i] > len) {
-				size = i + 1;
-				break;
+				return i + 1;
 			}
 		}
 		return size;
 	}
 
 	float calculateQRCodeScale(const uint8_t &size) {
-		const uint8_t maxWidth = tft.width() - (MARGIN * 2);
-		const uint8_t maxHeight = tft.height() - (calculateAmountTextHeight(true) + MARGIN);
+		const uint8_t maxWidth = tft.width() - (MARGIN_X * 2);
+		const uint8_t maxHeight = tft.height() - (calculateAmountTextHeight() + MARGIN_Y);
 		return std::fmin(
-			std::floor((maxWidth / size) * 100) / 100,
-			std::floor((maxHeight / size) * 100) / 100
+			std::floor(maxWidth / size),
+			std::floor(maxHeight / size)
 		);
 	}
 }
@@ -51,6 +46,7 @@ namespace display {
 	void init() {
 		tft.begin();
 		tft.fillScreen(BG_COLOR);
+		tft.setTextFont(TEXT_FONT);
 	}
 
 	void setBackgroundColor(const std::string &hexColor) {
@@ -68,16 +64,16 @@ namespace display {
 		const std::string str = fiat.str();
     	logger::write("Update amount: " + str);
 		const char* text = str.c_str();
-		const uint8_t textWidth = baseFontCharWidth * amountTextSize * str.length();
-		tft.setTextSize(amountTextSize);
+		tft.setTextSize(TEXT_MULTIPLIER);
 		tft.setTextColor(TEXT_COLOR);
-		tft.setCursor((tft.width() - textWidth) / 2, MARGIN);
+		const uint8_t textWidth = tft.textWidth(text);
+		tft.setCursor((tft.width() - textWidth) / 2, MARGIN_Y);
 		tft.println(text);
 	}
 
 	void clearAmount() {
 		// Clear previous text by drawing a white rectangle over it.
-		tft.fillRect(0, 0, tft.width(), calculateAmountTextHeight(true), BG_COLOR);
+		tft.fillRect(0, MARGIN_Y, tft.width(), calculateAmountTextHeight(), BG_COLOR);
 	}
 
 	void renderQRCode(const std::string &dataStr) {
@@ -102,7 +98,7 @@ namespace display {
 
 	void clearQRCode() {
     	logger::write("Clear QR code");
-		const uint8_t offsetY = calculateAmountTextHeight(true);
+		const uint8_t offsetY = calculateAmountTextHeight() + MARGIN_Y;
 		tft.fillRect(0, offsetY, tft.width(), tft.height() - offsetY, BG_COLOR);
 	}
 }
