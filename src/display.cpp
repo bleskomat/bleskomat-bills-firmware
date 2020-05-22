@@ -81,7 +81,7 @@ namespace display {
 		std::ostringstream stream;
 		stream << std::fixed << std::setprecision(precision) << amount << " " << fiatCurrency;
 		const std::string str = stream.str();
-    	logger::write("Update amount: " + str);
+		logger::write("Update amount: " + str);
 		const char* text = str.c_str();
 		tft.setTextSize(TEXT_MULTIPLIER);
 		tft.setTextColor(TEXT_COLOR);
@@ -101,7 +101,7 @@ namespace display {
 
 	void renderQRCode(const std::string &dataStr) {
 		clearQRCode();
-    	logger::write("Render QR code: " + dataStr);
+		logger::write("Render QR code: " + dataStr);
 		const char* data = toUpperCase(dataStr).c_str();
 		const int size = calculateQRCodeSize(dataStr);
 		QRCode qrcode;
@@ -121,7 +121,7 @@ namespace display {
 	}
 
 	void clearQRCode() {
-    	logger::write("Clear QR code");
+		logger::write("Clear QR code");
 		const uint8_t offsetY = calculateAmountTextHeight() + MARGIN_Y;
 		tft.fillRect(0, offsetY, tft.width(), tft.height() - offsetY, BG_COLOR);
 		LAST_RENDERED_QRCODE_TIME = 0;
