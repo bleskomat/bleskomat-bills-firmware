@@ -21,8 +21,9 @@ if (!useDummyFlags && !require('../config').fileExists(false)) {
 
 const printBuildFlags = function(buildFlags) {
 	const output = Object.keys(buildFlags).map(function(name) {
-		const value = JSON.stringify(buildFlags[name]);
-		return `-D ${name}=${value}`;
+		const value = buildFlags[name];
+		// Use single quotes around whole build flag definition + double-quotes around value:
+		return `'-D ${name}="${value}"'`;
 	}).join('\n');
 	process.stdout.write(output);
 };

@@ -32,14 +32,20 @@
 #include <string>
 #include "logger.h"
 
+namespace {
+	std::string trimQuotes(const std::string &str) {
+		return str.substr(1, str.length() - 2);
+	}
+}
+
 namespace config {
 	const uint8_t coinAcceptorPin(COIN_ACCEPTOR_PIN);
 	const std::string bgColor(BG_COLOR_HEX);
 	const std::string textColor(TEXT_COLOR_HEX);
-	const std::string apiKeyId(STRINGIFY(API_KEY_ID));
-	const std::string apiKeySecret(STRINGIFY(API_KEY_SECRET));
-	const std::string callbackUrl(STRINGIFY(CALLBACK_URL));
-	const std::string fiatCurrency(STRINGIFY(FIAT_CURRENCY));
+	const std::string apiKeyId(trimQuotes(STRINGIFY(API_KEY_ID)));
+	const std::string apiKeySecret(trimQuotes(STRINGIFY(API_KEY_SECRET)));
+	const std::string callbackUrl(trimQuotes(STRINGIFY(CALLBACK_URL)));
+	const std::string fiatCurrency(trimQuotes(STRINGIFY(FIAT_CURRENCY)));
 	void init();
 	float getValueIncrement();
 }
