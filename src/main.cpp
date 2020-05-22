@@ -70,7 +70,7 @@ void loop() {
       config::apiKeySecret,
       config::callbackUrl
     );
-    display::renderQRCode(req);
+    display::renderQRCode("lightning:" + req);
     lastRenderedQrCodeTime = millis();
     // Reset accumulated value counter.
     accumulatedValue = 0.00;
