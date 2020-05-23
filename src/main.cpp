@@ -3,7 +3,6 @@
 #include "display.h"
 #include "logger.h"
 #include "lnurl.h"
-#include "util.h"
 #include "modules.h"
 
 void setup() {
