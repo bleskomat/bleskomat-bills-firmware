@@ -37,10 +37,11 @@ This section includes information about the requirements (software + hardware) t
 ### Hardware Requirements
 
 To build the physical device, you will need the following hardware components:
-* ESP32
-* TFT screen
-* Coin Acceptor
+* [ESP-WROOM-32](https://www.espressif.com/en/products/modules/esp-wroom-32/overview) by espressif
+* TFT Display
+* Coin Acceptor - "Model HX-616"
 * 12V DC power adaptor
+* USB car charger (12V -> 5V DC)
 
 
 ### Software Requirements
@@ -144,7 +145,6 @@ To open the serial monitor:
 ```bash
 npm run monitor
 ```
-Choose `/dev/ttyUSB0`.
 
 
 
