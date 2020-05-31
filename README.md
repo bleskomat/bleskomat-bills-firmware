@@ -8,7 +8,9 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 	* [Software Requirements](#software-requirements)
 * [Setup](#setup)
 	* [Building the Hardware Device](#building-the-hardware-device)
-	* [Cable map to connect ESP32 to TFT screen](#cable-map-to-connect-esp32=to-tft-screen)
+		* [Wiring Diagram (w/ Coin Acceptor)](#wiring-diagram-w-coin-acceptor)
+		* [Wiring the Power Supply](#wiring-the-power-supply)
+		* [Wiring the TFT Display](#wiring-the-tft-display)
 	* [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
 	* [Generating Your Local Config File](#generating-your-local-config-file)
 	* [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
@@ -40,7 +42,7 @@ To build the physical device, you will need the following hardware components:
 * [ESP-WROOM-32](https://www.espressif.com/en/products/modules/esp-wroom-32/overview) by espressif
 * TFT Display
 * Coin Acceptor - "Model HX-616"
-* 12V DC power adaptor
+* 12V DC power adaptor with >= 1A
 * USB car charger (12V -> 5V DC)
 
 
@@ -58,9 +60,35 @@ Step-by-step setup process including both hardware and software.
 
 Before proceeding, be sure that you have all the project's [hardware requirements](#hardware-requirements).
 
-!! TODO !! Write detailed instructions (w/ pictures) to build the device.
+#### Wiring Diagram (w/ Coin Acceptor)
 
-### Cable map to connect ESP32 to TFT screen
+Here is a wiring diagram for the Bleskomat ATM with coin acceptor:
+
+![](https://github.com/samotari/bleskomat-device/blob/master/docs/bleskomat-w-coin-acceptor-wiring-schematic.png)
+
+#### Wiring the Power Supply
+
+The first step to building the device is wiring the power supply. If already plugged in, __unplug__ the 12V DC power supply now. Use scissors to cut the end off the power supply so that you can freely access the two wires within, as shown in the following image:
+
+![](https://github.com/samotari/bleskomat-device/blob/master/docs/12v-dc-power-supply.jpg)
+
+It is important to test the wires to know for certain which is the ground. Use a [multimeter](https://duckduckgo.com/?q=multimeter&t=canonical&iar=images&iax=images&ia=images) to measure the voltage of the power supply:
+* Plug-in the power supply to electricity
+* Turn on your multimeter and set it to measure voltage in the appropriate range
+* Touch the __red__ lead of your multimeter to one of the wires
+* Touch the __black__ lead of your multimeter to the other wire
+* If you see a negative voltage reading, swap the leads between the two wires
+* The wire touched by the __black__ lead is the ground ("gnd")
+* The wire touched by the __red__ lead is the hot wire ("pwr")
+* Unplug the power supply again
+
+The next step is to wire in the USB car charger. The end of the car charger - the round metal part that can be pushed in - is the 12V DC in ("pwr"). The two pieces of metal on the sides are the ground ("gnd"). Connect a new red wire to the car charger's 12V DC in connector. Connect a new black wire to one of the car charger's ground connectors. Connect these new wires to the corresponding wires of the power supply. Plug-in a USB cable to the car charger (USB2/3 to micro USB). This micro USB connector will power the ESP32 device.
+
+Now connect the "pwr" and "gnd" wires of your coin acceptor to the corresponding wires of the power supply.
+
+#### Wiring the TFT Display
+
+Have a look at the [wiring diagram](#wiring-diagram-w-coin-acceptor) above or the following is a table of cable mappings for connecting the ESP32 to TFT Display:
 
 |  ESP32       | TFT      |
 |--------------|----------|
