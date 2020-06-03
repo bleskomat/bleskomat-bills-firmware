@@ -2,6 +2,7 @@
   "name": "bleskomat-device",
   "version": "1.0.0",
   "description": "The Lightning Network ATM with simple components and a simple setup - just plug it in and it works!",
+  "private": true,
   "main": null,
   "scripts": {
     "compile:only": "platformio run",
