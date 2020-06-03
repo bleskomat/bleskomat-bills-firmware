@@ -219,6 +219,13 @@ module.exports = {
 			});
 		});
 	},
+	init: function() {
+		if (configFileExists()) {
+			console.log('Config file already exists.');
+			return Promise.resolve();
+		}
+		return this.load.apply(this, arguments);
+	},
 	load: function(options) {
 		options = _.defaults(options || {}, {
 			create: false,

@@ -10,7 +10,7 @@ if (!config[cmd]) {
 }
 let options;
 switch (cmd) {
-	case 'load':
+	case 'init':
 		options = { create: true };
 		break;
 }

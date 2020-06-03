@@ -131,7 +131,7 @@ You can find PlatformIO's libraries repository [here](https://platformio.org/lib
 
 A helper script is used to generate the local configuration file that is needed to connect to the server's Postgres database, encrypt/decrypt sensitive data (like API key secrets), and to set other required configuration options for the device build process. Let's get started:
 ```bash
-npm run config -- load
+npm run config -- init
 ```
 This will walk you thru the process of generating the local config file.
 
