@@ -1,7 +1,7 @@
 const apiKeyId = process.env.API_KEY_ID || null;
 const useDummyFlags = process.env.API_KEY_NONE || null;
 if (!apiKeyId && !useDummyFlags) {
-	console.error('ERROR: Missing API_KEY_ID environment variable.');
+	console.error('ERROR: `API_KEY_ID` or `API_KEY_NONE` env variable is required.');
 	process.exit(1);
 }
 
@@ -10,7 +10,7 @@ if (!useDummyFlags && !require('../config').fileExists(false)) {
 	// Config file is required.
 	if (!require('../config').fileExists(true)) {
 		// No configuration file exists.
-		console.error('ERROR: Config file not found. Use `npm run config -- load` to create it.');
+		console.error('ERROR: Config file not found. Use `npm run config -- init` to create it.');
 	} else {
 		// An encrypted config file exists.
 		// But the build process requires it to be unencrypted.
@@ -48,7 +48,7 @@ require('../config').load().then(config => {
 	const db = require('../db')(config);
 	return db.getApiKey(apiKeyId).then(apiKey => {
 		if (!apiKey) {
-			throw new Error('API key not found');
+			throw new Error(`API key not found: "${apiKeyId}"`);
 		}
 		const { host, port, url, protocol, endpoint } = config.lnurl;
 		return {
