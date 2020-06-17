@@ -90,16 +90,16 @@ Now connect the "pwr" and "gnd" wires of your coin acceptor to the corresponding
 
 Have a look at the [wiring diagram](#wiring-diagram-w-coin-acceptor) above or the following is a table of cable mappings for connecting the ESP32 to TFT Display:
 
-|  ESP32       | TFT      |
-|--------------|----------|
-| VIN          | VCC      |
-| GND          | GND      |
-| GPIO5  (D5)  | CS       |
-| GPIO16 (RX2) | RS       |
-| GPIO17 (TX2) | AO (DC)  |
-| GPIO23 (D23) | SDA      |
-| GPIO18 (D18) | SCK      |
-| 3.3V (3V3)   | LED (NC) |
+|  ESP32       | TFT        |
+|--------------|------------|
+| VIN          | VCC        |
+| GND          | GND        |
+| GPIO5  (D5)  | CS         |
+| GPIO16 (RX2) | RESET (RS) |
+| GPIO17 (TX2) | AO (DC)    |
+| GPIO23 (D23) | SDA        |
+| GPIO18 (D18) | SCK        |
+| 3.3V (3V3)   | LED (NC)   |
 
 
 ### Installing Libraries and Dependencies
