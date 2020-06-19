@@ -2,8 +2,10 @@
 
 namespace {
 	std::string fiatCurrency = "";
+	SoftwareSerial billAcceptorSerial(BILL_ACCEPTOR_RX_PIN, BILL_ACCEPTOR_TX_PIN); // RX, TX
 	float VALUE_ACCUMULATED = 0.00;
-
+	bool BILL_INSERTED = false;
+	unsigned long LAST_INSERTED_TIME = 0;
 	// Mapping serial codes comming form NV10:
 	// EUR {code, value} mappings
 	std::map<int,int> eur{ {1, 5.0}, {2, 10.0}, {3, 20.0}, {4, 50.0}, {5, 100.0}, {6, 200.0} };
@@ -25,22 +27,32 @@ namespace {
 
 namespace billAcceptor {
 
-	SoftwareSerial BillAcceptor(BILL_ACCEPTOR_RX_PIN, BILL_ACCEPTOR_TX_PIN); // RX, TX
-
 	void init() {
 		// set the data rate for the SoftwareSerial port
-		BillAcceptor.begin(BILL_ACCEPTOR_DATA_RATE);
+		logger::write("billAcceptor::init()");
+		printf("BILL_ACCEPTOR_DATA_RATE: %d\n", BILL_ACCEPTOR_DATA_RATE);
+		billAcceptorSerial.begin(BILL_ACCEPTOR_DATA_RATE);
 	}
 
 	void loop() {
-
-		if (BillAcceptor.available()) {
-			byte byteIn = BillAcceptor.read();
-
+		BILL_INSERTED = false;
+		if (billAcceptorSerial.available()) {
+			byte byteIn = billAcceptorSerial.read();
 			if (byteIn >= 1 && byteIn <= 12) {
+				logger::write("Bill inserted");
 				incrementAccumulatedValue(byteIn);
+				LAST_INSERTED_TIME = millis();
+				BILL_INSERTED = true;
 			}
 		}
+	}
+
+	bool billInserted() {
+		return BILL_INSERTED;
+	}
+
+	unsigned long getTimeSinceLastInserted() {
+		return LAST_INSERTED_TIME > 0 ? millis() - LAST_INSERTED_TIME : 0;
 	}
 
 	float getAccumulatedValue() {
@@ -52,6 +64,8 @@ namespace billAcceptor {
 	}
 
 	void reset() {
+		BILL_INSERTED = false;
+		LAST_INSERTED_TIME = 0;
 		VALUE_ACCUMULATED = 0.00;
 	}
 }
