@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg823"
+   version="1.1"
+   viewBox="0 0 78.610191 94.146349"
+   height="94.146347mm"
+   width="78.610191mm">
+  <defs
+     id="defs817">
+    <style
+       id="style2">.cls-1{fill:#ff9000;}.cls-2{fill:#fff;}.cls-3{fill:#ffba00;}.cls-4{font-size:260px;letter-spacing:-0.03em;}.cls-4,.cls-7{fill:#4e4e4e;font-family:Ubuntu-BoldItalic, Ubuntu;font-style:italic;}.cls-4,.cls-8,.cls-9{font-weight:700;}.cls-5{letter-spacing:-0.04em;}.cls-6{letter-spacing:-0.05em;}.cls-7{font-size:57px;}.cls-12,.cls-9{letter-spacing:0.01em;}.cls-10,.cls-11,.cls-12,.cls-13,.cls-14{font-family:Ubuntu-LightItalic, Ubuntu;}.cls-10{letter-spacing:-0.02em;}.cls-11{letter-spacing:-0.02em;}.cls-13{letter-spacing:-0.01em;}.cls-14{letter-spacing:0.01em;}</style>
+    <style
+       id="style2-6">.cls-1{fill:#ff9000;}.cls-2{fill:#fff;}.cls-3{fill:#ffba00;}.cls-4{font-size:260px;letter-spacing:-0.03em;}.cls-4,.cls-7{fill:#4e4e4e;font-family:Ubuntu-BoldItalic, Ubuntu;font-style:italic;}.cls-4,.cls-8,.cls-9{font-weight:700;}.cls-5{letter-spacing:-0.04em;}.cls-6{letter-spacing:-0.05em;}.cls-7{font-size:57px;}.cls-12,.cls-9{letter-spacing:0.01em;}.cls-10,.cls-11,.cls-12,.cls-13,.cls-14{font-family:Ubuntu-LightItalic, Ubuntu;}.cls-10{letter-spacing:-0.02em;}.cls-11{letter-spacing:-0.02em;}.cls-13{letter-spacing:-0.01em;}.cls-14{letter-spacing:0.01em;}</style>
+  </defs>
+  <metadata
+     id="metadata820">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(33.769174,-127.6488)"
+     id="layer1">
+    <path
+       id="rect2085"
+       transform="matrix(0.26458333,0,0,0.26458333,-33.769174,127.6488)"
+       d="M 123.49023 82.599609 C 113.1715 82.599609 104.86328 90.905873 104.86328 101.22461 L 104.86328 337.20312 C 104.86328 347.52186 113.1715 355.82812 123.49023 355.82812 L 278.48438 355.82812 C 288.80311 355.82812 297.10938 347.52186 297.10938 337.20312 L 297.10938 101.22461 C 297.10937 90.905873 288.80311 82.599609 278.48438 82.599609 L 123.49023 82.599609 z M 235.21094 120.39258 L 198.57617 199.44727 L 259.31445 215.83789 L 158.08398 318.03125 L 194.71875 238.01172 L 142.6582 223.55078 L 235.21094 120.39258 z "
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:4.2071681;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       id="path8"
+       transform="matrix(0.26458333,0,0,0.26458333,-65.158988,120.21876)"
+       d="M 255.34766,28.082031 118.63867,321.25391 a 163.89662,163.89662 0 0 0 170.91602,-52.13282 l -45.61133,-12.66797 83.84766,-93.46093 A 163.89662,163.89662 0 0 0 255.34766,28.082031 Z"
+       style="fill:#000000;stroke-width:0.96409774" />
+  </g>
+</svg>

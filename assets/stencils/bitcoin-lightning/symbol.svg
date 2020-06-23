@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg1438"
+   version="1.1"
+   viewBox="0 0 86.727997 86.727997"
+   height="86.727997mm"
+   width="86.727997mm"
+   sodipodi:docname="bitcoin.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1000"
+     id="namedview7"
+     showgrid="false"
+     inkscape:zoom="0.83364612"
+     inkscape:cx="161.49633"
+     inkscape:cy="115.91344"
+     inkscape:window-x="0"
+     inkscape:window-y="41"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1438" />
+  <defs
+     id="defs1432">
+    <style
+       id="style2">.cls-1{fill:#ff9000;}.cls-2{fill:#fff;}.cls-3{fill:#ffba00;}.cls-4{font-size:260px;letter-spacing:-0.03em;}.cls-4,.cls-7{fill:#4e4e4e;font-family:Ubuntu-BoldItalic, Ubuntu;font-style:italic;}.cls-4,.cls-8,.cls-9{font-weight:700;}.cls-5{letter-spacing:-0.04em;}.cls-6{letter-spacing:-0.05em;}.cls-7{font-size:57px;}.cls-12,.cls-9{letter-spacing:0.01em;}.cls-10,.cls-11,.cls-12,.cls-13,.cls-14{font-family:Ubuntu-LightItalic, Ubuntu;}.cls-10{letter-spacing:-0.02em;}.cls-11{letter-spacing:-0.02em;}.cls-13{letter-spacing:-0.01em;}.cls-14{letter-spacing:0.01em;}</style>
+  </defs>
+  <metadata
+     id="metadata1435">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:10.75833035;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 163.89453 0 A 163.89543 163.89543 0 0 0 0 163.89453 A 163.89543 163.89543 0 0 0 163.89453 327.79102 A 163.89543 163.89543 0 0 0 327.79102 163.89453 A 163.89543 163.89543 0 0 0 163.89453 0 z M 162.9375 60.144531 L 180.9082 64.617188 L 173.6875 93.541016 C 178.51763 94.640087 183.36772 95.747628 188.0918 96.923828 L 195.26367 68.166016 L 213.24414 72.648438 L 205.84961 102.1875 C 228.55411 110.00636 245.16673 121.73115 241.89844 143.53906 C 239.5364 159.50451 230.68412 167.23622 218.94141 169.94531 C 235.07076 178.34263 243.28563 191.22228 235.4668 213.55078 C 225.75833 241.28787 202.69737 243.61273 172.03906 237.82812 L 164.5957 267.64648 L 146.61523 263.16406 L 153.95312 233.74023 C 149.26761 232.58332 144.53421 231.35781 139.62695 230.02734 L 132.25977 259.58789 L 114.25977 255.06445 L 121.70312 225.17773 C 117.5093 224.09792 113.23871 222.9605 108.89062 221.87109 L 85.482422 216.08594 L 94.410156 195.50391 C 94.410156 195.50391 107.66562 199.02213 107.48242 198.76172 C 112.57286 200.02469 114.82995 196.69801 115.72656 194.49023 L 127.48828 147.34766 L 129.41602 147.81836 A 14.374698 14.374698 0 0 0 127.54688 147.2207 L 135.93359 113.56445 C 136.11677 109.70805 134.83508 104.88759 127.51758 103.14258 C 127.79716 102.94975 114.45312 99.894531 114.45312 99.894531 L 119.27344 80.689453 L 144.08008 86.878906 L 144.08008 86.974609 C 147.81114 87.900144 151.65803 88.777218 155.57227 89.673828 L 162.9375 60.144531 z M 168.81836 114.7793 L 159.86328 150.68164 C 170.01523 153.20757 201.3097 163.53423 206.38086 143.2207 C 211.65448 122.02984 178.96067 117.30523 168.81836 114.7793 z M 155.3418 168.79883 L 145.46875 208.38281 C 157.65494 211.41006 195.25357 223.48085 200.81641 201.15234 C 206.62028 177.86936 167.53763 171.84539 155.3418 168.79883 z "
+     transform="scale(0.26458333)"
+     id="path845" />
+</svg>
