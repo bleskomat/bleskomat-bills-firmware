@@ -9,7 +9,7 @@ namespace coinAcceptor {
 	void init();
 	void loop();
 	bool coinInserted();
-	unsigned long getTimeSinceLastCoinInserted();
+	unsigned long getTimeSinceLastInserted();
 	float getAccumulatedValue();
 	void setFiatCurrency(const std::string &fiatCurrency);
 	void reset();

@@ -33,7 +33,7 @@ This repository contains the source and build instructions for the physical devi
 
 ## Requirements
 
-This section includes information about the requirements (software + hardware) that you will need to build the physical Bleskomat ATM. 
+This section includes information about the requirements (software + hardware) that you will need to build the physical Bleskomat ATM.
 
 
 ### Hardware Requirements
@@ -101,6 +101,16 @@ Have a look at the [wiring diagram](#wiring-diagram-w-coin-acceptor) above or th
 | GPIO18 (D18) | SCK        |
 | 3.3V (3V3)   | LED (NC)   |
 
+#### Wiring the NV10 bill acceptor
+
+|  ESP32      | NV10 | Power         |
+|-------------|------|---------------|
+| GPIO1 (TX0) | 3    |               |
+| GPIO3 (RX0) | 1    |               |
+| GND         | 16   |               |
+|             | 15   | +12VDC Supply |
+
+![](https://github.com/samotari/bleskomat-device/blob/master/docs/nv10-pinout.png)
 
 ### Installing Libraries and Dependencies
 

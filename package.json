@@ -10,7 +10,8 @@
     "config": "node ./scripts/config.js",
     "monitor": "platformio device monitor --port /dev/ttyUSB0",
     "print:buildFlags": "node ./scripts/printBuildFlags.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tunnel:db": "ssh -vNTL 5433:localhost:5432 chill@iceberg"
   },
   "author": {
     "name": "Samotari",

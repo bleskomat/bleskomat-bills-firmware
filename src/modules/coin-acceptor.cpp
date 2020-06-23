@@ -6,7 +6,7 @@ namespace {
 	uint8_t LAST_PIN_READ;
 	unsigned long LAST_PIN_READ_TIME = 0;
 	bool COIN_INSERTED = false;
-	unsigned long LAST_COIN_INSERTED_TIME = 0;
+	unsigned long LAST_INSERTED_TIME = 0;
 
 	bool coinWasInserted() {
 		unsigned long diffTime = millis() - LAST_PIN_READ_TIME;
@@ -53,8 +53,9 @@ namespace coinAcceptor {
 				// A coin was inserted.
 				// This code executes once for each value unit the coin represents.
 				// For example: A coin worth 5 CZK will execute this code 5 times.
+				logger::write("Coin inserted");
 				incrementAccumulatedValue();
-				LAST_COIN_INSERTED_TIME = millis();
+				LAST_INSERTED_TIME = millis();
 				COIN_INSERTED = true;
 			}
 			flipPinState();
@@ -65,8 +66,8 @@ namespace coinAcceptor {
 		return COIN_INSERTED;
 	}
 
-	unsigned long getTimeSinceLastCoinInserted() {
-		return LAST_COIN_INSERTED_TIME > 0 ? millis() - LAST_COIN_INSERTED_TIME : 0;
+	unsigned long getTimeSinceLastInserted() {
+		return LAST_INSERTED_TIME > 0 ? millis() - LAST_INSERTED_TIME : 0;
 	}
 
 	float getAccumulatedValue() {
@@ -79,7 +80,7 @@ namespace coinAcceptor {
 
 	void reset() {
 		COIN_INSERTED = false;
-		LAST_COIN_INSERTED_TIME = 0;
+		LAST_INSERTED_TIME = 0;
 		VALUE_ACCUMULATED = 0.00;
 	}
 }
