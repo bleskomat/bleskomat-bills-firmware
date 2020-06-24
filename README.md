@@ -65,13 +65,13 @@ Before proceeding, be sure that you have all the project's [hardware requirement
 
 Here is a wiring diagram for the Bleskomat ATM with coin acceptor:
 
-![](https://github.com/samotari/bleskomat-device/blob/master/docs/bleskomat-w-coin-acceptor-wiring-schematic.png)
+![](docs/bleskomat-w-coin-acceptor-wiring-schematic.png)
 
 #### Wiring the Power Supply
 
 The first step to building the device is wiring the power supply. If already plugged in, __unplug__ the 12V DC power supply now. Use scissors to cut the end off the power supply so that you can freely access the two wires within, as shown in the following image:
 
-![](https://github.com/samotari/bleskomat-device/blob/master/docs/12v-dc-power-supply.jpg)
+![](docs/12v-dc-power-supply.jpg)
 
 It is important to test the wires to know for certain which is the ground. Use a [multimeter](https://duckduckgo.com/?q=multimeter&t=canonical&iar=images&iax=images&ia=images) to measure the voltage of the power supply:
 * Plug-in the power supply to electricity
@@ -111,7 +111,7 @@ Have a look at the [wiring diagram](#wiring-diagram-w-coin-acceptor) above or th
 | GND         | 16   |               |
 |             | 15   | +12VDC Supply |
 
-![](https://github.com/samotari/bleskomat-device/blob/master/docs/nv10-pinout.png)
+![](docs/nv10-pinout.png)
 
 
 ### Training the Coin Acceptor
@@ -122,7 +122,7 @@ Plug-in the power supply so that all the electronic components have power.
 
 An instruction sheet is included with the coin acceptor that will guide you through the training process:
 
-![](images/coin-acceptor-hx-616-instructions-side-1.jpg)
+![](docs/coin-acceptor-hx-616-instructions-side-1.jpg)
 
 
 ### Installing Libraries and Dependencies
