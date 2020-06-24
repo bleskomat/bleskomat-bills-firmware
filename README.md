@@ -11,6 +11,7 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 		* [Wiring Diagram (w/ Coin Acceptor)](#wiring-diagram-w-coin-acceptor)
 		* [Wiring the Power Supply](#wiring-the-power-supply)
 		* [Wiring the TFT Display](#wiring-the-tft-display)
+	* [Training the Coin Acceptor](#training-the-coin-acceptor)
 	* [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
 	* [Generating Your Local Config File](#generating-your-local-config-file)
 	* [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
@@ -111,6 +112,18 @@ Have a look at the [wiring diagram](#wiring-diagram-w-coin-acceptor) above or th
 |             | 15   | +12VDC Supply |
 
 ![](https://github.com/samotari/bleskomat-device/blob/master/docs/nv10-pinout.png)
+
+
+### Training the Coin Acceptor
+
+Be sure that you've already finished wiring the power supply to all the components before continuing with this step.
+
+Plug-in the power supply so that all the electronic components have power.
+
+An instruction sheet is included with the coin acceptor that will guide you through the training process:
+
+![](images/coin-acceptor-hx-616-instructions-side-1.jpg)
+
 
 ### Installing Libraries and Dependencies
 
