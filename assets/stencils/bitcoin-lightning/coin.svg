@@ -5,12 +5,12 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   id="Layer_2"
-   data-name="Layer 2"
-   viewBox="0 0 403.38141 403.38519"
-   version="1.1"
+   height="403.38519"
    width="403.38141"
-   height="403.38519">
+   version="1.1"
+   viewBox="0 0 403.38141 403.38519"
+   data-name="Layer 2"
+   id="Layer_2">
   <metadata
      id="metadata10">
     <rdf:RDF>
@@ -29,7 +29,7 @@
        id="style2">.cls-1{fill:#ff9000;}.cls-2{fill:#fff;}.cls-3{fill:#ffba00;}.cls-4{font-size:260px;letter-spacing:-0.03em;}.cls-4,.cls-7{fill:#4e4e4e;font-family:Ubuntu-BoldItalic, Ubuntu;font-style:italic;}.cls-4,.cls-8,.cls-9{font-weight:700;}.cls-5{letter-spacing:-0.04em;}.cls-6{letter-spacing:-0.05em;}.cls-7{font-size:57px;}.cls-12,.cls-9{letter-spacing:0.01em;}.cls-10,.cls-11,.cls-12,.cls-13,.cls-14{font-family:Ubuntu-LightItalic, Ubuntu;}.cls-10{letter-spacing:-0.02em;}.cls-11{letter-spacing:-0.02em;}.cls-13{letter-spacing:-0.01em;}.cls-14{letter-spacing:0.01em;}</style>
   </defs>
   <path
-     id="rect1406"
+     style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:12.61396694;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      d="M 49.224609 0 C 21.954379 0 0 21.954379 0 49.224609 L 0 354.16016 C 0 381.43039 21.954379 403.38477 49.224609 403.38477 L 354.15625 403.38477 C 381.42648 403.38477 403.38086 381.43039 403.38086 354.16016 L 403.38086 49.224609 C 403.38086 21.954379 381.42648 0 354.15625 0 L 49.224609 0 z M 196.00391 37.894531 A 163.89662 163.89662 0 0 1 365.58594 200.78906 L 281.73828 294.24805 L 327.34961 306.91602 A 163.89662 163.89662 0 1 1 196.00391 37.894531 z "
-     style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:12.61396694;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+     id="rect1406" />
 </svg>
