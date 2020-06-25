@@ -46,32 +46,60 @@ void loop() {
 		float billAccumulatedValue = billAcceptor::getAccumulatedValue();
 		float coinAccumulatedValue = coinAcceptor::getAccumulatedValue();
 		float accumulatedValue = billAccumulatedValue + coinAccumulatedValue;
-		if (
-			accumulatedValue > 0 &&
-			(
-				billAccumulatedValue == 0 ||
-				billAcceptor::getTimeSinceLastInserted() >= minWaitTimeSinceInsertedFiat
-			) &&
-			(
-				coinAccumulatedValue == 0 ||
-				coinAcceptor::getTimeSinceLastInserted() >= minWaitTimeSinceInsertedFiat
-			)
-		) {
-			printf("billAccumulatedValue: %f\n", billAccumulatedValue);
-			printf("coinAccumulatedValue: %f\n", coinAccumulatedValue);
-			printf("accumulatedValue: %f\n", accumulatedValue);
-			// The minimum required wait time between bills/coins has passed.
-			// Create a withdraw request and render it as a QR code.
-			std::string req = lnurl::create_signed_withdraw_request(
-				accumulatedValue,
-				config::fiatCurrency,
-				config::apiKeyId,
-				config::apiKeySecret,
-				config::callbackUrl
-			);
-			display::renderQRCode("lightning:" + req);
-			billAcceptor::reset();
-			coinAcceptor::reset();
+		if (accumulatedValue > 0) {
+			const unsigned long billTimeSinceLastInserted = billAcceptor::getTimeSinceLastInserted();
+			const unsigned long coinTimeSinceLastInserted = coinAcceptor::getTimeSinceLastInserted();
+			if (
+				(
+					billAccumulatedValue == 0 ||
+					billTimeSinceLastInserted >= minWaitTimeSinceInsertedFiat
+				) &&
+				(
+					coinAccumulatedValue == 0 ||
+					coinTimeSinceLastInserted >= minWaitTimeSinceInsertedFiat
+				)
+			) {
+				// The minimum required wait time between bills/coins has passed.
+				// Create a withdraw request and render it as a QR code.
+				printf("billAccumulatedValue: %f\n", billAccumulatedValue);
+				printf("coinAccumulatedValue: %f\n", coinAccumulatedValue);
+				printf("accumulatedValue: %f\n", accumulatedValue);
+				std::string req = lnurl::create_signed_withdraw_request(
+					accumulatedValue,
+					config::fiatCurrency,
+					config::apiKeyId,
+					config::apiKeySecret,
+					config::callbackUrl
+				);
+				display::renderQRCode("lightning:" + req);
+				billAcceptor::reset();
+				coinAcceptor::reset();
+			} else {
+				// Fiat was inserted, but timer has not run out yet.
+				unsigned long timeSinceLastInserted = 0;
+				if (billTimeSinceLastInserted > 0 && coinTimeSinceLastInserted > 0) {
+					if (billTimeSinceLastInserted < coinTimeSinceLastInserted) {
+						timeSinceLastInserted = billTimeSinceLastInserted;
+					} else {
+						timeSinceLastInserted = coinTimeSinceLastInserted;
+					}
+				} else if (billTimeSinceLastInserted > 0) {
+					timeSinceLastInserted = billTimeSinceLastInserted;
+				} else if (coinTimeSinceLastInserted > 0) {
+					timeSinceLastInserted = coinTimeSinceLastInserted;
+				}
+				unsigned long timeRemaining = 0;
+				if (minWaitTimeSinceInsertedFiat > timeSinceLastInserted) {
+					timeRemaining = minWaitTimeSinceInsertedFiat - timeSinceLastInserted;
+				}
+				printf("timeRemaining: %ld\n", timeRemaining);
+				printf("timeSinceLastInserted: %ld\n", timeSinceLastInserted);
+				if (timeRemaining > 1000 && timeSinceLastInserted > 5000) {
+					display::updateTimer(timeRemaining);
+				} else {
+					display::clearTimer();
+				}
+			}
 		}
 		if (!display::hasRenderedQRCode() && display::getRenderedAmount() != accumulatedValue) {
 			display::updateAmount(accumulatedValue, config::fiatCurrency);

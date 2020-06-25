@@ -24,4 +24,6 @@ namespace display {
 	void clearQRCode();
 	bool hasRenderedQRCode();
 	unsigned long getTimeSinceRenderedQRCode();
+	void updateTimer(const unsigned long milliseconds);
+	void clearTimer();
 }

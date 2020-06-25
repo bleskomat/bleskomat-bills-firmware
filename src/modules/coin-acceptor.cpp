@@ -10,7 +10,7 @@ namespace {
 
 	bool coinWasInserted() {
 		unsigned long diffTime = millis() - LAST_PIN_READ_TIME;
-		return LAST_PIN_READ == LOW && diffTime > 25 && diffTime < 35;
+		return LAST_PIN_READ == LOW && diffTime > 20 && diffTime < 50;
 	}
 
 	void flipPinState() {

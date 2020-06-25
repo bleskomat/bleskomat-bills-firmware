@@ -5,15 +5,18 @@ namespace {
 	TFT_eSPI tft = TFT_eSPI();
 	const uint8_t MARGIN_X = 4;
 	const uint8_t MARGIN_Y = 12;
-	const uint8_t TEXT_MULTIPLIER = 1;
 	const uint8_t TEXT_FONT = 2;
+	const uint8_t TEXT_MULTIPLIER_AMOUNT = 1;
+	const uint8_t TEXT_MULTIPLIER_TIMER = 3;
 	int BG_COLOR;
 	int TEXT_COLOR;
 	unsigned long LAST_RENDERED_QRCODE_TIME = 0;
+	unsigned long LAST_RENDERED_TIMER_TIME = 0;
 	float RENDERED_AMOUNT = 0.00;
+	int RENDERED_TIMER_SECONDS = 0;
 
-	uint8_t calculateAmountTextHeight() {
-		return tft.fontHeight() * TEXT_MULTIPLIER;
+	uint8_t calculateTextHeight(const uint8_t multiplier) {
+		return tft.fontHeight() * multiplier;
 	}
 
 	std::string toUpperCase(std::string s) {
@@ -35,7 +38,7 @@ namespace {
 
 	float calculateQRCodeScale(const uint8_t &size) {
 		const uint8_t maxWidth = tft.width() - (MARGIN_X * 2);
-		const uint8_t maxHeight = tft.height() - (calculateAmountTextHeight() + MARGIN_Y);
+		const uint8_t maxHeight = tft.height() - (calculateTextHeight(TEXT_MULTIPLIER_AMOUNT) + MARGIN_Y);
 		return std::fmin(
 			std::floor(maxWidth / size),
 			std::floor(maxHeight / size)
@@ -83,7 +86,7 @@ namespace display {
 		const std::string str = stream.str();
 		logger::write("Update amount: " + str);
 		const char* text = str.c_str();
-		tft.setTextSize(TEXT_MULTIPLIER);
+		tft.setTextSize(TEXT_MULTIPLIER_AMOUNT);
 		tft.setTextColor(TEXT_COLOR);
 		const uint8_t textWidth = tft.textWidth(text);
 		tft.setCursor((tft.width() - textWidth) / 2, MARGIN_Y);
@@ -92,7 +95,7 @@ namespace display {
 
 	void clearAmount() {
 		// Clear previous text by drawing a white rectangle over it.
-		tft.fillRect(0, MARGIN_Y, tft.width(), calculateAmountTextHeight(), BG_COLOR);
+		tft.fillRect(0, MARGIN_Y, tft.width(), calculateTextHeight(TEXT_MULTIPLIER_AMOUNT), BG_COLOR);
 	}
 
 	float getRenderedAmount() {
@@ -100,6 +103,7 @@ namespace display {
 	}
 
 	void renderQRCode(const std::string &dataStr) {
+		clearTimer();
 		clearQRCode();
 		logger::write("Render QR code: " + dataStr);
 		const char* data = toUpperCase(dataStr).c_str();
@@ -122,7 +126,7 @@ namespace display {
 
 	void clearQRCode() {
 		logger::write("Clear QR code");
-		const uint8_t offsetY = calculateAmountTextHeight() + MARGIN_Y;
+		const uint8_t offsetY = calculateTextHeight(TEXT_MULTIPLIER_AMOUNT) + MARGIN_Y;
 		tft.fillRect(0, offsetY, tft.width(), tft.height() - offsetY, BG_COLOR);
 		LAST_RENDERED_QRCODE_TIME = 0;
 	}
@@ -133,5 +137,43 @@ namespace display {
 
 	unsigned long getTimeSinceRenderedQRCode() {
 		return LAST_RENDERED_QRCODE_TIME > 0 ? millis() - LAST_RENDERED_QRCODE_TIME : 0;
+	}
+
+	void updateTimer(const unsigned long milliseconds) {
+		if (LAST_RENDERED_TIMER_TIME > 0 && millis() - LAST_RENDERED_TIMER_TIME < 500) {
+			// Don't render the timer too often.
+			return;
+		}
+		const int seconds = std::ceil(milliseconds / 1000);
+		if (
+			RENDERED_TIMER_SECONDS > 0 &&
+			seconds == RENDERED_TIMER_SECONDS
+		) {
+			// Already rendered with the same number of seconds.
+			// Do nothing.
+			return;
+		}
+		clearTimer();
+		std::stringstream stream;
+		stream << seconds;
+		const std::string str = stream.str();
+		logger::write("Update timer: " + str);
+		const char* text = str.c_str();
+		tft.setTextSize(TEXT_MULTIPLIER_TIMER);
+		tft.setTextColor(TEXT_COLOR);
+		const uint8_t textWidth = tft.textWidth(text);
+		const uint8_t amountTextHeight = calculateTextHeight(TEXT_MULTIPLIER_AMOUNT);
+		const uint8_t offsetX = (tft.width() - textWidth) / 2;
+		const uint8_t offsetY = MARGIN_Y + amountTextHeight;
+		tft.setCursor(offsetX, offsetY);
+		tft.println(text);
+		RENDERED_TIMER_SECONDS = seconds;
+	}
+
+	void clearTimer() {
+		const uint8_t amountTextHeight = calculateTextHeight(TEXT_MULTIPLIER_AMOUNT);
+		const uint8_t offsetY = MARGIN_Y + amountTextHeight;
+		tft.fillRect(0, offsetY, tft.width(), tft.height() - offsetY, BG_COLOR);
+		RENDERED_TIMER_SECONDS = 0;
 	}
 }
