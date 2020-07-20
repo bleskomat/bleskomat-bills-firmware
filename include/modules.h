@@ -5,3 +5,7 @@
 #ifdef BILL_ACCEPTOR
 	#include "modules/bill-acceptor.h"
 #endif
+
+#ifdef BUTTON
+	#include "modules/button.h"
+#endif
