@@ -17,51 +17,52 @@ void setup() {
 	logger::write("Setup OK");
 }
 
-const unsigned long maxTimeDisplayQrCode = 120000;// milliseconds
+float lastAccumulatedValue = 0;
+unsigned long accumulatedValueChangeTime = 0;
+unsigned long accumulatedValueDebounceTime = 400;// milliseconds
 
 void loop() {
 	modules::loop();
-	if (display::getTimeSinceRenderedQRCode() >= maxTimeDisplayQrCode) {
-		// Automatically clear the QR code from the screen after some time has passed.
-		display::clearQRCode();
-	} else if (coinAcceptor::coinInserted() && display::hasRenderedQRCode()) {
-		// Clear the QR code when new coins are inserted.
-		display::clearQRCode();
-	} else if (billAcceptor::billInserted() && display::hasRenderedQRCode()) {
-		// Clear the QR code when new bills are inserted.
-		display::clearQRCode();
+	float accumulatedValue = 0;
+	#ifdef COIN_ACCEPTOR
+		accumulatedValue += coinAcceptor::getAccumulatedValue();
+	#endif
+	#ifdef BILL_ACCEPTOR
+		accumulatedValue += billAcceptor::getAccumulatedValue();
+	#endif
+	if (accumulatedValue != lastAccumulatedValue) {
+		// Accumulated value has changed.
+		accumulatedValueChangeTime = millis();
 	}
-	float billAccumulatedValue = billAcceptor::getAccumulatedValue();
-	float coinAccumulatedValue = coinAcceptor::getAccumulatedValue();
-	float accumulatedValue = billAccumulatedValue + coinAccumulatedValue;
-	if (accumulatedValue > 0) {
-		if ((millis() - button::getLastDebounceTime()) > button::getDebounceDelay()) {
-			if (button::buttonStateChanged()) {
-				logger::write("buttonStateChanged");
-				button::updateBottonState();
-				if (button::buttonStateHigh()) {
-					logger::write("It is high!!!");
-					printf("billAccumulatedValue: %f\n", billAccumulatedValue);
-					printf("coinAccumulatedValue: %f\n", coinAccumulatedValue);
-					printf("accumulatedValue: %f\n", accumulatedValue);
-					// The button has been pressed with some accumulated value inserted coins/bills.
-					// Create a withdraw request and render it as a QR code.
-					std::string req = lnurl::create_signed_withdraw_request(
-						accumulatedValue,
-						config::fiatCurrency,
-						config::apiKeyId,
-						config::apiKeySecret,
-						config::callbackUrl
-					);
-					display::renderQRCode("lightning:" + req);
-					billAcceptor::reset();
-					coinAcceptor::reset();
-				}
-			}
+	if (button::pushed() && (millis() - accumulatedValueChangeTime) > accumulatedValueDebounceTime) {
+		if (display::hasRenderedQRCode()) {
+			// Button pushed while already displaying a QR code.
+			// Clear the QR code and reset accumulated value.
+			#ifdef COIN_ACCEPTOR
+				coinAcceptor::reset();
+			#endif
+			#ifdef BILL_ACCEPTOR
+				billAcceptor::reset();
+			#endif
+			display::clearQRCode();
+		} else if (accumulatedValue > 0) {
+			// Button pushed while no QR code displayed and accumulated value greater than 0.
+			// Create a withdraw request and render it as a QR code.
+			std::string req = lnurl::create_signed_withdraw_request(
+				accumulatedValue,
+				config::fiatCurrency,
+				config::apiKeyId,
+				config::apiKeySecret,
+				config::callbackUrl
+			);
+			display::renderQRCode("lightning:" + req);
 		}
-		button::updateLastButtonState();
-		if (!display::hasRenderedQRCode() && display::getRenderedAmount() != accumulatedValue) {
+	} else {
+		// Button not pressed.
+		// Ensure that the displayed accumulated value is correct.
+		if (accumulatedValue != display::getRenderedAmount()) {
 			display::updateAmount(accumulatedValue, config::fiatCurrency);
 		}
 	}
+	lastAccumulatedValue = accumulatedValue;
 }
