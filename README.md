@@ -41,10 +41,20 @@ This section includes information about the requirements (software + hardware) t
 
 To build the physical device, you will need the following hardware components:
 * [ESP-WROOM-32](https://www.espressif.com/en/products/modules/esp-wroom-32/overview) by espressif
-* TFT Display
+	* [laskarduino.cz](https://www.laskarduino.cz/iot-esp-32s-2-4ghz-dual-mode-wifi-bluetooth-rev-1--cp2102/)
+* TFT (SPI) Display:
+	* [laskarduino.cz](https://www.laskarduino.cz/128x160-barevny-lcd-tft-displej-1-8--spi/)
 * Coin Acceptor - "Model HX-616"
-* 12V DC power adaptor with >= 1A
-* USB car charger (12V -> 5V DC)
+* 12V DC power adapter (1.5A < 3A):
+	* [GME](https://www.gme.cz/napajeci-zdroj-sitovy-12v-2500ma-5-5-2-1mm-t3-sys1588-3012-t3)
+* USB (female) adapter:
+	* [laskarduino.cz](https://www.laskarduino.cz/usb-f-na-dip-adapter/)
+* Step-down converter:
+	* [laskarduino.cz](https://www.laskarduino.cz/step-down-menic-s-xl4005/)
+* Relay module:
+	* [laskarduino.cz](https://www.laskarduino.cz/1-kanal-5v-rele-modul--low-level--250vac-10a/)
+* Button:
+	* [GME](https://www.gme.cz/) has many available
 
 
 ### Software Requirements
