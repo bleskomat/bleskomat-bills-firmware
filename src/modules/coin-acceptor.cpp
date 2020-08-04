@@ -68,10 +68,6 @@ namespace coinAcceptor {
 		return COIN_INSERTED;
 	}
 
-	unsigned long getTimeSinceLastInserted() {
-		return LAST_INSERTED_TIME > 0 ? millis() - LAST_INSERTED_TIME : 0;
-	}
-
 	float getAccumulatedValue() {
 		return VALUE_ACCUMULATED;
 	}
