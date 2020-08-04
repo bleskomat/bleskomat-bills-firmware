@@ -40,6 +40,7 @@ void loop() {
 			// Clear the QR code and reset accumulated value.
 			#ifdef COIN_ACCEPTOR
 				coinAcceptor::reset();
+				coinAcceptor::on();
 			#endif
 			#ifdef BILL_ACCEPTOR
 				billAcceptor::reset();
@@ -56,6 +57,9 @@ void loop() {
 				config::callbackUrl
 			);
 			display::renderQRCode("lightning:" + req);
+			#ifdef COIN_ACCEPTOR
+				coinAcceptor::off();
+			#endif
 		}
 	} else {
 		// Button not pressed.

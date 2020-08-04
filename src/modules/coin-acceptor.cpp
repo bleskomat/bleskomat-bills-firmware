@@ -42,8 +42,10 @@ namespace {
 namespace coinAcceptor {
 
 	void init() {
+		pinMode(COIN_RELAY_PIN, OUTPUT);
 		pinMode(COIN_ACCEPTOR_PIN, INPUT_PULLUP);
 		LAST_PIN_READ = readPin();
+		on();
 	}
 
 	void loop() {
@@ -82,5 +84,15 @@ namespace coinAcceptor {
 		COIN_INSERTED = false;
 		LAST_INSERTED_TIME = 0;
 		VALUE_ACCUMULATED = 0.00;
+	}
+
+	void on() {
+		logger::write("Switching coin acceptor ON");
+		digitalWrite(COIN_RELAY_PIN, HIGH);
+	}
+
+	void off() {
+		logger::write("Switching coin acceptor OFF");
+		digitalWrite(COIN_RELAY_PIN, LOW);
 	}
 }
