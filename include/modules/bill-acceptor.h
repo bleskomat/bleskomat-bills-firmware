@@ -19,7 +19,7 @@ namespace billAcceptor {
 	void init();
 	void loop();
 	bool billInserted();
-	float getAccumulatedValue();
+	unsigned int getAccumulatedValue();
 	void setFiatCurrency(const std::string &fiatCurrency);
 	void reset();
 }
