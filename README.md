@@ -8,7 +8,7 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 	* [Software Requirements](#software-requirements)
 * [Setup](#setup)
 	* [Building the Hardware Device](#building-the-hardware-device)
-		* [Wiring Diagram (w/ Coin Acceptor)](#wiring-diagram-w-coin-acceptor)
+		* [Wiring Diagram](#wiring-diagram)
 		* [Wiring the Power Supply](#wiring-the-power-supply)
 		* [Wiring the TFT Display](#wiring-the-tft-display)
 	* [Training the Coin Acceptor](#training-the-coin-acceptor)
@@ -71,11 +71,11 @@ Step-by-step setup process including both hardware and software.
 
 Before proceeding, be sure that you have all the project's [hardware requirements](#hardware-requirements).
 
-#### Wiring Diagram (w/ Coin Acceptor)
+#### Wiring Diagram
 
-Here is a wiring diagram for the Bleskomat ATM with coin acceptor:
+Here is a wiring diagram for the Bleskomat ATM:
 
-![](docs/bleskomat-w-coin-acceptor-wiring-schematic.png)
+![](docs/wiring-diagram.png)
 
 #### Wiring the Power Supply
 
