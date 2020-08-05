@@ -17,7 +17,7 @@
    id="svg8"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="wiring-diagram.svg"
-   inkscape:export-filename="/home/chill/Projects/current/samotari/bleskomat/private/device/docs/hardware-wiring-schematic.png"
+   inkscape:export-filename="/home/chill/Projects/current/samotari/bleskomat/private/device/docs/wiring-diagram.png"
    inkscape:export-xdpi="300.034"
    inkscape:export-ydpi="300.034">
   <defs
@@ -45,9 +45,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.25"
-     inkscape:cx="819.40578"
-     inkscape:cy="1478.4978"
+     inkscape:zoom="0.35355339"
+     inkscape:cx="1267.4436"
+     inkscape:cy="940.91269"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
