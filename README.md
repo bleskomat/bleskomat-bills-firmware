@@ -44,6 +44,7 @@ To build the physical device, you will need the following hardware components:
 	* [laskarduino.cz](https://www.laskarduino.cz/iot-esp-32s-2-4ghz-dual-mode-wifi-bluetooth-rev-1--cp2102/)
 * TFT (SPI) Display:
 	* [laskarduino.cz](https://www.laskarduino.cz/128x160-barevny-lcd-tft-displej-1-8--spi/)
+* Bill Acceptor - [NV10](https://innovative-technology.com/products/products-main/127-nv10-usb)
 * Coin Acceptor - "Model HX-616"
 * 12V DC power adapter (1.5A < 3A):
 	* [GME](https://www.gme.cz/napajeci-zdroj-sitovy-12v-2500ma-5-5-2-1mm-t3-sys1588-3012-t3)
