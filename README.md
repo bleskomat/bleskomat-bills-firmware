@@ -137,11 +137,11 @@ Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable
 
 Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable mappings below:
 
-|  ESP32      | NV10 | Power Supply  |
-|-------------|------|---------------|
-| GPIO3 (RX0) | 1    |               |
-|             | 16   | - Ground      |
-|             | 15   | + 12V DC      |
+|  ESP32      | HX 616   | Power Supply  |
+|-------------|----------|---------------|
+|             | DC12V    | + 12V DC      |
+| GPIO4 (D4)  | COIN     |               |
+|             | GND      | - Ground      |
 
 
 ### Training the Coin Acceptor

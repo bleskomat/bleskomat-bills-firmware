@@ -45,9 +45,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="1347.0722"
-     inkscape:cy="1592.7215"
+     inkscape:zoom="2"
+     inkscape:cx="855.8518"
+     inkscape:cy="1437.9118"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -190,125 +190,111 @@
            id="tspan956"
            sodipodi:role="line">220V AC</tspan></text>
     </g>
-    <g
-       id="g1429"
-       transform="translate(331.01733,-15.557932)">
-      <rect
-         y="-87.184746"
-         x="-479.69156"
-         height="180"
-         width="124.23333"
-         id="rect817"
-         style="opacity:0.8;fill:#000000;fill-opacity:1;stroke-width:1.03456163" />
-      <text
-         id="text821"
-         y="-5.5942149"
-         x="-416.62265"
-         style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-         xml:space="preserve"><tspan
-           id="tspan823"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.05000305px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.26458332"
-           y="-5.5942149"
-           x="-416.62265"
-           sodipodi:role="line">HX 616</tspan><tspan
-           id="tspan1410"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15.52222443px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.26458332"
-           y="15.092504"
-           x="-416.62265"
-           sodipodi:role="line">coin acceptor</tspan></text>
-      <g
-         transform="translate(-306.20057,-49.626955)"
-         id="g1042">
-        <g
-           id="g1893"
-           transform="translate(-38.629167,11.90625)"
-           inkscape:export-xdpi="300.034"
-           inkscape:export-ydpi="300.034">
-          <rect
-             transform="rotate(90)"
-             y="7.0649338"
-             x="-8.2307673"
-             height="2.3079896"
-             width="2.3079898"
-             id="rect1325-3-2-81"
-             style="opacity:1;fill:#b3b3b3;fill-opacity:1;stroke:#b7b7b7;stroke-width:2.6920104;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-          <rect
-             transform="rotate(90)"
-             y="7.0610962"
-             x="-2.1704874"
-             height="2.3079896"
-             width="2.3079898"
-             id="rect1325-3-7-0-5-3"
-             style="opacity:1;fill:#b3b3b3;fill-opacity:1;stroke:#b7b7b7;stroke-width:2.6920104;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-          <rect
-             transform="rotate(90)"
-             y="7.0569611"
-             x="3.8912725"
-             height="2.3079896"
-             width="2.3079898"
-             id="rect1325-3-3-7-3-4-1"
-             style="opacity:1;fill:#b3b3b3;fill-opacity:1;stroke:#b7b7b7;stroke-width:2.6920104;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-          <rect
-             transform="rotate(90)"
-             y="7.0569611"
-             x="9.9447699"
-             height="2.3079896"
-             width="2.3079898"
-             id="rect1325-3-3-3-6-0-0-1"
-             style="opacity:1;fill:#b3b3b3;fill-opacity:1;stroke:#b7b7b7;stroke-width:2.6920104;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-          <rect
-             transform="rotate(90)"
-             y="7.0592422"
-             x="16.004965"
-             height="2.3079896"
-             width="2.3079898"
-             id="rect1325-3-3-3-8-4-9-5-0"
-             style="opacity:1;fill:#b3b3b3;fill-opacity:1;stroke:#b7b7b7;stroke-width:2.6920104;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-        </g>
-        <text
-           xml:space="preserve"
-           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Italic';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-           x="-56.127048"
-           y="16.788157"
-           id="text1055-2"
-           transform="rotate(-0.37688849)"
-           inkscape:export-xdpi="300.034"
-           inkscape:export-ydpi="300.034"><tspan
-             sodipodi:role="line"
-             x="-56.127048"
-             y="16.788157"
-             style="font-size:2.82222223px;fill:#ffffff;stroke-width:0.26458332"
-             id="tspan1057-6">coin</tspan></text>
-        <text
-           xml:space="preserve"
-           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Italic';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-           x="-55.460022"
-           y="11.138585"
-           id="text1055-2-3"
-           transform="rotate(-0.37688856)"
-           inkscape:export-xdpi="300.034"
-           inkscape:export-ydpi="300.034"><tspan
-             sodipodi:role="line"
-             x="-55.460022"
-             y="11.138585"
-             style="font-size:2.82222223px;fill:#ffffff;stroke-width:0.26458332"
-             id="tspan1057-6-3">pwr</tspan></text>
-        <text
-           xml:space="preserve"
-           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Italic';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-           x="-55.821663"
-           y="23.452227"
-           id="text1055-2-38"
-           transform="rotate(-0.37688856)"
-           inkscape:export-xdpi="300.034"
-           inkscape:export-ydpi="300.034"><tspan
-             sodipodi:role="line"
-             x="-55.821663"
-             y="23.452227"
-             style="font-size:2.82222223px;fill:#ffffff;stroke-width:0.26458332"
-             id="tspan989">gnd</tspan></text>
-      </g>
-    </g>
+    <rect
+       style="opacity:0.8;fill:#000000;fill-opacity:1;stroke-width:1.03456163"
+       id="rect817"
+       width="124.23333"
+       height="180"
+       x="-148.67422"
+       y="-102.74268" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="-85.605324"
+       y="-21.152147"
+       id="text821"><tspan
+         sodipodi:role="line"
+         x="-85.605324"
+         y="-21.152147"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.05000305px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.26458332"
+         id="tspan823">HX 616</tspan><tspan
+         sodipodi:role="line"
+         x="-85.605324"
+         y="-0.46542844"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15.52222443px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.26458332"
+         id="tspan1410">coin acceptor</tspan></text>
+    <rect
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;stroke:#b7b7b7;stroke-width:2.6920104;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1325-3-2-81"
+       width="2.3079898"
+       height="2.3079896"
+       x="-61.509403"
+       y="20.87734"
+       transform="rotate(90)" />
+    <rect
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;stroke:#b7b7b7;stroke-width:2.6920104;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1325-3-7-0-5-3"
+       width="2.3079898"
+       height="2.3079896"
+       x="-55.449123"
+       y="20.873503"
+       transform="rotate(90)" />
+    <rect
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;stroke:#b7b7b7;stroke-width:2.6920104;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1325-3-3-7-3-4-1"
+       width="2.3079898"
+       height="2.3079896"
+       x="-49.387363"
+       y="20.869368"
+       transform="rotate(90)" />
+    <rect
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;stroke:#b7b7b7;stroke-width:2.6920104;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1325-3-3-3-6-0-0-1"
+       width="2.3079898"
+       height="2.3079896"
+       x="-43.333866"
+       y="20.869368"
+       transform="rotate(90)" />
+    <rect
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;stroke:#b7b7b7;stroke-width:2.6920104;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1325-3-3-3-8-4-9-5-0"
+       width="2.3079898"
+       height="2.3079896"
+       x="-37.273674"
+       y="20.871649"
+       transform="rotate(90)" />
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Italic';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="-33.00404"
+       y="-47.429588"
+       id="text1055-2"
+       transform="rotate(-0.37688849)"
+       inkscape:export-xdpi="300.034"
+       inkscape:export-ydpi="300.034"><tspan
+         sodipodi:role="line"
+         x="-33.00404"
+         y="-47.429588"
+         style="font-size:2.82222223px;fill:#ffffff;stroke-width:0.26458332"
+         id="tspan1057-6">COIN</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Italic';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="-34.45105"
+       y="-53.486401"
+       id="text1055-2-3"
+       transform="rotate(-0.37688856)"
+       inkscape:export-xdpi="300.034"
+       inkscape:export-ydpi="300.034"><tspan
+         sodipodi:role="line"
+         x="-34.45105"
+         y="-53.486401"
+         style="font-size:2.82222223px;fill:#ffffff;stroke-width:0.26458332"
+         id="tspan1057-6-3">DC12V</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Italic';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="-32.694607"
+       y="-41.380981"
+       id="text1055-2-38"
+       transform="rotate(-0.37688856)"
+       inkscape:export-xdpi="300.034"
+       inkscape:export-ydpi="300.034"><tspan
+         sodipodi:role="line"
+         x="-32.694607"
+         y="-41.380981"
+         style="font-size:2.82222223px;fill:#ffffff;stroke-width:0.26458332"
+         id="tspan989">GND</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
