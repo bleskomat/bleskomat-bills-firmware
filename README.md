@@ -11,6 +11,8 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 		* [Wiring Diagram](#wiring-diagram)
 		* [Wiring the Power Supply](#wiring-the-power-supply)
 		* [Wiring the TFT Display](#wiring-the-tft-display)
+		* [Wiring the Bill Acceptor](#wiring-the-bill-acceptor)
+		* [Wiring the Coin Acceptor](#wiring-the-coin-acceptor)
 	* [Training the Coin Acceptor](#training-the-coin-acceptor)
 	* [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
 	* [Generating Your Local Config File](#generating-your-local-config-file)
@@ -26,7 +28,7 @@ Key features include:
 * Easily hackable and extendible
 
 The project consists of two parts:
-* __Physical Device (ATM)__ - user inserts coins, device generates a signed URL and displays as QR code, user's app (which supports lnurl-withdraw) scans QR code and makes request to HTTP server, withdraw process is completed and the user has successfully bought satoshis with fiat coins.
+* __Physical Device (ATM)__ - user inserts bills or coins, device generates a signed URL and displays as QR code, user's app (which supports lnurl-withdraw) scans QR code and makes request to HTTP server, withdraw process is completed and the user has successfully bought satoshis with fiat money.
 * __HTTP Server__ - supports [lnurl-withdraw](https://github.com/btcontract/lnurl-rfc/blob/master/lnurl-withdraw.md) with additional request handlers for fiat-currency -> satoshi conversion and request signing.
 
 This repository contains the source and build instructions for the physical device. The source code and documentation for the HTTP server component is located in a [separate repository](https://github.com/samotari/bleskomat-server).
@@ -68,15 +70,18 @@ To build the physical device, you will need the following hardware components:
 
 Step-by-step setup process including both hardware and software.
 
+
 ### Building the Hardware Device
 
 Before proceeding, be sure that you have all the project's [hardware requirements](#hardware-requirements).
+
 
 #### Wiring Diagram
 
 Here is a wiring diagram for the Bleskomat ATM:
 
 ![](docs/wiring-diagram.png)
+
 
 #### Wiring the Power Supply
 
@@ -90,39 +95,53 @@ It is important to test the wires to know for certain which is the ground. Use a
 * Touch the __red__ lead of your multimeter to one of the wires
 * Touch the __black__ lead of your multimeter to the other wire
 * If you see a negative voltage reading, swap the leads between the two wires
-* The wire touched by the __black__ lead is the ground ("gnd")
-* The wire touched by the __red__ lead is the hot wire ("pwr")
+* The wire touched by the __black__ lead is the ground ("GND")
+* The wire touched by the __red__ lead is the hot wire ("PWR")
 * Unplug the power supply again
 
-The next step is to wire in the USB car charger. The end of the car charger - the round metal part that can be pushed in - is the 12V DC in ("pwr"). The two pieces of metal on the sides are the ground ("gnd"). Connect a new red wire to the car charger's 12V DC in connector. Connect a new black wire to one of the car charger's ground connectors. Connect these new wires to the corresponding wires of the power supply. Plug-in a USB cable to the car charger (USB2/3 to micro USB). This micro USB connector will power the ESP32 device.
+Now use the following wire diagram as a guide to wire the ESP32 to the power supply.
 
-Now connect the "pwr" and "gnd" wires of your coin acceptor to the corresponding wires of the power supply.
+![](docs/wiring-diagram-power-supply-esp32.png)
+
+Note that powering the ESP32 via its micro USB port requires a regulated voltage of approximately 5V. The suggested step-down converter is the [XL4005](https://www.laskarduino.cz/step-down-menic-s-xl4005/). It does a good job of keeping a steady voltage and doesn't generate much heat. Connect the USB (F) adapter directly to the outputs of the step-down converter. Use a standard USB to micro USB cable to connect the ESP32.
+
 
 #### Wiring the TFT Display
 
-Have a look at the [wiring diagram](#wiring-diagram-w-coin-acceptor) above or the following is a table of cable mappings for connecting the ESP32 to TFT Display:
+Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable mappings below:
 
-|  ESP32       | TFT        |
-|--------------|------------|
-| VIN          | VCC        |
-| GND          | GND        |
-| GPIO5  (D5)  | CS         |
-| GPIO16 (RX2) | RESET (RS) |
-| GPIO17 (TX2) | AO (DC)    |
-| GPIO23 (D23) | SDA        |
-| GPIO18 (D18) | SCK        |
-| 3.3V (3V3)   | LED (NC)   |
+|  ESP32       | TFT Display |
+|--------------|-------------|
+| VIN          | VCC         |
+| GND          | GND         |
+| GPIO5  (D5)  | CS          |
+| GPIO16 (RX2) | RESET (RS)  |
+| GPIO17 (TX2) | AO (DC)     |
+| GPIO23 (D23) | SDA         |
+| GPIO18 (D18) | SCK         |
+| 3.3V (3V3)   | LED (NC)    |
 
-#### Wiring the NV10 bill acceptor
 
-|  ESP32      | NV10 | Power         |
+#### Wiring the Bill Acceptor
+
+Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable mappings below:
+
+|  ESP32      | NV10 | Power Supply  |
 |-------------|------|---------------|
-| GPIO1 (TX0) | 3    |               |
 | GPIO3 (RX0) | 1    |               |
-| GND         | 16   |               |
-|             | 15   | +12VDC Supply |
+|             | 16   | - Ground      |
+|             | 15   | + 12V DC      |
 
-![](docs/nv10-pinout.png)
+
+#### Wiring the Coin Acceptor
+
+Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable mappings below:
+
+|  ESP32      | NV10 | Power Supply  |
+|-------------|------|---------------|
+| GPIO3 (RX0) | 1    |               |
+|             | 16   | - Ground      |
+|             | 15   | + 12V DC      |
 
 
 ### Training the Coin Acceptor
