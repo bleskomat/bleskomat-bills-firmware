@@ -103,7 +103,11 @@ Now use the following wire diagram as a guide to wire the ESP32 to the power sup
 
 ![](docs/wiring-diagram-power-supply-esp32.png)
 
-Note that powering the ESP32 via its micro USB port requires a regulated voltage of approximately 5V. The suggested step-down converter is the [XL4005](https://www.laskarduino.cz/step-down-menic-s-xl4005/). It does a good job of keeping a steady voltage and doesn't generate much heat. Connect the USB (F) adapter directly to the outputs of the step-down converter. Use a standard USB to micro USB cable to connect the ESP32.
+Note that powering the ESP32 via its micro USB port requires a regulated voltage of approximately 5V. The suggested step-down converter is the [XL4005](https://www.laskarduino.cz/step-down-menic-s-xl4005/). It does a good job of keeping a steady voltage and doesn't generate much heat.
+
+Once you've connected the step-down converter to the power supply, use your multimeter to measure the voltage at the out pins. Use a small screwdriver to turn the screw on the little blue box. Turning the screw counter clockwise should lower the voltage, turning it the opposite direction should increase the voltage. Once you have the voltage set to 5V, you can connect the USB (F) adapter to the out pins.
+
+Use a standard USB to micro USB cable to connect the ESP32.
 
 
 #### Wiring the TFT Display
