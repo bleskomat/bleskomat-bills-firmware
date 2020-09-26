@@ -99,9 +99,7 @@ It is important to test the wires to know for certain which is the ground. Use a
 * The wire touched by the __red__ lead is the hot wire ("PWR")
 * Unplug the power supply again
 
-Now use the following wire diagram as a guide to wire the ESP32 to the power supply.
-
-![](docs/wiring-diagram-power-supply-esp32.png)
+Now use the [wiring diagram](#wiring-diagram) above as a guide to wire the ESP32 to the power supply.
 
 Note that powering the ESP32 via its micro USB port requires a regulated voltage of approximately 5V. The suggested step-down converter is the [XL4005](https://www.laskarduino.cz/step-down-menic-s-xl4005/). It does a good job of keeping a steady voltage and doesn't generate much heat.
 
