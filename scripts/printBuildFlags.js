@@ -46,22 +46,24 @@ require('../config').load().then(config => {
 		return dummyFlags;
 	}
 	const db = require('../db')(config);
-	return db.getApiKey(apiKeyId).then(apiKey => {
-		if (!apiKey) {
-			throw new Error(`API key not found: "${apiKeyId}"`);
-		}
-		const { host, port, url, protocol, endpoint } = config.lnurl;
-		return {
-			API_KEY_ID: apiKey.id,
-			API_KEY_SECRET: apiKey.key,
-			CALLBACK_URL: (url ? url : `${protocol}://${host}:${port}`) + endpoint,
-			FIAT_CURRENCY: apiKey.fiatCurrency || 'CZK',
-		};
+	return db.onReady().then(() => {
+		return db.getApiKey(apiKeyId).then(apiKey => {
+			if (!apiKey) {
+				throw new Error(`API key not found: "${apiKeyId}"`);
+			}
+			const { host, port, url, protocol, endpoint } = config.lnurl;
+			return {
+				API_KEY_ID: apiKey.id,
+				API_KEY_SECRET: apiKey.key,
+				CALLBACK_URL: (url ? url : `${protocol}://${host}:${port}`) + endpoint,
+				FIAT_CURRENCY: apiKey.fiatCurrency || 'CZK',
+			};
+		});
 	});
 }).then(buildFlags => {
 	printBuildFlags(buildFlags);
 	process.exit();
 }).catch(error => {
-	console.error('ERROR: ' + error.message);
+	console.error(error);
 	process.exit(1);
 });
