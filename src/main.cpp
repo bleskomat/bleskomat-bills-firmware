@@ -1,8 +1,11 @@
-#include <string>
+#include "config.h"
 #include "display.h"
 #include "logger.h"
-#include "lnurl.h"
 #include "modules.h"
+#include "util.h"
+
+#include <lnurl.h>
+#include <string>
 
 void setup() {
 	Serial.begin(115200);
@@ -49,14 +52,9 @@ void loop() {
 		} else if (accumulatedValue > 0) {
 			// Button pushed while no QR code displayed and accumulated value greater than 0.
 			// Create a withdraw request and render it as a QR code.
-			std::string req = lnurl::create_signed_withdraw_request(
-				accumulatedValue,
-				config::fiatCurrency,
-				config::apiKeyId,
-				config::apiKeySecret,
-				config::callbackUrl
-			);
-			display::renderQRCode("lightning:" + req);
+			const std::string req = util::createSignedWithdrawRequest(accumulatedValue);
+			// Convert to uppercase because it reduces the complexity of the QR code.
+			display::renderQRCode("LIGHTNING:" + util::toUpperCase(req));
 			#ifdef COIN_ACCEPTOR
 				coinAcceptor::off();
 			#endif

@@ -1,6 +1,11 @@
+#ifndef BLESKOMAT_MODULES_BILL_ACCEPTOR_H
+#define BLESKOMAT_MODULES_BILL_ACCEPTOR_H
+
 #include "logger.h"
+
 #include <Arduino.h>
 #include <SoftwareSerial.h>
+
 #include <map>
 
 #ifndef BILL_ACCEPTOR_RX_PIN
@@ -23,3 +28,5 @@ namespace billAcceptor {
 	void setFiatCurrency(const std::string &fiatCurrency);
 	void reset();
 }
+
+#endif

@@ -1,4 +1,8 @@
+#ifndef BLESKOMAT_MODULES_COIN_ACCEPTOR_H
+#define BLESKOMAT_MODULES_COIN_ACCEPTOR_H
+
 #include "logger.h"
+
 #include <Arduino.h>
 
 #ifndef COIN_ACCEPTOR_PIN
@@ -19,3 +23,5 @@ namespace coinAcceptor {
 	void on();
 	void off();
 }
+
+#endif

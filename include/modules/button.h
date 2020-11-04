@@ -1,4 +1,8 @@
+#ifndef BLESKOMAT_MODULES_BUTTON_ACCEPTOR_H
+#define BLESKOMAT_MODULES_BUTTON_ACCEPTOR_H
+
 #include "logger.h"
+
 #include <Arduino.h>
 
 #ifndef BUTTON_PIN
@@ -10,3 +14,5 @@ namespace button {
 	void loop();
 	bool pushed();
 }
+
+#endif

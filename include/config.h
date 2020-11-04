@@ -1,3 +1,6 @@
+#ifndef BLESKOMAT_CONFIG_H
+#define BLESKOMAT_CONFIG_H
+
 #define STRINGIFY(s) STRINGIFY1(s)
 #define STRINGIFY1(s) #s
 
@@ -33,3 +36,5 @@ namespace config {
 	const std::string fiatCurrency(trimQuotes(STRINGIFY(FIAT_CURRENCY)));
 	void init();
 }
+
+#endif

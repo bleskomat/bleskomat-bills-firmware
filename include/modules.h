@@ -1,3 +1,6 @@
+#ifndef BLESKOMAT_MODULES_H
+#define BLESKOMAT_MODULES_H
+
 #include "config.h"
 #include "logger.h"
 
@@ -17,3 +20,5 @@ namespace modules {
 	void init();
 	void loop();
 }
+
+#endif

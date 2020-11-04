@@ -1,19 +1,24 @@
-#include "SPI.h"
-#include "TFT_eSPI.h"
+#ifndef BLESKOMAT_DISPLAY_H
+#define BLESKOMAT_DISPLAY_H
+
 #include "logger.h"
-#include "qrcode.h"
+
+#include <Arduino.h>
+#include <qrcode.h>
+#include <SPI.h>
+#include <TFT_eSPI.h>
+
 #include <iomanip>
 #include <sstream>
 #include <string>
-#include <Arduino.h>
 
-#ifndef BG_COLOR_HEX
-	#define BG_COLOR_HEX "FFFFFF"
-#endif
+	#ifndef BG_COLOR_HEX
+		#define BG_COLOR_HEX "FFFFFF"
+	#endif
 
-#ifndef TEXT_COLOR_HEX
-	#define TEXT_COLOR_HEX "000000"
-#endif
+	#ifndef TEXT_COLOR_HEX
+		#define TEXT_COLOR_HEX "000000"
+	#endif
 
 namespace display {
 	void init();
@@ -25,3 +30,5 @@ namespace display {
 	bool hasRenderedQRCode();
 	unsigned long getTimeSinceRenderedQRCode();
 }
+
+#endif
