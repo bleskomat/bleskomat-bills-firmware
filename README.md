@@ -217,21 +217,22 @@ API_KEY_NONE=1 npm run compile:only
 
 To compile and upload to your device:
 ```bash
-API_KEY_ID="XXX" npm run compile:upload
+API_KEY_ID="XXX" DEVICE=/dev/ttyUSB0 npm run compile:upload
 ```
-If you receive a "Permission denied" error about `/dev/ttyUSB0` then you will need to set permissions for that file on your system:
+The device path for your operating system might be different. If you receive a "Permission denied" error about `/dev/ttyUSB0` then you will need to set permissions for that file on your system:
 ```bash
 sudo chown $USER:$USER /dev/ttyUSB0
 ```
 To run the build with dummy/invalid API-key-related build flags:
 ```bash
-API_KEY_NONE=1 npm run compile:upload
+API_KEY_NONE=1 DEVICE=/dev/ttyUSB0 npm run compile:upload
 ```
 
 To open the serial monitor:
 ```bash
-npm run monitor
+DEVICE=/dev/ttyUSB0 npm run monitor
 ```
+Again the device path here could be different for your operating system.
 
 
 
