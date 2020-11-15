@@ -9,7 +9,7 @@
     "compile:upload": "platformio run --upload-port ${DEVICE:-/dev/ttyUSB0} --target upload",
     "config": "node ./scripts/config.js",
     "monitor": "platformio device monitor --baud 115200 --port ${DEVICE:-/dev/ttyUSB0}",
-    "print:buildFlags": "node ./scripts/printBuildFlags.js",
+    "print:config": "node ./scripts/printConfig.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "tunnel:db": "ssh -vNTL 5433:localhost:5432 chill@iceberg"
   },

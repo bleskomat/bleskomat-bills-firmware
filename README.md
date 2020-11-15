@@ -11,12 +11,14 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 		* [Wiring Diagram](#wiring-diagram)
 		* [Wiring the Power Supply](#wiring-the-power-supply)
 		* [Wiring the TFT Display](#wiring-the-tft-display)
+		* [Wiring the SD card](#wiring-the-sd-card)
 		* [Wiring the Bill Acceptor](#wiring-the-bill-acceptor)
 		* [Wiring the Coin Acceptor](#wiring-the-coin-acceptor)
 	* [Training the Coin Acceptor](#training-the-coin-acceptor)
 	* [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
 	* [Generating Your Local Config File](#generating-your-local-config-file)
 	* [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
+	* [Prepare SD Card](#prepare-sd-card)
 * [License](#license)
 
 
@@ -128,6 +130,18 @@ Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable
 | 3.3V (3V3)   | LED (NC)   |
 
 
+#### Wiring the SD card
+
+The TTF display we are using contain a SD card module. The pins are located above the screen and not soldered to the module by default but the pins can be added. The table of mappings is the following:
+
+|  ESP32       | TFT        |
+|--------------|------------|
+|  GPIO2  (D2) |  SD_MISO   |
+|  GPIO15 (D15)|  SD_MOSI   |
+|  GPIO14 (D14)|  SD_SCK    |
+|  GPIO13 (D13)|  SD_CS     |
+
+
 #### Wiring the Bill Acceptor
 
 Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable mappings below:
@@ -208,16 +222,16 @@ npm run config -- encrypt
 
 To compile the project (without uploading to a device):
 ```bash
-API_KEY_ID="XXX" npm run compile:only
+npm run compile:only
 ```
 To run the build with dummy/invalid API-key-related build flags:
 ```bash
-API_KEY_NONE=1 npm run compile:only
+npm run compile:only
 ```
 
 To compile and upload to your device:
 ```bash
-API_KEY_ID="XXX" DEVICE=/dev/ttyUSB0 npm run compile:upload
+DEVICE=/dev/ttyUSB0 npm run compile:upload
 ```
 The device path for your operating system might be different. If you receive a "Permission denied" error about `/dev/ttyUSB0` then you will need to set permissions for that file on your system:
 ```bash
@@ -225,7 +239,7 @@ sudo chown $USER:$USER /dev/ttyUSB0
 ```
 To run the build with dummy/invalid API-key-related build flags:
 ```bash
-API_KEY_NONE=1 DEVICE=/dev/ttyUSB0 npm run compile:upload
+DEVICE=/dev/ttyUSB0 npm run compile:upload
 ```
 
 To open the serial monitor:
@@ -234,6 +248,30 @@ DEVICE=/dev/ttyUSB0 npm run monitor
 ```
 Again the device path here could be different for your operating system.
 
+
+## Prepare SD Card
+
+Before continuing here, see [Wiring the SD card](#wiring-the-sd-card).
+
+Format the SD card with FAT32. Create a configuration file with the following command:
+```bash
+npm run print:config "6d830ddeb0" > ./bleskomat.conf
+```
+This will generate a new configuration file named `bleskomat.conf` for the API key ID `"6d830ddeb0"`. The contents of the config file will be something like this:
+```
+apiKey.id=6d830ddeb0
+apiKey.key=b11cd6b002916691ccf3097eee3b49e51759225704dde88ecfced76ad95324c9
+apiKey.encoding=hex
+callbackUrl=https://0fe4d56b.eu.ngrok.io/lnurl
+fiatCurrency=CZK
+shorten=true
+```
+Copy this file to the SD card.
+
+You can also print dummy configuration values by omiting the API key ID:
+```bash
+npm run print:config > ./bleskomat.conf
+```
 
 
 ## License
