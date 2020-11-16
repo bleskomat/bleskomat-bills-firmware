@@ -5,6 +5,7 @@
 #include "sdcard.h"
 
 #include <lnurl.h>
+#include <Preferences.h>
 
 #include <algorithm>
 #include <string>
@@ -13,7 +14,9 @@
 
 namespace config {
 	void init();
-	LnurlSignerConfig getConfig();
+	LnurlSignerConfig getAll();
+	std::string get(const char* t_key);
+	std::string get(const std::string &key);
 }
 
 #endif

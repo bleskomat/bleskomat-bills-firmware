@@ -5,12 +5,12 @@ namespace modules {
 	void init() {
 		#ifdef COIN_ACCEPTOR
 			coinAcceptor::init();
-			coinAcceptor::setFiatCurrency(config::getConfig().fiatCurrency);
+			coinAcceptor::setFiatCurrency(config::get("fiatCurrency"));
 			logger::write("Coin Reader OK");
 		#endif
 		#ifdef BILL_ACCEPTOR
 			billAcceptor::init();
-			billAcceptor::setFiatCurrency(config::getConfig().fiatCurrency);
+			billAcceptor::setFiatCurrency(config::get("fiatCurrency"));
 			logger::write("Bill Reader OK");
 		#endif
 		#ifdef BUTTON

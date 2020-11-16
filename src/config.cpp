@@ -2,17 +2,66 @@
 
 namespace {
 
+	// The configuration object:
 	LnurlSignerConfig values;
 
-	void printConfig() {
-		logger::write("config.apiKey.id: " + values.apiKey.id);
-		logger::write("config.apiKey.key: " + values.apiKey.key);
-		logger::write("config.apiKey.encoding: " + values.apiKey.encoding);
-		logger::write("config.callbackUrl: " + values.callbackUrl);
-		logger::write("config.fiatCurrency: " + values.fiatCurrency);
+	const std::string configFileName = "bleskomat.conf";
+
+	// List of configuration keys:
+	const std::vector<std::string> configKeys = {
+		"apiKey.id",
+		"apiKey.key",
+		"apiKey.encoding",
+		"callbackUrl",
+		"fiatCurrency",
+		"shorten"
+	};
+
+	// Using Preferences library as a wrapper to Non-Volatile Storage (flash memory):
+	// https://github.com/espressif/arduino-esp32/tree/master/libraries/Preferences
+	// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/nvs_flash.html
+	LnurlSignerConfig nvs_values;
+	const std::string nvs_namespace = "BleskomatConfig";
+	const bool nvs_readonly = false;
+	Preferences nvs_prefs;
+
+	bool setConfigValue(const std::string &key, const std::string &value, LnurlSignerConfig &t_values) {
+		if (key == "apiKey.id") {
+			t_values.apiKey.id = value;
+		} else if (key == "apiKey.key") {
+			t_values.apiKey.key = value;
+		} else if (key == "apiKey.encoding") {
+			t_values.apiKey.encoding = value;
+		} else if (key == "callbackUrl") {
+			t_values.callbackUrl = value;
+		} else if (key == "fiatCurrency") {
+			t_values.fiatCurrency = value;
+		} else if (key == "shorten") {
+			t_values.shorten = (value == "true" || value == "1");
+		} else {
+			return false;
+		}
+		return true;
 	}
 
-	void readFromLine(const std::string &line) {
+	std::string getConfigValue(const std::string &key, const LnurlSignerConfig &t_values) {
+		if (key == "apiKey.id") {
+			return t_values.apiKey.id;
+		} else if (key == "apiKey.key") {
+			return t_values.apiKey.key;
+		} else if (key == "apiKey.encoding") {
+			return t_values.apiKey.encoding;
+		} else if (key == "callbackUrl") {
+			return t_values.callbackUrl;
+		} else if (key == "fiatCurrency") {
+			return t_values.fiatCurrency;
+		} else if (key == "shorten") {
+			return t_values.shorten ? "true" : "false";
+		}
+		return "";
+	}
+
+	bool readFromConfigLine(const std::string &line) {
 		// The character used to separate key/value pair - e.g "key=value".
 		const std::string delimiter = "=";
 		const auto pos = line.find(delimiter);
@@ -20,65 +69,141 @@ namespace {
 			// Found delimiter.
 			const std::string key = line.substr(0, pos);
 			const std::string value = line.substr(pos + 1);
-			if (key == "apiKey.id") {
-				values.apiKey.id = value;
-			} else if (key == "apiKey.key") {
-				values.apiKey.key = value;
-			} else if (key == "apiKey.encoding") {
-				values.apiKey.encoding = value;
-			} else if (key == "callbackUrl") {
-				values.callbackUrl = value;
-			} else if (key == "fiatCurrency") {
-				values.fiatCurrency = value;
-			} else if (key == "shorten") {
-				values.shorten = (value == "true" || value == "1");
+			if (setConfigValue(key, value, values)) {
+				logger::write("Read configuration from configuration file ( " + key + "=" + value + " )");
+				return true;
 			} else {
-				logger::write("Unknown key found in configuration file: \"" + key + "\"");
+				logger::write("Unknown key found in configuration file (\"" + key + "\")");
 			}
 		}
-	}
-
-	int readFromFile(const std::string &t_fileName) {
-		try {
-			const char* fileName = t_fileName.c_str();
-			std::ifstream file(fileName);
-			if (!file) {
-				logger::write("Failed to open file " + std::string(fileName));
-				return -1;
-			}
-			std::string line = "";
-			while (std::getline(file, line)) {
-				readFromLine(line);
-			}
-			file.close();
-		} catch (const std::exception &e) {
-			std::cerr << e.what() << std::endl;
-		}
-		return 0;
+		return false;
 	}
 
 	std::string getConfigFilePath() {
 		std::string configFilePath = sdcard::getMountPoint();
-		configFilePath += "/bleskomat.conf";
+		configFilePath += "/" + configFileName;
 		return configFilePath;
+	}
+
+	bool readFromConfigFile() {
+		try {
+			const std::string filePath = getConfigFilePath();
+			// Open the config file for reading.
+			std::ifstream file(filePath);
+			if (!file) {
+				logger::write("Failed to open configuration file " + filePath);
+				return false;
+			}
+			std::string line = "";
+			while (std::getline(file, line)) {
+				readFromConfigLine(line);
+			}
+			file.close();
+		} catch (const std::exception &e) {
+			std::cerr << e.what() << std::endl;
+			return false;
+		}
+		return true;
+	}
+
+	bool deleteConfigFile() {
+		const std::string filePath = getConfigFilePath();
+		return std::remove(filePath.c_str()) == 0;
+	}
+
+	bool initNVS() {
+		const char* name = nvs_namespace.c_str();
+		return nvs_prefs.begin(name, nvs_readonly);
+	}
+
+	bool readKeyValueFromNVS(const std::string &key) {
+		const std::string value = nvs_prefs.getString(key.c_str(), "").c_str();
+		if (value == "") {
+			logger::write("Key/value not found in non-volatile storage: \"" + key + "\"");
+		} else if (setConfigValue(key, value, nvs_values) && setConfigValue(key, value, values)) {
+			logger::write("Read configuration from non-volatile storage ( " + key + "=" + value + " )");
+			return true;
+		} else {
+			logger::write("Unknown key/value found in non-volatile storage: \"" + key + "\"");
+		}
+		return false;
+	}
+
+	bool readFromNVS() {
+		for (int index = 0; index < configKeys.size(); index++) {
+			const std::string key = configKeys[index];
+			readKeyValueFromNVS(key);
+		}
+		return true;
+	}
+
+	bool saveKeyValueToNVS(const std::string &key, const std::string &value) {
+		return nvs_prefs.putString(key.c_str(), value.c_str()) != 0;
+	}
+
+	bool saveConfigurationsToNVS() {
+		for (int index = 0; index < configKeys.size(); index++) {
+			const std::string key = configKeys[index];
+			const std::string value = getConfigValue(key, values);
+			if (value != getConfigValue(key, nvs_values)) {
+				// Configuration has been changed.
+				// Save the new value to non-volatile storage.
+				if (saveKeyValueToNVS(key, value)) {
+					logger::write("Saved configuration to non-volatile storage ( " + key + "=" + value + " )");
+				}
+			}
+		}
+		return true;
+	}
+
+	void endNVS() {
+		nvs_prefs.end();
 	}
 }
 
 namespace config {
 
 	void init() {
-		if (!sdcard::isReady()) {
-			logger::write("SD card failed to mount. Using default configuration.");
+		if (initNVS()) {
+			logger::write("Non-volatile storage initialized.");
+			if (readFromNVS()) {
+				logger::write("Done reading configurations from non-volatile storage.");
+			} else {
+				logger::write("Failed to read configurations from non-volatile storage.");
+			}
 		} else {
-			logger::write("SD card mounted. Reading configuration file from SD card.");
-			if (readFromFile(getConfigFilePath()) != 0) {
-				logger::write("Failed to read configuration file. Falling back to defaults.");
+			logger::write("Failed to initialize non-volatile storage.");
+		}
+		if (sdcard::isMounted()) {
+			if (readFromConfigFile()) {
+				logger::write("Done reading configurations from file.");
+				if (saveConfigurationsToNVS()) {
+					logger::write("Saved configurations to non-volatile storage.");
+					if (deleteConfigFile()) {
+						logger::write("Deleted configuration file.");
+					} else {
+						logger::write("Failed to delete configuration file.");
+					}
+				} else {
+					logger::write("Failed to save configurations to non-volatile storage.");
+				}
+			} else {
+				logger::write("Failed to read configurations from file.");
 			}
 		}
-		printConfig();
+		endNVS();
 	}
 
-	LnurlSignerConfig getConfig() {
+	LnurlSignerConfig getAll() {
 		return values;
+	}
+
+	std::string get(const char* t_key) {
+		const std::string key = std::string(t_key);
+		return get(key);
+	}
+
+	std::string get(const std::string &key) {
+		return getConfigValue(key, values);
 	}
 }

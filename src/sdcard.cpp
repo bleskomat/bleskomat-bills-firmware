@@ -2,8 +2,10 @@
 
 namespace {
 	const char* mountpoint = "/sdcard";
-	bool initialized = false;
-	int mount() {
+	bool mounted = false;
+	bool mount() {
+
+		logger::write("Mounting SD card...");
 
 		// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/sdspi_host.html
 		sdmmc_host_t host = SDSPI_HOST_DEFAULT();
@@ -37,13 +39,13 @@ namespace {
 			} else {
 				logger::write("Failed to initialize the card: " + std::string(esp_err_to_name(ret)));
 			}
-			return -1;
+			return false;
 		}
 
 		// Card has been initialized, print its properties
 		sdmmc_card_print_info(stdout, card);
 
-		return 1;
+		return true;
 	}
 
 	// void unmount() {
@@ -54,8 +56,8 @@ namespace {
 
 namespace sdcard {
 
-	bool isReady() {
-		return initialized;
+	bool isMounted() {
+		return mounted;
 	}
 
 	std::string getMountPoint() {
@@ -63,11 +65,11 @@ namespace sdcard {
 	}
 
 	void init() {
-		if (mount() == 1) {
-			logger::write("SD card initialized");
-			initialized = true;
+		if (mount()) {
+			logger::write("SD card mounted.");
+			mounted = true;
 		} else {
-			logger::write("SD card initialization failed");
+			logger::write("Failed to mount SD card.");
 		}
 	};
 }

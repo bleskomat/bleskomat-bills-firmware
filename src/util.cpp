@@ -21,12 +21,12 @@ namespace {
 namespace util {
 
 	std::string createSignedWithdrawRequest(const double &accumulatedValue) {
-		LnurlSigner signer(config::getConfig());
+		LnurlSigner signer(config::getAll());
 		const std::string nonce = generate_nonce();
 		LnurlWithdrawParamsFiat params;
 		params.minWithdrawable = accumulatedValue;
 		params.maxWithdrawable = accumulatedValue;
-		params.defaultDescription = "Bleskomat ATM purchase (" + to_string(accumulatedValue) + " " + config::getConfig().fiatCurrency + ")";
+		params.defaultDescription = "Bleskomat ATM purchase (" + to_string(accumulatedValue) + " " + config::get("fiatCurrency") + ")";
 		const std::string signedUrl = signer.create_url(params, nonce);
 		const std::string encoded = Lnurl::encode(signedUrl);
 		return encoded;

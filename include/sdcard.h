@@ -16,7 +16,7 @@
 #include "sdmmc_cmd.h"
 
 namespace sdcard {
-	bool isReady();
+	bool isMounted();
 	std::string getMountPoint();
 	void init();
 }
