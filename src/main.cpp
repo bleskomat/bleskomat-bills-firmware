@@ -14,7 +14,7 @@ void setup() {
 	config::init();
 	logger::write("Config OK");
 	display::init();
-	display::updateAmount(0.00, config::getConfig().fiatCurrency);
+	display::updateAmount(0.00, config::get("fiatCurrency"));
 	logger::write("Display OK");
 	modules::init();
 	logger::write("Modules OK");
@@ -64,7 +64,7 @@ void loop() {
 		// Button not pressed.
 		// Ensure that the displayed accumulated value is correct.
 		if (accumulatedValue != display::getRenderedAmount()) {
-			display::updateAmount(accumulatedValue, config::getConfig().fiatCurrency);
+			display::updateAmount(accumulatedValue, config::get("fiatCurrency"));
 		}
 	}
 	lastAccumulatedValue = accumulatedValue;
