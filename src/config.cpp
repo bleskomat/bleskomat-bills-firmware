@@ -61,6 +61,17 @@ namespace {
 		return "";
 	}
 
+	void printConfig() {
+		std::string msg = "Using the following configurations:\n";
+		for (int index = 0; index < configKeys.size(); index++) {
+			const std::string key = configKeys[index];
+			const std::string value = getConfigValue(key, values);
+			msg += "  " + key + "=" + value + "\n";
+		}
+		msg.pop_back();// Remove the last line-break character.
+		logger::write(msg);
+	}
+
 	bool readFromConfigLine(const std::string &line) {
 		// The character used to separate key/value pair - e.g "key=value".
 		const std::string delimiter = "=";
@@ -70,10 +81,9 @@ namespace {
 			const std::string key = line.substr(0, pos);
 			const std::string value = line.substr(pos + 1);
 			if (setConfigValue(key, value, values)) {
-				logger::write("Read configuration from configuration file ( " + key + "=" + value + " )");
 				return true;
 			} else {
-				logger::write("Unknown key found in configuration file (\"" + key + "\")");
+				logger::write("Unknown key found in configuration file: \"" + key + "\"");
 			}
 		}
 		return false;
@@ -118,15 +128,8 @@ namespace {
 
 	bool readKeyValueFromNVS(const std::string &key) {
 		const std::string value = nvs_prefs.getString(key.c_str(), "").c_str();
-		if (value == "") {
-			logger::write("Key/value not found in non-volatile storage: \"" + key + "\"");
-		} else if (setConfigValue(key, value, nvs_values) && setConfigValue(key, value, values)) {
-			logger::write("Read configuration from non-volatile storage ( " + key + "=" + value + " )");
-			return true;
-		} else {
-			logger::write("Unknown key/value found in non-volatile storage: \"" + key + "\"");
-		}
-		return false;
+		if (value == "") return false;
+		return setConfigValue(key, value, nvs_values) && setConfigValue(key, value, values);
 	}
 
 	bool readFromNVS() {
@@ -148,8 +151,8 @@ namespace {
 			if (value != getConfigValue(key, nvs_values)) {
 				// Configuration has been changed.
 				// Save the new value to non-volatile storage.
-				if (saveKeyValueToNVS(key, value)) {
-					logger::write("Saved configuration to non-volatile storage ( " + key + "=" + value + " )");
+				if (!saveKeyValueToNVS(key, value)) {
+					logger::write("Failed to save configuration to non-volatile storage ( " + key + "=" + value + " )");
 				}
 			}
 		}
@@ -165,33 +168,30 @@ namespace config {
 
 	void init() {
 		if (initNVS()) {
-			logger::write("Non-volatile storage initialized.");
-			if (readFromNVS()) {
-				logger::write("Done reading configurations from non-volatile storage.");
-			} else {
-				logger::write("Failed to read configurations from non-volatile storage.");
+			logger::write("Non-volatile storage initialized");
+			if (!readFromNVS()) {
+				logger::write("Failed to read configurations from non-volatile storage");
 			}
 		} else {
-			logger::write("Failed to initialize non-volatile storage.");
+			logger::write("Failed to initialize non-volatile storage");
 		}
 		if (sdcard::isMounted()) {
 			if (readFromConfigFile()) {
-				logger::write("Done reading configurations from file.");
 				if (saveConfigurationsToNVS()) {
-					logger::write("Saved configurations to non-volatile storage.");
 					if (deleteConfigFile()) {
-						logger::write("Deleted configuration file.");
+						logger::write("Deleted configuration file");
 					} else {
-						logger::write("Failed to delete configuration file.");
+						logger::write("Failed to delete configuration file");
 					}
 				} else {
-					logger::write("Failed to save configurations to non-volatile storage.");
+					logger::write("Failed to save configurations to non-volatile storage");
 				}
 			} else {
-				logger::write("Failed to read configurations from file.");
+				logger::write("Failed to read configurations from file");
 			}
 		}
 		endNVS();
+		printConfig();
 	}
 
 	LnurlSignerConfig getAll() {

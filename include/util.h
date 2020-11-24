@@ -11,8 +11,11 @@
 
 namespace util {
 
-	std::string createSignedWithdrawRequest(const double &accumulatedValue);
+	std::string createSignedWithdrawUrl(const double &accumulatedValue);
+	std::string lnurlEncode(const std::string &text);
 	std::string toUpperCase(std::string s);
+	std::string toString(const unsigned int &number);
+	std::string toString(const byte &byteIn);
 }
 
 #endif
