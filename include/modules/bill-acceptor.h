@@ -2,6 +2,7 @@
 #define BLESKOMAT_MODULES_BILL_ACCEPTOR_H
 
 #include "logger.h"
+#include "util.h"
 
 #include <Arduino.h>
 #include <SoftwareSerial.h>

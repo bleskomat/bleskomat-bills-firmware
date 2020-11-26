@@ -9,7 +9,6 @@
 
 void setup() {
 	Serial.begin(115200);
-	logger::enable();
 	sdcard::init();
 	config::init();
 	logger::write("Config OK");
@@ -53,9 +52,11 @@ void loop() {
 		} else if (accumulatedValue > 0) {
 			// Button pushed while no QR code displayed and accumulated value greater than 0.
 			// Create a withdraw request and render it as a QR code.
-			const std::string req = util::createSignedWithdrawRequest(accumulatedValue);
+			const std::string signedUrl = util::createSignedWithdrawUrl(accumulatedValue);
+			const std::string encoded = util::lnurlEncode(signedUrl);
 			// Convert to uppercase because it reduces the complexity of the QR code.
-			display::renderQRCode("LIGHTNING:" + util::toUpperCase(req));
+			display::renderQRCode("LIGHTNING:" + util::toUpperCase(encoded));
+			logger::logTransaction(signedUrl);
 			#ifdef COIN_ACCEPTOR
 				coinAcceptor::off();
 			#endif

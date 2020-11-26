@@ -33,14 +33,11 @@ namespace {
 	};
 
 	unsigned int getValue(std::string fiatCurrency, byte byteIn) {
-		printf("getValue (fiatCurrency: %s) for byte %u\n", fiatCurrency.c_str(), byteIn);
 		CurrencyValuesNestedMap::iterator it = values.find(fiatCurrency);
 		if (it != values.end()) {
-			printf("Found currency values map for %s\n", fiatCurrency.c_str());
 			ByteToValueMap &innerMap = it->second;
 			ByteToValueMap::iterator innerIt = innerMap.find(byteIn);
 			if (innerIt != innerMap.end()) {
-				printf("Found value (%u) for byte %u\n", innerIt->second, byteIn);
 				return innerIt->second;
 			}
 		}
@@ -52,21 +49,21 @@ namespace billAcceptor {
 
 	void init() {
 		// Set the data rate for the SoftwareSerial port.
-		printf("Setting bill acceptor data rate to %u\n", BILL_ACCEPTOR_DATA_RATE);
 		billAcceptorSerial.begin(BILL_ACCEPTOR_DATA_RATE);
 	}
 
 	void loop() {
 		billWasInserted = false;
 		if (billAcceptorSerial.available()) {
-			printf("Bill acceptor has bytes available");
 			byte byteIn = billAcceptorSerial.read();
 			unsigned int valueInserted = getValue(currentFiatCurrency, byteIn);
 			if (valueInserted > 0) {
-				printf("Bill inserted (%u %s)", valueInserted, currentFiatCurrency.c_str());
+				logger::write("Bill inserted: " + util::toString(valueInserted) + " " + currentFiatCurrency);
 				valueAccumulated = valueAccumulated + valueInserted;
 				lastInsertedTime = millis();
 				billWasInserted = true;
+			} else {
+				logger::write("Unknown byte received from bill acceptor: byte = " + util::toString(byteIn) + ", fiatCurrency = " + currentFiatCurrency);
 			}
 		}
 	}
