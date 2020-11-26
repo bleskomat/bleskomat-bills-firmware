@@ -3,6 +3,7 @@
 
 #include "logger.h"
 #include "sdcard.h"
+#include "util.h"
 
 #include <lnurl.h>
 #include <Preferences.h>
@@ -12,10 +13,16 @@
 #include <fstream>
 #include <sstream>
 
+struct BleskomatConfig {
+	struct LnurlSignerConfig lnurl;
+	double transactionLimit = 0.00;
+};
+
 namespace config {
 	void init();
-	LnurlSignerConfig getAll();
-	std::string get(const char* t_key);
+	LnurlSignerConfig getLnurlSignerConfig();
+	BleskomatConfig getAll();
+	std::string get(const char* &t_key);
 	std::string get(const std::string &key);
 }
 

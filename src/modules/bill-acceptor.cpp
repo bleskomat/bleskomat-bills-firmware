@@ -58,12 +58,12 @@ namespace billAcceptor {
 			byte byteIn = billAcceptorSerial.read();
 			unsigned int valueInserted = getValue(currentFiatCurrency, byteIn);
 			if (valueInserted > 0) {
-				logger::write("Bill inserted: " + util::toString(valueInserted) + " " + currentFiatCurrency);
+				logger::write("Bill inserted: " + util::unsignedIntToString(valueInserted) + " " + currentFiatCurrency);
 				valueAccumulated = valueAccumulated + valueInserted;
 				lastInsertedTime = millis();
 				billWasInserted = true;
 			} else {
-				logger::write("Unknown byte received from bill acceptor: byte = " + util::toString(byteIn) + ", fiatCurrency = " + currentFiatCurrency);
+				logger::write("Unknown byte received from bill acceptor: byte = " + util::byteToString(byteIn) + ", fiatCurrency = " + currentFiatCurrency);
 			}
 		}
 	}

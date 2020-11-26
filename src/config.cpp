@@ -3,7 +3,7 @@
 namespace {
 
 	// The configuration object:
-	LnurlSignerConfig values;
+	BleskomatConfig values;
 
 	const std::string configFileName = "bleskomat.conf";
 
@@ -14,49 +14,55 @@ namespace {
 		"apiKey.encoding",
 		"callbackUrl",
 		"fiatCurrency",
-		"shorten"
+		"shorten",
+		"transactionLimit"
 	};
 
 	// Using Preferences library as a wrapper to Non-Volatile Storage (flash memory):
 	// https://github.com/espressif/arduino-esp32/tree/master/libraries/Preferences
 	// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/nvs_flash.html
-	LnurlSignerConfig nvs_values;
+	BleskomatConfig nvs_values;
 	const std::string nvs_namespace = "BleskomatConfig";
 	const bool nvs_readonly = false;
 	Preferences nvs_prefs;
 
-	bool setConfigValue(const std::string &key, const std::string &value, LnurlSignerConfig &t_values) {
+	bool setConfigValue(const std::string &key, const std::string &value, BleskomatConfig &t_values) {
 		if (key == "apiKey.id") {
-			t_values.apiKey.id = value;
+			t_values.lnurl.apiKey.id = value;
 		} else if (key == "apiKey.key") {
-			t_values.apiKey.key = value;
+			t_values.lnurl.apiKey.key = value;
 		} else if (key == "apiKey.encoding") {
-			t_values.apiKey.encoding = value;
+			t_values.lnurl.apiKey.encoding = value;
 		} else if (key == "callbackUrl") {
-			t_values.callbackUrl = value;
+			t_values.lnurl.callbackUrl = value;
 		} else if (key == "fiatCurrency") {
-			t_values.fiatCurrency = value;
+			t_values.lnurl.fiatCurrency = value;
 		} else if (key == "shorten") {
-			t_values.shorten = (value == "true" || value == "1");
+			t_values.lnurl.shorten = (value == "true" || value == "1");
+		} else if (key == "transactionLimit") {
+			// Convert string to double:
+			t_values.transactionLimit = std::strtod(value.c_str(), NULL);
 		} else {
 			return false;
 		}
 		return true;
 	}
 
-	std::string getConfigValue(const std::string &key, const LnurlSignerConfig &t_values) {
+	std::string getConfigValue(const std::string &key, const BleskomatConfig &t_values) {
 		if (key == "apiKey.id") {
-			return t_values.apiKey.id;
+			return t_values.lnurl.apiKey.id;
 		} else if (key == "apiKey.key") {
-			return t_values.apiKey.key;
+			return t_values.lnurl.apiKey.key;
 		} else if (key == "apiKey.encoding") {
-			return t_values.apiKey.encoding;
+			return t_values.lnurl.apiKey.encoding;
 		} else if (key == "callbackUrl") {
-			return t_values.callbackUrl;
+			return t_values.lnurl.callbackUrl;
 		} else if (key == "fiatCurrency") {
-			return t_values.fiatCurrency;
+			return t_values.lnurl.fiatCurrency;
 		} else if (key == "shorten") {
-			return t_values.shorten ? "true" : "false";
+			return t_values.lnurl.shorten ? "true" : "false";
+		} else if (key == "transactionLimit") {
+			return util::doubleToString(t_values.transactionLimit);
 		}
 		return "";
 	}
@@ -194,7 +200,11 @@ namespace config {
 		printConfig();
 	}
 
-	LnurlSignerConfig getAll() {
+	LnurlSignerConfig getLnurlSignerConfig() {
+		return values.lnurl;
+	}
+
+	BleskomatConfig getAll() {
 		return values;
 	}
 
@@ -205,5 +215,9 @@ namespace config {
 
 	std::string get(const std::string &key) {
 		return getConfigValue(key, values);
+	}
+
+	double getTransactionLimit() {
+		return values.transactionLimit;
 	}
 }

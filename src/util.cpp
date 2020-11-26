@@ -15,7 +15,7 @@ namespace {
 namespace util {
 
 	std::string createSignedWithdrawUrl(const double &accumulatedValue) {
-		LnurlSigner signer(config::getAll());
+		LnurlSigner signer(config::getLnurlSignerConfig());
 		const std::string nonce = generate_nonce();
 		LnurlWithdrawParamsFiat params;
 		params.minWithdrawable = accumulatedValue;
@@ -35,13 +35,19 @@ namespace util {
 		return s;
 	}
 
-	std::string toString(const unsigned int &number) {
+	std::string doubleToString(const double &number) {
 		std::ostringstream ss;
 		ss << number;
 		return ss.str();
 	}
 
-	std::string toString(const byte &byteIn) {
+	std::string unsignedIntToString(const unsigned int &number) {
+		std::ostringstream ss;
+		ss << number;
+		return ss.str();
+	}
+
+	std::string byteToString(const byte &byteIn) {
 		std::ostringstream ss;
 		ss << byteIn;
 		return ss.str();
