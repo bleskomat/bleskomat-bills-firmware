@@ -196,6 +196,27 @@ Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable
 |             | GND      | - Ground      |
 
 
+#### Wiring the DG600F coin acceptor
+
+|  ESP32      | NV10 | Power         |
+|-------------|------|---------------|
+| GPIO36      | 3    |               |
+|             | 1    |               |
+|             | 16   |               |
+|             | 15   | +12VDC Supply |
+
+#### Switch functions setting for the DG600F coin acceptor
+
+| Switch           | State         |
+|------------------|---------------|
+| 1 (Port Level)   | Down (NO)     |
+| 2 (Security)     | Down (Normal) |
+| 3 (Transmitting) | Up (RS232)    |
+| 4 (Inhibiting)   | Down (> +3V)  |
+
+![](docs/coin-acceptor-DG600F-dip-setting-switch.png)
+
+
 ### Training the Coin Acceptor
 
 Be sure that you've already finished wiring the power supply to all the components before continuing with this step.
