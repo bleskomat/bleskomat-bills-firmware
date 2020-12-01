@@ -42,7 +42,7 @@ namespace {
 namespace coinAcceptor {
 
 	void init() {
-		pinMode(COIN_RELAY_PIN, OUTPUT);
+		// pinMode(COIN_RELAY_PIN, OUTPUT);
 		pinMode(COIN_ACCEPTOR_PIN, INPUT_PULLUP);
 		LAST_PIN_READ = readPin();
 		on();

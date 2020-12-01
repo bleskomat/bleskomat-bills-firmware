@@ -16,6 +16,10 @@
 	#include "modules/button.h"
 #endif
 
+#ifdef EPAPER
+	#include "modules/epaper.h"
+#endif
+
 namespace modules {
 	void init();
 	void loop();

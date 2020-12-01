@@ -15,6 +15,7 @@
 
 struct BleskomatConfig {
 	struct LnurlSignerConfig lnurl;
+	unsigned short fiatPrecision = 2;
 	double transactionLimit = 0.00;
 };
 
@@ -24,6 +25,8 @@ namespace config {
 	BleskomatConfig getAll();
 	std::string get(const char* &t_key);
 	std::string get(const std::string &key);
+	unsigned short getFiatPrecision();
+	double getTransactionLimit();
 }
 
 #endif

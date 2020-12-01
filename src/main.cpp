@@ -1,5 +1,4 @@
 #include "config.h"
-#include "display.h"
 #include "logger.h"
 #include "modules.h"
 #include "util.h"
@@ -12,9 +11,6 @@ void setup() {
 	sdcard::init();
 	config::init();
 	logger::write("Config OK");
-	display::init();
-	display::updateAmount(0.00, config::get("fiatCurrency"));
-	logger::write("Display OK");
 	modules::init();
 	logger::write("Modules OK");
 	logger::write("Setup OK");
@@ -23,9 +19,11 @@ void setup() {
 float lastAccumulatedValue = 0;
 unsigned long accumulatedValueChangeTime = 0;
 unsigned long accumulatedValueDebounceTime = 400;// milliseconds
+float amountShown = 0;
 
 void loop() {
 	modules::loop();
+	const std::string currentScreen = screen::getCurrentScreen();
 	float accumulatedValue = 0;
 	#ifdef COIN_ACCEPTOR
 		accumulatedValue += coinAcceptor::getAccumulatedValue();
@@ -36,11 +34,55 @@ void loop() {
 	if (accumulatedValue != lastAccumulatedValue) {
 		// Accumulated value has changed.
 		accumulatedValueChangeTime = millis();
+		lastAccumulatedValue = accumulatedValue;
 	}
-	if (button::pushed() && (millis() - accumulatedValueChangeTime) > accumulatedValueDebounceTime) {
-		if (display::hasRenderedQRCode()) {
-			// Button pushed while already displaying a QR code.
-			// Clear the QR code and reset accumulated value.
+	if (
+		accumulatedValue > 0 &&
+		currentScreen != "insertFiat" &&
+		currentScreen != "transactionComplete"
+	) {
+		screen::showInsertFiatScreen(accumulatedValue);
+		amountShown = accumulatedValue;
+	}
+	if (currentScreen == "splash") {
+		if (button::pushed()) {
+			screen::showInstructionsScreen();
+		}
+	} else if (currentScreen == "instructions") {
+		if (button::pushed()) {
+			screen::showInsertFiatScreen(0);
+		}
+	} else if (currentScreen == "insertFiat") {
+		if (button::pushed() && accumulatedValue == 0) {
+			screen::showInstructionsScreen();
+		} else if (button::pushed() && (millis() - accumulatedValueChangeTime) > accumulatedValueDebounceTime) {
+			// Button pushed.
+			if (accumulatedValue > 0) {
+				// Button pushed while insert fiat screen shown and accumulated value greater than 0.
+				// Create a withdraw request and render it as a QR code.
+				const std::string signedUrl = util::createSignedWithdrawUrl(accumulatedValue);
+				const std::string encoded = util::lnurlEncode(signedUrl);
+				// Convert to uppercase because it reduces the complexity of the QR code.
+				const std::string qrcodeData = "LIGHTNING:" + util::toUpperCase(encoded);
+				screen::showTransactionCompleteScreen(accumulatedValue, qrcodeData);
+				// Save the transaction for debugging and auditing purposes.
+				logger::logTransaction(signedUrl);
+				#ifdef COIN_ACCEPTOR
+					coinAcceptor::off();
+				#endif
+			}
+		} else {
+			// Button not pressed.
+			// Ensure that the amount shown is correct.
+			if (amountShown != accumulatedValue) {
+				screen::updateInsertFiatScreenAmount(accumulatedValue);
+				amountShown = accumulatedValue;
+			}
+		}
+	} else if (currentScreen == "transactionComplete") {
+		if (button::pushed()) {
+			// Button pushed while showing the transaction complete screen.
+			// Reset accumulated values.
 			#ifdef COIN_ACCEPTOR
 				coinAcceptor::reset();
 				coinAcceptor::on();
@@ -48,25 +90,8 @@ void loop() {
 			#ifdef BILL_ACCEPTOR
 				billAcceptor::reset();
 			#endif
-			display::clearQRCode();
-		} else if (accumulatedValue > 0) {
-			// Button pushed while no QR code displayed and accumulated value greater than 0.
-			// Create a withdraw request and render it as a QR code.
-			const std::string signedUrl = util::createSignedWithdrawUrl(accumulatedValue);
-			const std::string encoded = util::lnurlEncode(signedUrl);
-			// Convert to uppercase because it reduces the complexity of the QR code.
-			display::renderQRCode("LIGHTNING:" + util::toUpperCase(encoded));
-			logger::logTransaction(signedUrl);
-			#ifdef COIN_ACCEPTOR
-				coinAcceptor::off();
-			#endif
-		}
-	} else {
-		// Button not pressed.
-		// Ensure that the displayed accumulated value is correct.
-		if (accumulatedValue != display::getRenderedAmount()) {
-			display::updateAmount(accumulatedValue, config::get("fiatCurrency"));
+			amountShown = 0;
+			screen::showSplashScreen();
 		}
 	}
-	lastAccumulatedValue = accumulatedValue;
 }
