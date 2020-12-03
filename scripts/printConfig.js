@@ -18,15 +18,22 @@ if (!useDummyValues && !require('../config').fileExists(false)) {
 	process.exit(1);
 }
 
+const fiatCurrencyCoinValues = {
+	'CZK': '1,2,5,10,20,50',
+	'EUR': '0.05,0.10,0.20,0.50,1,2',
+};
+
 const prepareDummyValues = function() {
 	const encoding = 'hex';
+	const fiatCurrency = 'CZK';
 	return {
 		'apiKey.id': crypto.randomBytes(8).toString(encoding),
 		'apiKey.key': crypto.randomBytes(32).toString(encoding),
 		'apiKey.encoding': encoding,
 		'callbackUrl': 'https://localhost:3000/lnurl',
-		'fiatCurrency': 'CZK',
+		'fiatCurrency': fiatCurrency,
 		'shorten': true,
+		'coinValues': fiatCurrencyCoinValues[fiatCurrency],
 	};
 };
 
@@ -61,13 +68,15 @@ require('../config').load().then(config => {
 				throw new Error(`API key not found: "${apiKeyId}"`);
 			}
 			const { host, port, url, protocol, endpoint } = config.lnurl;
+			const fiatCurrency = apiKey.fiatCurrency || 'CZK';
 			return {
 				'apiKey.id': apiKey.id,
 				'apiKey.key': apiKey.key,
 				'apiKey.encoding': apiKey.encoding,
 				'callbackUrl': (url ? url : `${protocol}://${host}:${port}`) + endpoint,
-				'fiatCurrency': apiKey.fiatCurrency || 'CZK',
+				'fiatCurrency': fiatCurrency,
 				'shorten': true,
+				'coinValues': fiatCurrencyCoinValues[fiatCurrency],
 			};
 		});
 	});

@@ -12,11 +12,13 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 struct BleskomatConfig {
 	struct LnurlSignerConfig lnurl;
 	unsigned short fiatPrecision = 2;
 	double transactionLimit = 0.00;
+	std::vector<float> coinValues;
 };
 
 namespace config {
@@ -27,6 +29,7 @@ namespace config {
 	std::string get(const std::string &key);
 	unsigned short getFiatPrecision();
 	double getTransactionLimit();
+	std::vector<float> getCoinValues();
 }
 
 #endif

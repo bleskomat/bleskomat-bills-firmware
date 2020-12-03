@@ -15,7 +15,7 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 		* [Wiring the SD Card SPI Module](#wiring-the-sd-card-spi-module)
 		* [Wiring the Bill Acceptor](#wiring-the-bill-acceptor)
 		* [Wiring the Coin Acceptor](#wiring-the-coin-acceptor)
-	* [Training the Coin Acceptor](#training-the-coin-acceptor)
+	* [Configure and Train Coin Acceptor](#configure-and-train-coin-acceptor)
 	* [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
 	* [Generating Your Local Config File](#generating-your-local-config-file)
 	* [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
@@ -187,25 +187,19 @@ Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable
 
 #### Wiring the Coin Acceptor
 
-Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable mappings below:
 
-|  ESP32      | HX 616   | Power Supply  |
+|  ESP32      | DG600F   | Power Supply  |
 |-------------|----------|---------------|
-|             | DC12V    | + 12V DC      |
-| GPIO4 (D4)  | COIN     |               |
+| GPIO21      | INHIBIT  |               |
+| GPIO16      | SERIAL   |               |
+|             | COUNTER  |               |
 |             | GND      | - Ground      |
+|             | 12V DC   | + 12V DC      |
 
 
-#### Wiring the DG600F coin acceptor
+### Configure and Train Coin Acceptor
 
-|  ESP32      | NV10 | Power         |
-|-------------|------|---------------|
-| GPIO36      | 3    |               |
-|             | 1    |               |
-|             | 16   |               |
-|             | 15   | +12VDC Supply |
-
-#### Switch functions setting for the DG600F coin acceptor
+Physical switches on the DG600F should set as follows:
 
 | Switch           | State         |
 |------------------|---------------|
@@ -216,16 +210,29 @@ Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable
 
 ![](docs/coin-acceptor-DG600F-dip-setting-switch.png)
 
+Open the [DG600F manual](docs/DG600F-coin-acceptor-manual.pdf) to "Coin Acceptor Parameters Setting" on page 18. Set the parameters as follows:
 
-### Training the Coin Acceptor
+| Parameter | Description                      | Value | Meaning                           |
+|-----------|----------------------------------|-------|-----------------------------------|
+| A1        | machine charge amount            | 01    | min. coin value before data sent  |
+| A2        | serial output signal pulse-width | 01    | 25ms / 9600 bps (RS232 baud rate) |
+| A3        | faulty alarm option              | 01    | (rings only one time)             |
+| A4        | serial port RS232 signal length  | 01    | one byte                          |
+| A5        | serial port output               | 01    | output to serial pin              |
 
-Be sure that you've already finished wiring the power supply to all the components before continuing with this step.
 
-Plug-in the power supply so that all the electronic components have power.
+To train the coin acceptor, have a look at "Coin Parameters Setting" on page 16 of the [DG600F manual](docs/DG600F-coin-acceptor-manual.pdf). Be sure to set the "coin value" for each coin in series, incremented by 1. For example:
+* 1 CZK = 1 coin value
+* 2 CZK = 2 coin value
+* 5 CZK = 3 coin value
+* 10 CZK = 4 coin value
+* 20 CZK = 5 coin value
+* 50 CZK = 6 coin value
 
-An instruction sheet is included with the coin acceptor that will guide you through the training process:
-
-![](docs/coin-acceptor-hx-616-instructions-side-1.jpg)
+Then in bleskomat.conf, set the `coinValues` setting as follows:
+```
+coinValues=1,2,5,10,20,50
+```
 
 
 ### Installing Libraries and Dependencies
