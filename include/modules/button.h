@@ -12,6 +12,8 @@
 namespace button {
 	void init();
 	void loop();
+	bool isPressed();
+	// For temporary backwards compatibility:
 	bool pushed();
 }
 
