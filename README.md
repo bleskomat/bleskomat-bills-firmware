@@ -5,6 +5,7 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 * [Overview](#overview)
 * [Requirements](#requirements)
 	* [Hardware Requirements](#hardware-requirements)
+		* [Parts Suppliers](#parts-suppliers)
 	* [Software Requirements](#software-requirements)
 * [Setup](#setup)
 	* [Building the Hardware Device](#building-the-hardware-device)
@@ -60,6 +61,28 @@ To build the physical device, you will need the following hardware components:
 	* [laskarduino.cz](https://www.laskarduino.cz/1-kanal-5v-rele-modul--low-level--250vac-10a/)
 * Button:
 	* [GME](https://www.gme.cz/) has many available
+
+
+#### Parts Suppliers
+
+* [GM Electronic](https://www.gme.cz/):
+	* physical shop
+	* tools and electronics parts
+	* usually missing most components and not the most helpful staff
+* [laskarduino](https://www.laskarduino.cz/):
+	* eshop only
+	* hobby electronics projects
+	* cheap and good selection
+* [arduino-shop](https://arduino-shop.cz/):
+	* eshop only
+	* expensive and limited selection
+* [COMAX LEISURE CZ,a.s.](https://www.akceptory-bankovek.cz/)
+	* NV10 and other bank note acceptors
+	* physical shop
+	* Modletice 71, 251 70 MODLETICE
+	* info@comax.cz
+	* Main contact:  "Martin Zych" - martin.zych@comax.cz
+
 
 
 ### Software Requirements
