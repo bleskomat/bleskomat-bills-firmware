@@ -18,9 +18,12 @@ if (!useDummyValues && !require('../config').fileExists(false)) {
 	process.exit(1);
 }
 
+const pkg = require('../package.json');
+
 const prepareDummyValues = function() {
 	const encoding = 'hex';
 	return {
+		'version': pkg.version,
 		'apiKey.id': crypto.randomBytes(8).toString(encoding),
 		'apiKey.key': crypto.randomBytes(32).toString(encoding),
 		'apiKey.encoding': encoding,
@@ -62,6 +65,7 @@ require('../config').load().then(config => {
 			}
 			const { host, port, url, protocol, endpoint } = config.lnurl;
 			return {
+				'version': pkg.version,
 				'apiKey.id': apiKey.id,
 				'apiKey.key': apiKey.key,
 				'apiKey.encoding': apiKey.encoding,

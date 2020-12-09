@@ -14,6 +14,7 @@
 #include <sstream>
 
 struct BleskomatConfig {
+	std::string version = "0.0.0";
 	struct LnurlSignerConfig lnurl;
 	double transactionLimit = 0.00;
 };

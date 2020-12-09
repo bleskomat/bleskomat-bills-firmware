@@ -9,6 +9,7 @@ namespace {
 
 	// List of configuration keys:
 	const std::vector<std::string> configKeys = {
+		"version",
 		"apiKey.id",
 		"apiKey.key",
 		"apiKey.encoding",
@@ -27,7 +28,9 @@ namespace {
 	Preferences nvs_prefs;
 
 	bool setConfigValue(const std::string &key, const std::string &value, BleskomatConfig &t_values) {
-		if (key == "apiKey.id") {
+		if (key == "version") {
+			t_values.version = value;
+		} else if (key == "apiKey.id") {
 			t_values.lnurl.apiKey.id = value;
 		} else if (key == "apiKey.key") {
 			t_values.lnurl.apiKey.key = value;
@@ -49,7 +52,9 @@ namespace {
 	}
 
 	std::string getConfigValue(const std::string &key, const BleskomatConfig &t_values) {
-		if (key == "apiKey.id") {
+		if (key == "version") {
+			return t_values.version;
+		} else if (key == "apiKey.id") {
 			return t_values.lnurl.apiKey.id;
 		} else if (key == "apiKey.key") {
 			return t_values.lnurl.apiKey.key;
