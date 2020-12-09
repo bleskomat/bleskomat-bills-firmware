@@ -1,14 +1,9 @@
-#include "config.h"
-#include "logger.h"
-#include "modules.h"
-#include "util.h"
-
-#include <lnurl.h>
-#include <string>
+#include "main.h"
 
 void setup() {
 	Serial.begin(115200);
 	sdcard::init();
+	logger::write("Bleskomat firmware version=" + firmwareVersion + ",commit=" + firmwareCommitHash);
 	config::init();
 	logger::write("Config OK");
 	modules::init();

@@ -1,6 +1,6 @@
 {
   "name": "bleskomat-device",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "The Lightning Network ATM with simple components and a simple setup - just plug it in and it works!",
   "private": true,
   "main": null,
@@ -10,6 +10,7 @@
     "config": "node ./scripts/config.js",
     "monitor": "platformio device monitor --baud 115200 --port ${DEVICE:-/dev/ttyUSB0}",
     "print:config": "node ./scripts/printConfig.js",
+    "print:firmwareBuildFlags": "node ./scripts/printFirmwareBuildFlags.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "tunnel:db": "ssh -vNTL 5433:localhost:5432 chill@iceberg"
   },
