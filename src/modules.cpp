@@ -9,7 +9,6 @@ namespace modules {
 		#endif
 		#ifdef BILL_ACCEPTOR
 			billAcceptor::init();
-			billAcceptor::setFiatCurrency(config::get("fiatCurrency"));
 			logger::write("Bill Reader OK");
 		#endif
 		#ifdef BUTTON

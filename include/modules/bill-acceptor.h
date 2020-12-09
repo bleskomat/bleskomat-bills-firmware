@@ -1,13 +1,12 @@
 #ifndef BLESKOMAT_MODULES_BILL_ACCEPTOR_H
 #define BLESKOMAT_MODULES_BILL_ACCEPTOR_H
 
+#include "config.h"
 #include "logger.h"
 #include "util.h"
 
 #include <Arduino.h>
-#include <SoftwareSerial.h>
-
-#include <map>
+#include <HardwareSerial.h>
 
 #ifndef BILL_ACCEPTOR_RX_PIN
 	#define BILL_ACCEPTOR_RX_PIN 3
@@ -24,9 +23,7 @@
 namespace billAcceptor {
 	void init();
 	void loop();
-	bool billInserted();
-	unsigned int getAccumulatedValue();
-	void setFiatCurrency(const std::string &fiatCurrency);
+	float getAccumulatedValue();
 	void reset();
 }
 

@@ -23,6 +23,11 @@ const fiatCurrencyCoinValues = {
 	'EUR': '0.05,0.10,0.20,0.50,1,2',
 };
 
+const fiatCurrencyBillValues = {
+	'CZK': '100,200,500,1000,2000,5000',
+	'EUR': '5,10,20,50,100,200',
+};
+
 const prepareDummyValues = function() {
 	const encoding = 'hex';
 	const fiatCurrency = 'CZK';
@@ -34,6 +39,7 @@ const prepareDummyValues = function() {
 		'fiatCurrency': fiatCurrency,
 		'shorten': true,
 		'coinValues': fiatCurrencyCoinValues[fiatCurrency],
+		'billValues': fiatCurrencyBillValues[fiatCurrency],
 	};
 };
 
@@ -77,6 +83,7 @@ require('../config').load().then(config => {
 				'fiatCurrency': fiatCurrency,
 				'shorten': true,
 				'coinValues': fiatCurrencyCoinValues[fiatCurrency],
+				'billValues': fiatCurrencyBillValues[fiatCurrency],
 			};
 		});
 	});

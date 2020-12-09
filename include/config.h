@@ -19,6 +19,7 @@ struct BleskomatConfig {
 	unsigned short fiatPrecision = 2;
 	double transactionLimit = 0.00;
 	std::vector<float> coinValues;
+	std::vector<float> billValues;
 };
 
 namespace config {
@@ -30,6 +31,7 @@ namespace config {
 	unsigned short getFiatPrecision();
 	double getTransactionLimit();
 	std::vector<float> getCoinValues();
+	std::vector<float> getBillValues();
 }
 
 #endif
