@@ -15,6 +15,7 @@ namespace {
 		"callbackUrl",
 		"fiatCurrency",
 		"shorten",
+		"fiatPrecision",
 		"transactionLimit"
 	};
 
@@ -215,6 +216,10 @@ namespace config {
 
 	std::string get(const std::string &key) {
 		return getConfigValue(key, values);
+	}
+
+	unsigned short getFiatPrecision() {
+		return values.fiatPrecision;
 	}
 
 	double getTransactionLimit() {

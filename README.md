@@ -11,8 +11,8 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 	* [Building the Hardware Device](#building-the-hardware-device)
 		* [Wiring Diagram](#wiring-diagram)
 		* [Wiring the Power Supply](#wiring-the-power-supply)
-		* [Wiring the TFT Display](#wiring-the-tft-display)
-		* [Wiring the SD card](#wiring-the-sd-card)
+		* [Wiring the E-Paper Module](#wiring-the-e-paper-module)
+		* [Wiring the SD Card SPI Module](#wiring-the-sd-card-spi-module)
 		* [Wiring the Bill Acceptor](#wiring-the-bill-acceptor)
 		* [Wiring the Coin Acceptor](#wiring-the-coin-acceptor)
 	* [Training the Coin Acceptor](#training-the-coin-acceptor)
@@ -20,6 +20,7 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 	* [Generating Your Local Config File](#generating-your-local-config-file)
 	* [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
 	* [Prepare SD Card](#prepare-sd-card)
+* [Fonts](#fonts)
 * [License](#license)
 
 
@@ -47,8 +48,10 @@ This section includes information about the requirements (software + hardware) t
 To build the physical device, you will need the following hardware components:
 * [ESP-WROOM-32](https://www.espressif.com/en/products/modules/esp-wroom-32/overview) by espressif
 	* [laskarduino.cz](https://www.laskarduino.cz/iot-esp-32s-2-4ghz-dual-mode-wifi-bluetooth-rev-1--cp2102/)
-* TFT (SPI) Display:
-	* [laskarduino.cz](https://www.laskarduino.cz/128x160-barevny-lcd-tft-displej-1-8--spi/)
+* [WaveShare 4.2 inch E-Paper Module (b/w)](https://www.waveshare.com/wiki/4.2inch_e-Paper_Module):
+	* [laskarduino.cz](https://www.laskarduino.cz/waveshare-4-2--400x300-epaper-displej-modul-bw/)
+* SD Card SPI Module:
+	* [laskarduino.cz](https://www.laskarduino.cz/sd-card-modul-spi/)
 * Bill Acceptor - [NV10](https://innovative-technology.com/products/products-main/127-nv10-usb)
 * Coin Acceptor - "Model HX-616"
 * 12V DC power adapter (1.5A < 3A):
@@ -137,32 +140,38 @@ Do not forget to connect the ESP32 to the common ground. Without this connection
 There are other options when powering the ESP32 - e.g via the 3.3V pin or the 5V/VIN pin. You should __never__ power the ESP32 via more than one of these options at the same time. For example, do not power the ESP32 via its 3.3V pin while also connecting the ESP32 via USB to your computer. This can damage the ESP32 and possibly also your computer.
 
 
-#### Wiring the TFT Display
-
-Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable mappings below:
-
-|  ESP32       | TFT        |
-|--------------|------------|
-| VIN          | VCC        |
-| GND          | GND        |
-| GPIO5  (D5)  | CS         |
-| GPIO16 (RX2) | RST        |
-| GPIO17 (TX2) | RS         |
-| GPIO23 (D23) | SDA        |
-| GPIO18 (D18) | CLK (SCK)  |
-| 3.3V (3V3)   | LED (NC)   |
 
 
-#### Wiring the SD card
+#### Wiring the E-Paper Module
 
-The TTF display we are using contain a SD card module. The pins are located above the screen and not soldered to the module by default but the pins can be added. The table of mappings is the following:
+Connect the E-Paper display module to the ESP32 using the following table as a guide:
 
-|  ESP32       | TFT        |
-|--------------|------------|
-|  GPIO2  (D2) |  SD_MISO   |
-|  GPIO15 (D15)|  SD_MOSI   |
-|  GPIO14 (D14)|  SD_SCK    |
-|  GPIO13 (D13)|  SD_CS     |
+| ESP32 | E-Paper Display Module |
+|-------|------------------------|
+| D25   | BUSY                   |
+| D26   | RST                    |
+| D27   | DC                     |
+| D15   | CS                     |
+| D13   | CLK                    |
+| D14   | DIN                    |
+| GND   | GND                    |
+| 3.3V  | VCC                    |
+
+
+#### Wiring the SD Card SPI Module
+
+Connect the SD card SPI module to the ESP32 using the following table as a guide:
+
+| ESP32 | SD Card SPI Module |
+|-------|--------------------|
+| GND   | GND                |
+| 3.3V  | 3.3                |
+|       | 5                  |
+| D5    | CS                 |
+| D23   | MOSI               |
+| D18   | SCK                |
+| D19   | MISO               |
+| GND   | GND                |
 
 
 #### Wiring the Bill Acceptor
@@ -295,6 +304,60 @@ You can also print dummy configuration values by omiting the API key ID:
 ```bash
 npm run print:config > ./bleskomat.conf
 ```
+
+
+## Fonts
+
+Each font used to render text on the E-Paper display is loaded from a C-style header file. If you need to add another font family or size, you will need to:
+* [Install fontconvert dependencies](#install-fontconvert-dependencies)
+* [Build The Adafruit GFX fontconvert tool from source](#build-the-adafruit-gfx-fontconvert-tool-from-source)
+* Download the font(s) you want in `.ttf` format
+* [Generate Font Header File](#generate-font-header-file)
+
+
+### Install fontconvert dependencies
+
+On Ubuntu it's pretty simple:
+```bash
+sudo add-apt-repository ppa:glasen/freetype2 \
+	&& sudo apt-get update \
+	&& sudo apt-get install -yq freetype2-demos libfreetype6 libfreetype6-dev
+```
+
+### Build The Adafruit GFX fontconvert tool from source
+
+```bash
+cd .pio/libdeps/bleskomat32/Adafruit\ GFX\ Library/fontconvert \
+	&& make
+```
+Alternatively, you can find the fontconvert source and build scripts in the [Adafruit GFX Library repository](https://github.com/adafruit/Adafruit-GFX-Library/tree/master/fontconvert).
+
+
+### Generate Font Header File
+
+On Linux, your installed fonts can be found at `~/.local/share/fonts`. Or you can download fonts from the many font collections online. You will need fonts in `.ttf` format. There are tools that can convert other formats to `.ttf`, but that's outside the scope of this section.
+
+Use the following command to generate a font header file:
+```bash
+./scripts/generateFontHeaderFile.sh ~/.local/share/fonts/OpenSans/Light/OpenSans-Light.ttf 16
+```
+This will generate a new header font file at `./include/fonts/OpenSans_Light16pt7b.h`. You will need to include the new font in the `./includes/modules/epaper.h` file as follows:
+```cpp
+// ...
+
+#include "fonts/OpenSans_Light16pt7b.h"
+
+// ...
+```
+And then use the font in `./src/modules/epaper.cpp` as follows:
+```cpp
+const std::string text = "Using a new font";
+int16_t x = display.width() / 2;// center
+int16_t y = display.height() / 2;//center
+TextBoundingBox text_box;
+renderText(text, &OpenSans_Light16pt7b, x, y, &text_box);
+```
+
 
 
 ## License
