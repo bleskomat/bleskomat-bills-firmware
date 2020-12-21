@@ -16,9 +16,6 @@ void setup() {
 	logger::write("Setup OK");
 }
 
-float lastAccumulatedValue = 0;
-unsigned long accumulatedValueChangeTime = 0;
-unsigned long accumulatedValueDebounceTime = 400;// milliseconds
 float amountShown = 0;
 
 void loop() {
@@ -31,11 +28,6 @@ void loop() {
 	#ifdef BILL_ACCEPTOR
 		accumulatedValue += billAcceptor::getAccumulatedValue();
 	#endif
-	if (accumulatedValue != lastAccumulatedValue) {
-		// Accumulated value has changed.
-		accumulatedValueChangeTime = millis();
-		lastAccumulatedValue = accumulatedValue;
-	}
 	if (
 		accumulatedValue > 0 &&
 		currentScreen != "insertFiat" &&
@@ -53,10 +45,7 @@ void loop() {
 			screen::showInsertFiatScreen(0);
 		}
 	} else if (currentScreen == "insertFiat") {
-		if (button::pushed() && accumulatedValue == 0) {
-			screen::showInstructionsScreen();
-		} else if (button::pushed() && (millis() - accumulatedValueChangeTime) > accumulatedValueDebounceTime) {
-			// Button pushed.
+		if (button::pushed()) {
 			if (accumulatedValue > 0) {
 				// Button pushed while insert fiat screen shown and accumulated value greater than 0.
 				// Create a withdraw request and render it as a QR code.
@@ -70,6 +59,9 @@ void loop() {
 				#ifdef COIN_ACCEPTOR
 					coinAcceptor::off();
 				#endif
+			} else {
+				// Button pressed with zero amount.
+				screen::showInstructionsScreen();
 			}
 		} else {
 			// Button not pressed.
