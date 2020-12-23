@@ -16,7 +16,8 @@ namespace {
 		"fiatCurrency",
 		"shorten",
 		"fiatPrecision",
-		"transactionLimit"
+		"transactionLimit",
+		"coinValues"
 	};
 
 	// Using Preferences library as a wrapper to Non-Volatile Storage (flash memory):
@@ -43,6 +44,8 @@ namespace {
 		} else if (key == "transactionLimit") {
 			// Convert string to double:
 			t_values.transactionLimit = std::strtod(value.c_str(), NULL);
+		} else if (key == "coinValues") {
+			t_values.coinValues = util::stringListToFloatVector(value);
 		} else {
 			return false;
 		}
@@ -64,6 +67,8 @@ namespace {
 			return t_values.lnurl.shorten ? "true" : "false";
 		} else if (key == "transactionLimit") {
 			return util::doubleToString(t_values.transactionLimit);
+		} else if (key == "coinValues") {
+			return util::floatVectorToStringList(t_values.coinValues);
 		}
 		return "";
 	}
@@ -224,5 +229,9 @@ namespace config {
 
 	double getTransactionLimit() {
 		return values.transactionLimit;
+	}
+
+	std::vector<float> getCoinValues() {
+		return values.coinValues;
 	}
 }

@@ -1,94 +1,57 @@
 #include "modules/coin-acceptor.h"
 
 namespace {
-	std::string fiatCurrency = "";
-	float VALUE_ACCUMULATED = 0.00;
-	uint8_t LAST_PIN_READ;
-	unsigned long LAST_PIN_READ_TIME = 0;
-	bool COIN_INSERTED = false;
-	unsigned long LAST_INSERTED_TIME = 0;
 
-	bool coinWasInserted() {
-		unsigned long diffTime = millis() - LAST_PIN_READ_TIME;
-		return LAST_PIN_READ == LOW && diffTime > 25 && diffTime < 35;
-	}
+	std::vector<float> coinValues;
+	float accumulatedValue = 0.00;
 
-	void flipPinState() {
-		// Flip the state of the last read.
-		LAST_PIN_READ = LAST_PIN_READ == HIGH ? LOW : HIGH;
-		LAST_PIN_READ_TIME = millis();
-	}
-
-	uint8_t readPin() {
-		return digitalRead(COIN_ACCEPTOR_PIN);
-	}
-
-	bool pinStateHasChanged() {
-		return readPin() != LAST_PIN_READ;
-	}
-
-	float getValueIncrement() {
-		if (fiatCurrency == "EUR") {
-			return 0.05;
+	float getCoinValue(const int &byteIn) {
+		const int index = byteIn - 1;
+		if (index >= 0 && index < coinValues.size()) {
+			return coinValues[index];
 		}
-		return 1.0;
-	}
-
-	void incrementAccumulatedValue() {
-		VALUE_ACCUMULATED = VALUE_ACCUMULATED + getValueIncrement();
+		return 0;
 	}
 }
 
 namespace coinAcceptor {
 
 	void init() {
-		// pinMode(COIN_RELAY_PIN, OUTPUT);
-		pinMode(COIN_ACCEPTOR_PIN, INPUT_PULLUP);
-		LAST_PIN_READ = readPin();
-		on();
+		coinValues = config::getCoinValues();
+		Serial2.begin(COIN_ACCEPTOR_DATA_RATE, SERIAL_8N1, COIN_ACCEPTOR_RX_PIN, 0);
+		pinMode(COIN_ACCEPTOR_INHIBITING_PIN, OUTPUT);
+		coinAcceptor::on();
 	}
 
 	void loop() {
-		COIN_INSERTED = false;
-		if (pinStateHasChanged()) {
-			if (coinWasInserted()) {
-				// A coin was inserted.
-				// This code executes once for each value unit the coin represents.
-				// For example: A coin worth 5 CZK will execute this code 5 times.
-				logger::write("Coin inserted");
-				incrementAccumulatedValue();
-				LAST_INSERTED_TIME = millis();
-				COIN_INSERTED = true;
+		if (Serial2.available()) {
+			byte byteIn = Serial2.read();
+			if (byteIn > 0) {
+				logger::write("Coin acceptor byte received: " + util::byteToString(byteIn));
+				float coinValue = getCoinValue(byteIn);
+				if (coinValue > 0) {
+					logger::write("Coin inserted with value = " + util::floatToString(coinValue));
+					accumulatedValue += coinValue;
+				}
 			}
-			flipPinState();
 		}
 	}
 
-	bool coinInserted() {
-		return COIN_INSERTED;
-	}
-
 	float getAccumulatedValue() {
-		return VALUE_ACCUMULATED;
-	}
-
-	void setFiatCurrency(const std::string &str) {
-		fiatCurrency = str;
+		return accumulatedValue;
 	}
 
 	void reset() {
-		COIN_INSERTED = false;
-		LAST_INSERTED_TIME = 0;
-		VALUE_ACCUMULATED = 0.00;
+		accumulatedValue = 0.00;
 	}
 
 	void on() {
 		logger::write("Switching coin acceptor ON");
-		digitalWrite(COIN_RELAY_PIN, HIGH);
+		digitalWrite(COIN_ACCEPTOR_INHIBITING_PIN, HIGH);
 	}
 
 	void off() {
 		logger::write("Switching coin acceptor OFF");
-		digitalWrite(COIN_RELAY_PIN, LOW);
+		digitalWrite(COIN_ACCEPTOR_INHIBITING_PIN, LOW);
 	}
 }
