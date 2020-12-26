@@ -16,6 +16,7 @@
 
 struct BleskomatConfig {
 	struct LnurlSignerConfig lnurl;
+	std::string uriSchemaPrefix = "LIGHTNING";
 	unsigned short fiatPrecision = 2;
 	double transactionLimit = 0.00;
 	std::vector<float> coinValues;
