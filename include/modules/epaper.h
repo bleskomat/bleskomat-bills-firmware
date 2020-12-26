@@ -56,6 +56,7 @@
 #include <GxEPD2_GFX.h>
 #include <GxEPD2_BW.h>
 
+#include <cmath>
 #include <vector>
 
 namespace epaper {
@@ -65,7 +66,11 @@ namespace epaper {
 	void showInstructionsScreen();
 	void showInsertFiatScreen(const float &amount);
 	void updateInsertFiatScreenAmount(const float &amount);
-	void showTransactionCompleteScreen(const float &amount, const std::string &qrcodeData);
+	void showTransactionCompleteScreen(
+		const float &amount,
+		const std::string &qrcodeData,
+		const std::string &referenceCode = ""
+	);
 }
 
 #endif

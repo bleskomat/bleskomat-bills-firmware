@@ -50,8 +50,10 @@ void loop() {
 		if (button::isPressed()) {
 			if (accumulatedValue > 0) {
 				// Button pushed while insert fiat screen shown and accumulated value greater than 0.
+				// Generate random words that will be displayed to the user as a human-friendly proof/reference code.
+				const std::string referenceCode = util::generateRandomWords(5);
 				// Create a withdraw request and render it as a QR code.
-				const std::string signedUrl = util::createSignedWithdrawUrl(accumulatedValue);
+				const std::string signedUrl = util::createSignedWithdrawUrl(accumulatedValue, referenceCode);
 				const std::string encoded = util::lnurlEncode(signedUrl);
 				const std::string uriSchemaPrefix = config::get("uriSchemaPrefix");
 				std::string qrcodeData = "";
@@ -62,7 +64,7 @@ void loop() {
 				}
 				// QR codes with only uppercase letters are less complex (easier to scan).
 				qrcodeData += util::toUpperCase(encoded);
-				screen::showTransactionCompleteScreen(accumulatedValue, qrcodeData);
+				screen::showTransactionCompleteScreen(accumulatedValue, qrcodeData, referenceCode);
 				// Save the transaction for debugging and auditing purposes.
 				logger::logTransaction(signedUrl);
 				#ifdef COIN_ACCEPTOR
