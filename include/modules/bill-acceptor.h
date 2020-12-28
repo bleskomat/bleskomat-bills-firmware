@@ -19,11 +19,21 @@
 	#define BILL_ACCEPTOR_DATA_RATE 300
 #endif
 
+#ifndef BILL_ACCEPTOR_CODE_ENABLE_ALL
+	#define BILL_ACCEPTOR_CODE_ENABLE_ALL 184
+#endif
+
+#ifndef BILL_ACCEPTOR_CODE_DISABLE_ALL
+	#define BILL_ACCEPTOR_CODE_DISABLE_ALL 185
+#endif
+
 namespace billAcceptor {
 	void init();
 	void loop();
 	float getAccumulatedValue();
 	void reset();
+	void on();
+	void off();
 }
 
 #endif

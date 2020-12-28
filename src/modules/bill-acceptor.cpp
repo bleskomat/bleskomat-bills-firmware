@@ -19,6 +19,7 @@ namespace billAcceptor {
 	void init() {
 		billValues = config::getBillValues();
 		Serial1.begin(BILL_ACCEPTOR_DATA_RATE, SERIAL_8N1, BILL_ACCEPTOR_RX_PIN, BILL_ACCEPTOR_TX_PIN);
+		billAcceptor::on();
 	}
 
 	void loop() {
@@ -41,5 +42,15 @@ namespace billAcceptor {
 
 	void reset() {
 		accumulatedValue = 0.00;
+	}
+
+	void on() {
+		logger::write("Switching bill acceptor ON");
+		Serial1.write(BILL_ACCEPTOR_CODE_ENABLE_ALL);
+	}
+
+	void off() {
+		logger::write("Switching bill acceptor OFF");
+		Serial1.write(BILL_ACCEPTOR_CODE_DISABLE_ALL);
 	}
 }
