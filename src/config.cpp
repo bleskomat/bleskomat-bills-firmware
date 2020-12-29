@@ -49,6 +49,9 @@ namespace {
 			t_values.coinValues = util::stringListToFloatVector(value);
 		} else if (key == "billValues") {
 			t_values.billValues = util::stringListToFloatVector(value);
+		} else if (key == "fiatPrecision") {
+			// Convert string to short:
+			t_values.fiatPrecision = (char)( *value.c_str() - '0' );
 		} else {
 			return false;
 		}
@@ -74,6 +77,8 @@ namespace {
 			return util::floatVectorToStringList(t_values.coinValues);
 		} else if (key == "billValues") {
 			return util::floatVectorToStringList(t_values.billValues);
+		} else if (key == "fiatPrecision") {
+			return util::shortToString(t_values.fiatPrecision);
 		}
 		return "";
 	}
