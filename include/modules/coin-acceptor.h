@@ -7,7 +7,7 @@
 
 #include <HardwareSerial.h>
 
-#include <string>
+#include <deque>
 
 #ifndef COIN_ACCEPTOR_RX_PIN
 	#define COIN_ACCEPTOR_RX_PIN 16
