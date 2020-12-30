@@ -5,15 +5,14 @@
 #include "logger.h"
 #include "util.h"
 
-#include <Arduino.h>
 #include <HardwareSerial.h>
 
 #ifndef BILL_ACCEPTOR_RX_PIN
-	#define BILL_ACCEPTOR_RX_PIN 3
+	#define BILL_ACCEPTOR_RX_PIN 9
 #endif
 
 #ifndef BILL_ACCEPTOR_TX_PIN
-	#define BILL_ACCEPTOR_TX_PIN 1
+	#define BILL_ACCEPTOR_TX_PIN 10
 #endif
 
 #ifndef BILL_ACCEPTOR_DATA_RATE

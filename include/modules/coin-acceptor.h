@@ -5,7 +5,6 @@
 #include "logger.h"
 #include "util.h"
 
-#include <Arduino.h>
 #include <HardwareSerial.h>
 
 #include <string>
