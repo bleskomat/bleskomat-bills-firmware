@@ -325,6 +325,10 @@ apiKey.encoding=hex
 callbackUrl=https://0fe4d56b.eu.ngrok.io/lnurl
 fiatCurrency=CZK
 shorten=true
+fiatPrecision=0
+transactionLimit=20000
+coinValues=1,2,5,10,20,50
+billValues=100,200,500,1000,2000,5000
 ```
 Copy this file to the SD card.
 
