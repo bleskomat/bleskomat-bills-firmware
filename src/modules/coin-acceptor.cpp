@@ -4,6 +4,7 @@ namespace {
 
 	std::vector<float> coinValues;
 	float accumulatedValue = 0.00;
+	std::deque<int> buffer;
 
 	float getCoinValue(const int &byteIn) {
 		const int index = byteIn - 1;
@@ -11,6 +12,30 @@ namespace {
 			return coinValues[index];
 		}
 		return 0;
+	}
+
+	void parseBuffer() {
+		while (buffer.size() >= 3) {
+			const int byte1 = buffer.front();
+			buffer.pop_front();
+			if (byte1 == 0xAA) {
+				// "Title" byte found.
+				// The next byte should be the coin value reference.
+				const int byte2 = buffer.front();
+				buffer.pop_front();
+				const float coinValue = getCoinValue(byte2);
+				if (coinValue > 0) {
+					// Coin value found.
+					// The next byte is the XOR of the previous two bytes.
+					const int byte3 = buffer.front();
+					buffer.pop_front();
+					if (byte3 == (byte1 ^ byte2)) {
+						logger::write("Coin inserted with value = " + util::floatToString(coinValue));
+						accumulatedValue += coinValue;
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -24,17 +49,14 @@ namespace coinAcceptor {
 	}
 
 	void loop() {
-		if (Serial2.available()) {
-			byte byteIn = Serial2.read();
-			if (byteIn > 0) {
-				logger::write("Coin acceptor byte received: " + util::byteToString(byteIn));
-				float coinValue = getCoinValue(byteIn);
-				if (coinValue > 0) {
-					logger::write("Coin inserted with value = " + util::floatToString(coinValue));
-					accumulatedValue += coinValue;
-				}
+		while (Serial2.available()) {
+			const int byteReceived = Serial2.read();
+			if (byteReceived > 0 && byteReceived < 254) {
+				logger::write("Coin acceptor byte received: " + util::byteToString(byteReceived));
+				buffer.push_back(byteReceived);
 			}
 		}
+		parseBuffer();
 	}
 
 	float getAccumulatedValue() {

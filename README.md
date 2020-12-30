@@ -212,13 +212,13 @@ Physical switches on the DG600F should set as follows:
 
 Open the [DG600F manual](docs/DG600F-coin-acceptor-manual.pdf) to "Coin Acceptor Parameters Setting" on page 18. Set the parameters as follows:
 
-| Parameter | Description                      | Value | Meaning                           |
-|-----------|----------------------------------|-------|-----------------------------------|
-| A1        | machine charge amount            | 01    | min. coin value before data sent  |
-| A2        | serial output signal pulse-width | 01    | 25ms / 9600 bps (RS232 baud rate) |
-| A3        | faulty alarm option              | 01    | (rings only one time)             |
-| A4        | serial port RS232 signal length  | 01    | one byte                          |
-| A5        | serial port output               | 01    | output to serial pin              |
+| Parameter | Description                      | Value | Meaning                                          |
+|-----------|----------------------------------|-------|--------------------------------------------------|
+| A1        | machine charge amount            | 01    | min. coin value before data sent                 |
+| A2        | serial output signal pulse-width | 01    | 25ms / 9600 bps (RS232 baud rate)                |
+| A3        | faulty alarm option              | 01    | (rings only one time)                            |
+| A4        | serial port RS232 signal length  | 03    | 3 bytes: 0xAA, coin value, XOR of prev two bytes |
+| A5        | serial port output               | 01    | output to serial pin                             |
 
 
 To train the coin acceptor, have a look at "Coin Parameters Setting" on page 16 of the [DG600F manual](docs/DG600F-coin-acceptor-manual.pdf). Be sure to set the "coin value" for each coin in series, incremented by 1. For example:
