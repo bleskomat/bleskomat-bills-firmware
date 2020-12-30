@@ -71,6 +71,12 @@ namespace util {
 		return ss.str();
 	}
 
+	std::string shortToString(const short &number) {
+		std::ostringstream ss;
+		ss << number;
+		return ss.str();
+	}
+
 	std::string unsignedIntToString(const unsigned int &number) {
 		std::ostringstream ss;
 		ss << +number;
