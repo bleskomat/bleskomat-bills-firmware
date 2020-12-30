@@ -53,7 +53,9 @@ namespace util {
 			ss << floatVector[index] << delimiter;
 		}
 		std::string stringList = ss.str();
-		stringList.pop_back();// Remove the last instance of delimiter.
+		if (stringList != "") {
+			stringList.pop_back();// Remove the last instance of delimiter.
+		}
 		return stringList;
 	}
 
