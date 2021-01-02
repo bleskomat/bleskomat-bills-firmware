@@ -125,6 +125,16 @@ namespace {
 		display.clearScreen((uint8_t) backgroundColor);
 		display.clearScreen((uint8_t) textColor);
 	}
+
+	std::string getInstructionsUrl() {
+		const std::string apiKeyId = config::get("apiKey.id");
+		std::string instructionsUrl = config::get("instructionsUrl");
+		return util::replaceFirstOccurrence(
+			instructionsUrl,
+			"{{API_KEY_ID}}",
+			util::urlEncode(apiKeyId)
+		);
+	}
 }
 
 namespace epaper {
@@ -169,6 +179,13 @@ namespace epaper {
 		if (!isInitialized()) return;
 		display.clearScreen();
 		display.drawImage(BLESKOMAT_INSTRUCTIONS_SCREEN_400x300, 0, 0, display.epd2.WIDTH, display.epd2.HEIGHT, false, false, true);
+		const std::string instructionsUrl = getInstructionsUrl();
+		int16_t margin = 15;
+		uint16_t qrcode_w = 100;
+		uint16_t qrcode_h = 100;
+		int16_t qrcode_x = 280 + (qrcode_w / 2);
+		int16_t qrcode_y = margin + (qrcode_h / 2);
+		renderQRCode(instructionsUrl, qrcode_x, qrcode_y, qrcode_w, qrcode_h);
 		currentScreen = "instructions";
 	}
 
