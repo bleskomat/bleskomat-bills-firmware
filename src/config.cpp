@@ -15,6 +15,7 @@ namespace {
 		"callbackUrl",
 		"fiatCurrency",
 		"shorten",
+		"uriSchemaPrefix",
 		"fiatPrecision",
 		"transactionLimit",
 		"coinValues",
@@ -42,6 +43,8 @@ namespace {
 			t_values.lnurl.fiatCurrency = value;
 		} else if (key == "shorten") {
 			t_values.lnurl.shorten = (value == "true" || value == "1");
+		} else if (key == "uriSchemaPrefix") {
+			t_values.uriSchemaPrefix = value;
 		} else if (key == "transactionLimit") {
 			// Convert string to double:
 			t_values.transactionLimit = std::strtod(value.c_str(), NULL);
@@ -71,6 +74,8 @@ namespace {
 			return t_values.lnurl.fiatCurrency;
 		} else if (key == "shorten") {
 			return t_values.lnurl.shorten ? "true" : "false";
+		} else if (key == "uriSchemaPrefix") {
+			return t_values.uriSchemaPrefix;
 		} else if (key == "transactionLimit") {
 			return util::doubleToString(t_values.transactionLimit);
 		} else if (key == "coinValues") {
