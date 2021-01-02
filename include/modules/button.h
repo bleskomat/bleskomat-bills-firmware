@@ -6,15 +6,13 @@
 #include <Arduino.h>
 
 #ifndef BUTTON_PIN
-	#define BUTTON_PIN 25
+	#define BUTTON_PIN 33
 #endif
 
 namespace button {
 	void init();
 	void loop();
 	bool isPressed();
-	// For temporary backwards compatibility:
-	bool pushed();
 }
 
 #endif
