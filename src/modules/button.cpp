@@ -19,9 +19,10 @@ namespace button {
 			if (state != lastState) {
 				if (state == HIGH) {
 					pressed = true;
-					logger::write("Button is pushed");
+					logger::write("Button pressed");
 				} else {
 					pressed = false;
+					logger::write("Button released");
 				}
 				// Reset the debouncing timer.
 				// We track time in order to avoid noise state changes.
@@ -33,10 +34,5 @@ namespace button {
 
 	bool isPressed() {
 		return pressed;
-	}
-
-	// For temporary backwards compatibility:
-	bool pushed() {
-		return button::isPressed();
 	}
 }

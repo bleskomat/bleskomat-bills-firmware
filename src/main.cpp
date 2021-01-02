@@ -32,15 +32,15 @@ void loop() {
 		amountShown = accumulatedValue;
 	}
 	if (currentScreen == "splash") {
-		if (button::pushed()) {
+		if (button::isPressed()) {
 			screen::showInstructionsScreen();
 		}
 	} else if (currentScreen == "instructions") {
-		if (button::pushed()) {
+		if (button::isPressed()) {
 			screen::showInsertFiatScreen(0);
 		}
 	} else if (currentScreen == "insertFiat") {
-		if (button::pushed()) {
+		if (button::isPressed()) {
 			if (accumulatedValue > 0) {
 				// Button pushed while insert fiat screen shown and accumulated value greater than 0.
 				// Create a withdraw request and render it as a QR code.
@@ -67,7 +67,7 @@ void loop() {
 			}
 		}
 	} else if (currentScreen == "transactionComplete") {
-		if (button::pushed()) {
+		if (button::isPressed()) {
 			// Button pushed while showing the transaction complete screen.
 			// Reset accumulated values.
 			#ifdef COIN_ACCEPTOR
