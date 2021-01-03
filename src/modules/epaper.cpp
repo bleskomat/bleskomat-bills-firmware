@@ -14,6 +14,11 @@ namespace {
 		uint16_t h = 0;
 	};
 
+	struct TextSize {
+		uint16_t w = 0;
+		uint16_t h = 0;
+	};
+
 	bool initialized = false;
 	GxEPD2_BW<GxEPD2_420, GxEPD2_420::HEIGHT> display(GxEPD2_420(EPAPER_CS, EPAPER_DC, EPAPER_RST, EPAPER_BUSY));
 
@@ -24,7 +29,47 @@ namespace {
 	const auto backgroundColor = GxEPD_WHITE;
 	const auto textColor = GxEPD_BLACK;
 
+	typedef std::vector<GFXfont> FontList;
+
+	const FontList amountTextFonts = {
+		// Ordered from largest to smallest.
+		Courier_Prime_Code32pt7b,
+		Courier_Prime_Code30pt7b,
+		Courier_Prime_Code28pt7b,
+		Courier_Prime_Code26pt7b,
+		Courier_Prime_Code24pt7b,
+		Courier_Prime_Code22pt7b,
+		Courier_Prime_Code20pt7b,
+		Courier_Prime_Code16pt7b,
+		Courier_Prime_Code12pt7b
+	};
+
 	std::string currentScreen = "";
+
+	TextSize calculateTextSize(const std::string &t_text, const GFXfont *f) {
+		TextSize textSize;
+		const char* text = t_text.c_str();
+		display.setFont(f);
+		int16_t x, y;// Not used, but needed to prevent getTextBounds() from throwing error.
+		display.getTextBounds(text, 0, 0, &x, &y, &textSize.w, &textSize.h);
+		return textSize;
+	}
+
+	GFXfont getBestFitFont(const std::string &text, const FontList &fonts) {
+		GFXfont font;
+		// We use the width of the display to calculate the best fit font.
+		const uint16_t max_w = display.width() * .8;
+		for (int index = 0; index < fonts.size(); index++) {
+			font = fonts.at(index);
+			TextSize textSize = calculateTextSize(text, &font);
+			if (textSize.w <= max_w) {
+				// Best fit font found.
+				// Stop searching.
+				break;
+			}
+		}
+		return font;
+	}
 
 	int getBestFitQRCodeVersion(const std::string &dataStr) {
 		int size = 12;
@@ -74,6 +119,8 @@ namespace {
 		int16_t cursor_x = box_x + (w_adjust / 2);
 		int16_t cursor_y = (box_y + tbh) - (h_adjust * .8);// Cursor y-coordinate is the text baseline.
 		display.setPartialWindow(box_x, box_y, tbw, tbh);
+		// Uncomment the following line to print debug info to serial monitor:
+		// std::cout << "renderText \"" << t_text << "\" / x, y, w, h: " << +box_x << ", " << +box_y << ", " << +tbw << ", " << +tbh << " " << std::endl;
 		display.firstPage();
 		do {
 			display.fillScreen(backgroundColor);
@@ -225,7 +272,8 @@ namespace epaper {
 		const std::string text = getAmountFiatCurrencyString(amount);
 		int16_t x = (display.width() / 2);
 		int16_t y = (display.height() / 2) + insertFiatScreenAmountMarginTop;
-		renderText(text, &Courier_Prime_Code32pt7b, x, y, &renderedAmountTextBoundingBox);
+		GFXfont font = getBestFitFont(text, amountTextFonts);
+		renderText(text, &font, x, y, &renderedAmountTextBoundingBox);
 	}
 
 	void showTransactionCompleteScreen(const float &amount,const std::string &qrcodeData) {

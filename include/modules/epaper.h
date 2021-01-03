@@ -4,6 +4,13 @@
 #include "fonts/OpenSans_Light9pt7b.h"
 #include "fonts/OpenSans_Light12pt7b.h"
 #include "fonts/Courier_Prime_Code12pt7b.h"
+#include "fonts/Courier_Prime_Code16pt7b.h"
+#include "fonts/Courier_Prime_Code20pt7b.h"
+#include "fonts/Courier_Prime_Code22pt7b.h"
+#include "fonts/Courier_Prime_Code24pt7b.h"
+#include "fonts/Courier_Prime_Code26pt7b.h"
+#include "fonts/Courier_Prime_Code28pt7b.h"
+#include "fonts/Courier_Prime_Code30pt7b.h"
 #include "fonts/Courier_Prime_Code32pt7b.h"
 
 #include "images/bleskomat_instructions_screen_400x300.h"
@@ -48,6 +55,8 @@
 #include <Wire.h>
 #include <GxEPD2_GFX.h>
 #include <GxEPD2_BW.h>
+
+#include <vector>
 
 namespace epaper {
 	void init();
