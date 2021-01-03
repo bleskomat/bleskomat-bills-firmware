@@ -16,8 +16,8 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="case-measurements.svg"
-   inkscape:export-filename="/home/carlos/proyectos/samotari/bleskomat/bleskomat-device/docs/case-measurements.png"
+   sodipodi:docname="case-measurements-with-front-bended-spanish.svg"
+   inkscape:export-filename="/home/carlos/proyectos/samotari/bleskomat/bleskomat-device/docs/case-measurements-with-front-bended-spanish.png"
    inkscape:export-xdpi="300.034"
    inkscape:export-ydpi="300.034">
   <defs
@@ -38,11 +38,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.5544572"
-     inkscape:cx="981.41335"
-     inkscape:cy="1665.2668"
+     inkscape:zoom="0.1386143"
+     inkscape:cx="2669.8729"
+     inkscape:cy="2767.6654"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g2860-6-2"
      showgrid="true"
      inkscape:window-width="1920"
      inkscape:window-height="1025"
@@ -81,7 +81,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -229,7 +229,7 @@
          id="tspan5072"
          x="486.47974"
          y="-276.16656"
-         style="stroke-width:0.63426358">front</tspan><tspan
+         style="stroke-width:0.63426358">frontal</tspan><tspan
          sodipodi:role="line"
          x="486.47974"
          y="-244.45338"
@@ -238,17 +238,17 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:25.37054253px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.63426352"
-       x="837.74634"
+       x="814.20428"
        y="-276.16656"
        id="text5074-2"
        transform="scale(1.0491847,0.95312102)"><tspan
          sodipodi:role="line"
-         x="837.74634"
+         x="814.20428"
          y="-276.16656"
          style="stroke-width:0.63426352"
-         id="tspan5076-9">back</tspan><tspan
+         id="tspan5076-9">trasera</tspan><tspan
          sodipodi:role="line"
-         x="837.74634"
+         x="814.20428"
          y="-244.45338"
          style="stroke-width:0.63426352"
          id="tspan5101" /></text>
@@ -294,7 +294,7 @@
            y="458.28247"
            x="-284.76727"
            id="tspan1063"
-           sodipodi:role="line">cut-outs</tspan></text>
+           sodipodi:role="line">cortes</tspan></text>
     </g>
     <text
        xml:space="preserve"
@@ -306,7 +306,7 @@
          id="tspan1524"
          x="473.3103"
          y="-146.38544"
-         style="font-size:21.16666603px;stroke-width:0.26458332">- all measurements are millimeters (mm)</tspan></text>
+         style="font-size:21.16666603px;stroke-width:0.26458332">- todas las medidas estan en milimetros (mm)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -317,7 +317,7 @@
          id="tspan1524-2"
          x="473.70129"
          y="-111.10541"
-         style="font-size:21.16666603px;stroke-width:0.26458332">- the back panel should be a door to access the electronics and fiat inside</tspan></text>
+         style="font-size:21.16666603px;stroke-width:0.26458332">- la parte trasera debe ser una puerta que se abre desde la derecha y permite acceder a los componentes dentro</tspan></text>
     <g
        id="g1624-7-3"
        transform="matrix(-1.0036571,0,0,-0.93293006,1020.7751,-790.23542)">
@@ -366,16 +366,21 @@
            y="-358.92676"
            x="357.6998"
            id="tspan1536-7-4"
-           sodipodi:role="line">coin insert</tspan></text>
+           sodipodi:role="line">insertar</tspan><tspan
+           style="font-size:8.46666622px;stroke-width:0.26458332"
+           y="-348.34341"
+           x="357.6998"
+           sodipodi:role="line"
+           id="tspan445">moneda</tspan></text>
       <text
          id="text1690-0-8-8"
-         y="-348.91785"
-         x="376.3775"
+         y="-339.13248"
+         x="375.36523"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
          xml:space="preserve"><tspan
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';text-align:center;text-anchor:middle;stroke-width:0.26458332"
-           y="-348.91785"
-           x="376.3775"
+           y="-339.13248"
+           x="375.36523"
            id="tspan1688-2-6-7"
            sodipodi:role="line"><tspan
    id="tspan1725-8-1"
@@ -384,9 +389,9 @@
    style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Bold';text-align:center;text-anchor:middle;stroke-width:0.26458332">35</tspan></tspan><tspan
            id="tspan1696-7-4-2"
            style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Italic';text-align:center;text-anchor:middle;stroke-width:0.26458332"
-           y="-340.09839"
-           x="376.3775"
-           sodipodi:role="line">(w x h)</tspan></text>
+           y="-330.31302"
+           x="375.36523"
+           sodipodi:role="line">(ancho x alto)</tspan></text>
     </g>
     <rect
        style="fill:#ff5555;fill-opacity:1;stroke-width:0.20250563"
@@ -421,15 +426,15 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:25.37054253px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.63426358"
-       x="1166.921"
+       x="1144.1417"
        y="-279.15207"
        id="text5074-2-9"
        transform="scale(1.0491847,0.95312103)"><tspan
          sodipodi:role="line"
-         x="1166.921"
+         x="1144.1417"
          y="-279.15207"
          style="stroke-width:0.63426358"
-         id="tspan5101-2">side (x2)</tspan></text>
+         id="tspan5101-2">lateral (x2)</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.94484264;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:2.83452789, 2.83452789;stroke-dashoffset:0;stroke-opacity:1"
        d="m 1157.0303,-642.86686 c 58.9653,-64.76327 137.6068,-44.59814 180.6454,0"
@@ -497,7 +502,7 @@
          id="tspan1268-7"
          x="854.60712"
          y="-373.39859"
-         style="stroke-width:0.26458332">hole for power cable</tspan></text>
+         style="stroke-width:0.26458332">agujero para conector de electricidad</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -510,7 +515,7 @@
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Italic';text-align:center;text-anchor:middle;stroke-width:0.26458332"
          id="tspan1696-7-3-9"><tspan
    id="tspan1797-3"
-   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Bold';text-align:center;text-anchor:middle;stroke-width:0.26458332">12  </tspan>(diameter)</tspan></text>
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Bold';text-align:center;text-anchor:middle;stroke-width:0.26458332">12  </tspan>(diametro)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -528,14 +533,14 @@
       <text
          xml:space="preserve"
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-         x="2137.5591"
-         y="-557.88232"
+         x="2113.6995"
+         y="-557.40515"
          id="text1538-3-3-0"><tspan
            sodipodi:role="line"
            id="tspan1536-5-5-6"
-           x="2137.5591"
-           y="-557.88232"
-           style="font-size:14.11111069px;stroke-width:0.26458332">bill acceptor</tspan></text>
+           x="2113.6995"
+           y="-557.40515"
+           style="font-size:14.11111069px;stroke-width:0.26458332">aceptor de billetes</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -553,7 +558,7 @@
            x="2176.083"
            y="-526.73804"
            style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Italic';text-align:center;text-anchor:middle;stroke-width:0.26458332"
-           id="tspan2749-0-9">(w x h)</tspan></text>
+           id="tspan2749-0-9">(ancho x alto)</tspan></text>
     </g>
     <g
        transform="matrix(1.165903,0,0,0.79931792,-869.90388,80.366154)"
@@ -568,7 +573,7 @@
            id="tspan1536-5-5-6-2"
            x="2137.5591"
            y="-557.88232"
-           style="font-size:14.11111069px;stroke-width:0.26458332">octopus tray</tspan></text>
+           style="font-size:14.11111069px;stroke-width:0.26458332">bandeja pulpo</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -589,27 +594,27 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:25.37054253px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.63426358"
-       x="1944.139"
-       y="-527.94519"
+       x="1905.546"
+       y="-516.61646"
        id="text5074-2-9-2"
        transform="scale(1.0491847,0.95312103)"><tspan
          sodipodi:role="line"
-         x="1944.139"
-         y="-527.94519"
+         x="1905.546"
+         y="-516.61646"
          style="stroke-width:0.63426358"
-         id="tspan5101-2-8">top</tspan></text>
+         id="tspan5101-2-8">cubierta</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:25.37054253px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.63426358"
-       x="1916.0173"
-       y="-112.94627"
+       x="1932.741"
+       y="-111.53018"
        id="text5074-2-9-2-9"
        transform="scale(1.0491847,0.95312103)"><tspan
          sodipodi:role="line"
-         x="1916.0173"
-         y="-112.94627"
+         x="1932.741"
+         y="-111.53018"
          style="stroke-width:0.63426358"
-         id="tspan499">bottom</tspan></text>
+         id="tspan499">base</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.96323055;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:2.8896916, 2.8896916;stroke-dashoffset:0;stroke-opacity:1"
        d="m 1957.0496,-722.87775 c 64.9742,-61.08373 151.6298,-42.06429 199.0543,0"
@@ -688,7 +693,7 @@
          id="tspan1524-2-3"
          x="472.89246"
          y="-81.330002"
-         style="font-size:21.16666603px;stroke-width:0.26458332">- octopus tray should be a sctructrus that can hold coin and bill acceptors as well as have coin colletor inside and can be taken out</tspan></text>
+         style="font-size:21.16666603px;stroke-width:0.26458332">- la bandeja pulpo es como una caja que sostiene los componentes y permite extraerlos totalmente a la vez que almacena monedas dentro</tspan></text>
     <path
        inkscape:connector-curvature="0"
        id="path917-3-7-0-6-1-7-61"
@@ -879,12 +884,12 @@
          y="-732.90833"
          x="593.69171"
          id="tspan1536-7-4-6"
-         sodipodi:role="line">      button</tspan><tspan
+         sodipodi:role="line">      botón</tspan><tspan
          style="font-size:8.46666622px;stroke-width:0.26458332"
          y="-722.32501"
          x="593.69171"
          sodipodi:role="line"
-         id="tspan304">12 (diameter)</tspan></text>
+         id="tspan304">12 (diametro)</tspan></text>
     <g
        id="g1624-7-3-7-3"
        transform="matrix(1,0,0,0.61611476,53.33065,-501.91504)">
@@ -950,14 +955,14 @@
       <text
          id="text1538-0-0-0"
          y="-358.92676"
-         x="357.6998"
+         x="345.88986"
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
          xml:space="preserve"><tspan
            style="font-size:8.46666622px;stroke-width:0.26458332"
            y="-358.92676"
-           x="357.6998"
+           x="345.88986"
            id="tspan1536-7-4-9"
-           sodipodi:role="line">coin output</tspan></text>
+           sodipodi:role="line">salida moneda</tspan></text>
       <text
          id="text1690-0-8-8-3"
          y="-348.91785"
@@ -975,7 +980,7 @@
            style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Italic';text-align:center;text-anchor:middle;stroke-width:0.26458332"
            y="-340.09839"
            x="376.3775"
-           sodipodi:role="line">(w x h)</tspan></text>
+           sodipodi:role="line">(ancho x alto)</tspan></text>
     </g>
   </g>
 </svg>
