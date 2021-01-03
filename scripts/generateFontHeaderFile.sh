@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Exit on any error:
+set -e
+
 fontSize=$2
 inputFontFilePath=$(realpath "$1")
 fontName="$(basename "${inputFontFilePath}" | cut -f 1 -d '.' | tr -s ' ' | tr ' ' '_' | tr '-' '_')${fontSize}pt7b"
@@ -9,7 +12,7 @@ outDir=$(realpath "${thisDir}/../include/fonts")
 outFilePath="${outDir}/${fontName}.h"
 headerGuard="BLESKOMAT_FONTS_$(echo -n "${fontName}" | tr '[:lower:]' '[:upper:]')_H"
 mkdir -p $outDir
-headerFileBytes="$("${fontconvert}" ${inputFontFilePath} ${fontSize})"
+headerFileBytes="$("${fontconvert}" "${inputFontFilePath}" ${fontSize})"
 headerFileBytes=${headerFileBytes/const uint8_t/const char}
 
 cat > "$outFilePath" <<EOF
