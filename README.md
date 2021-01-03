@@ -329,6 +329,7 @@ fiatPrecision=0
 transactionLimit=20000
 coinValues=1,2,5,10,20,50
 billValues=100,200,500,1000,2000,5000
+instructionsUrl=https://www.bleskomat.com/intro?id={{API_KEY_ID}}
 ```
 Copy this file to the SD card.
 
@@ -355,6 +356,7 @@ The following is a list of all possible configuration options that can be set vi
 * `billValues` - Same as coin values (above), but for the bill acceptor. Examples:
 	* CZK: `100,200,500,1000,2000,5000`
 	* EUR: `5,10,20,50,100,200,500`
+* `instructionsUrl` - The full URL to the web server's instructions page. For the Bleskomat server this is "https://www.bleskomat.com/intro?id={{API_KEY_ID}}". The `{{API_KEY_ID}}` is replaced with the device's API key ID (URL-encoded). This URL is rendered as a QR code on the device's instructions screen.
 
 
 ## Fonts

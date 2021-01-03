@@ -21,6 +21,7 @@ struct BleskomatConfig {
 	double transactionLimit = 0.00;
 	std::vector<float> coinValues;
 	std::vector<float> billValues;
+	std::string instructionsUrl = "https://www.bleskomat.com/intro?id={{API_KEY_ID}}";
 };
 
 namespace config {

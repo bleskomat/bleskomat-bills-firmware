@@ -23,6 +23,12 @@ namespace util {
 	std::string shortToString(const short &number);
 	std::string unsignedIntToString(const unsigned int &number);
 	std::string byteToString(const byte &byteIn);
+	std::string replaceFirstOccurrence(
+		std::string& s,
+		const std::string& toReplace,
+		const std::string& replaceWith
+	);
+	std::string urlEncode(const std::string &value);
 }
 
 #endif

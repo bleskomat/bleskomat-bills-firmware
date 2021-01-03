@@ -19,7 +19,8 @@ namespace {
 		"fiatPrecision",
 		"transactionLimit",
 		"coinValues",
-		"billValues"
+		"billValues",
+		"instructionsUrl"
 	};
 
 	// Using Preferences library as a wrapper to Non-Volatile Storage (flash memory):
@@ -55,6 +56,8 @@ namespace {
 		} else if (key == "fiatPrecision") {
 			// Convert string to short:
 			t_values.fiatPrecision = (char)( *value.c_str() - '0' );
+		} else if (key == "instructionsUrl") {
+			t_values.instructionsUrl = value;
 		} else {
 			return false;
 		}
@@ -84,6 +87,8 @@ namespace {
 			return util::floatVectorToStringList(t_values.billValues);
 		} else if (key == "fiatPrecision") {
 			return util::shortToString(t_values.fiatPrecision);
+		} else if (key == "instructionsUrl") {
+			return t_values.instructionsUrl;
 		}
 		return "";
 	}
