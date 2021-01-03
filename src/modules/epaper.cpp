@@ -181,20 +181,27 @@ namespace epaper {
 		if (!isInitialized()) return;
 		display.clearScreen();
 		updateInsertFiatScreenAmount(amount);
+		int16_t center_x = display.width() / 2;// center
+		// Keep track of the bounding box of the previously rendered text - start with amount text.
+		TextBoundingBox prevText_box = renderedAmountTextBoundingBox;
 
-		// Instructional text #1 (center, below amount).
-		const std::string text = "insert bills and/or coins";
-		int16_t margin = 16;
-		int16_t x = display.width() / 2;// center
-		// Render the next text line below the amount text.
-		int16_t text_y = renderedAmountTextBoundingBox.y + renderedAmountTextBoundingBox.h + margin;
-		TextBoundingBox text_box;
-		renderText(text, &OpenSans_Light12pt7b, x, text_y, &text_box);
+		const double transactionLimit = config::getTransactionLimit();
+		if (transactionLimit > 0) {
+			const std::string limitText = "Limit = " + config::get("transactionLimit") + " " + config::get("fiatCurrency");
+			int16_t limitText_y = prevText_box.y + prevText_box.h + 15;
+			renderText(limitText, &OpenSans_Light9pt7b, center_x, limitText_y, &prevText_box);
+		}
 
-		// Instructional text #2 (center, below instructional text #1).
+		// Instructional text #1:
+		const std::string text1 = "insert bills and/or coins";
+		int16_t text1_y = prevText_box.y + prevText_box.h + 45;
+		renderText(text1, &OpenSans_Light12pt7b, center_x, text1_y, &prevText_box);
+
+		// Instructional text #2:
 		const std::string text2 = "(press button when done)";
-		int16_t text2_y = text_box.y + text_box.h + margin;
-		renderText(text2, &OpenSans_Light9pt7b, x, text2_y, NULL);
+		int16_t text2_y = prevText_box.y + prevText_box.h + 15;
+		renderText(text2, &OpenSans_Light9pt7b, center_x, text2_y, &prevText_box);
+
 		currentScreen = "insertFiat";
 	}
 
