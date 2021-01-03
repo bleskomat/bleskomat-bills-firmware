@@ -162,6 +162,11 @@ namespace epaper {
 		if (!isInitialized()) return;
 		scrub();
 		display.drawImage(BLESKOMAT_SPLASH_SCREEN_400x300, 0, 0, display.epd2.WIDTH, display.epd2.HEIGHT, false, false, true);
+		const std::string text = "(press button to begin)";
+		uint8_t margin = 40;
+		int16_t text_x = display.width() / 2;// center
+		int16_t text_y = display.height() - margin;// bottom
+		renderText(text, &OpenSans_Light9pt7b, text_x, text_y, NULL);
 		currentScreen = "splash";
 	}
 
