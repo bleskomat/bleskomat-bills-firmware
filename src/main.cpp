@@ -72,6 +72,14 @@ void loop() {
 				screen::updateInsertFiatScreenAmount(accumulatedValue);
 				amountShown = accumulatedValue;
 			}
+			double transactionLimit = config::getTransactionLimit();
+			#ifdef COIN_ACCEPTOR
+				float maxCoinValue = coinAcceptor::getMaxCoinValue();
+				if ((accumulatedValue + maxCoinValue) > transactionLimit) {
+					// Possible to exceed tx limit, so disallow entering more coins.
+					coinAcceptor::off();
+				}
+			#endif
 		}
 	} else if (currentScreen == "transactionComplete") {
 		if (button::isPressed()) {

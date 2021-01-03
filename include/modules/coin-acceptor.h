@@ -25,6 +25,7 @@ namespace coinAcceptor {
 	void init();
 	void loop();
 	float getAccumulatedValue();
+	float getMaxCoinValue();
 	void reset();
 	void on();
 	void off();

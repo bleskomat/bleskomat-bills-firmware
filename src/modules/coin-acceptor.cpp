@@ -3,6 +3,7 @@
 namespace {
 
 	std::vector<float> coinValues;
+	float maxCoinValue = 0.00;
 	float accumulatedValue = 0.00;
 	std::deque<int> buffer;
 
@@ -37,12 +38,24 @@ namespace {
 			}
 		}
 	}
+
+	float findMaxValueInFloatVector(const std::vector<float> &floatVector) {
+		float maxValue = 0;
+		for (int index = 0; index < floatVector.size(); index++) {
+			float value = floatVector.at(index);
+			if (value > maxValue) {
+				maxValue = value;
+			}
+		}
+		return maxValue;
+	}
 }
 
 namespace coinAcceptor {
 
 	void init() {
 		coinValues = config::getCoinValues();
+		maxCoinValue = findMaxValueInFloatVector(coinValues);
 		Serial2.begin(COIN_ACCEPTOR_DATA_RATE, SERIAL_8N1, COIN_ACCEPTOR_RX_PIN, 0);
 		pinMode(COIN_ACCEPTOR_INHIBITING_PIN, OUTPUT);
 		coinAcceptor::on();
@@ -61,6 +74,10 @@ namespace coinAcceptor {
 
 	float getAccumulatedValue() {
 		return accumulatedValue;
+	}
+
+	float getMaxCoinValue() {
+		return maxCoinValue;
 	}
 
 	void reset() {
