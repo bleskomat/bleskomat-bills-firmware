@@ -17,7 +17,7 @@ namespace {
 		"shorten",
 		"uriSchemaPrefix",
 		"fiatPrecision",
-		"transactionLimit",
+		"buyLimit",
 		"coinValues",
 		"billValues",
 		"instructionsUrl"
@@ -46,9 +46,9 @@ namespace {
 			t_values.lnurl.shorten = (value == "true" || value == "1");
 		} else if (key == "uriSchemaPrefix") {
 			t_values.uriSchemaPrefix = value;
-		} else if (key == "transactionLimit") {
+		} else if (key == "buyLimit") {
 			// Convert string to double:
-			t_values.transactionLimit = std::strtod(value.c_str(), NULL);
+			t_values.buyLimit = std::strtod(value.c_str(), NULL);
 		} else if (key == "coinValues") {
 			t_values.coinValues = util::stringListToFloatVector(value);
 		} else if (key == "billValues") {
@@ -79,8 +79,8 @@ namespace {
 			return t_values.lnurl.shorten ? "true" : "false";
 		} else if (key == "uriSchemaPrefix") {
 			return t_values.uriSchemaPrefix;
-		} else if (key == "transactionLimit") {
-			return util::doubleToString(t_values.transactionLimit);
+		} else if (key == "buyLimit") {
+			return util::doubleToString(t_values.buyLimit);
 		} else if (key == "coinValues") {
 			return util::floatVectorToStringList(t_values.coinValues);
 		} else if (key == "billValues") {
@@ -247,8 +247,8 @@ namespace config {
 		return values.fiatPrecision;
 	}
 
-	double getTransactionLimit() {
-		return values.transactionLimit;
+	double getBuyLimit() {
+		return values.buyLimit;
 	}
 
 	std::vector<float> getCoinValues() {

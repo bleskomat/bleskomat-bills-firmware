@@ -249,9 +249,9 @@ namespace epaper {
 		// Keep track of the bounding box of the previously rendered text - start with amount text.
 		TextBoundingBox prevText_box = renderedAmountTextBoundingBox;
 
-		const double transactionLimit = config::getTransactionLimit();
-		if (transactionLimit > 0) {
-			const std::string limitText = "Limit = " + config::get("transactionLimit") + " " + config::get("fiatCurrency");
+		const double buyLimit = config::getBuyLimit();
+		if (buyLimit > 0) {
+			const std::string limitText = "Limit = " + config::get("buyLimit") + " " + config::get("fiatCurrency");
 			int16_t limitText_y = prevText_box.y + prevText_box.h + 15;
 			renderText(limitText, &OpenSans_Light9pt7b, center_x, limitText_y, &prevText_box);
 		}

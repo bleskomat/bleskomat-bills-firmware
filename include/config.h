@@ -18,7 +18,7 @@ struct BleskomatConfig {
 	struct LnurlSignerConfig lnurl;
 	std::string uriSchemaPrefix = "LIGHTNING";
 	unsigned short fiatPrecision = 2;
-	double transactionLimit = 0.00;
+	double buyLimit = 0.00;
 	std::vector<float> coinValues;
 	std::vector<float> billValues;
 	std::string instructionsUrl = "https://www.bleskomat.com/intro?id={{API_KEY_ID}}";
@@ -31,7 +31,7 @@ namespace config {
 	std::string get(const char* &t_key);
 	std::string get(const std::string &key);
 	unsigned short getFiatPrecision();
-	double getTransactionLimit();
+	double getBuyLimit();
 	std::vector<float> getCoinValues();
 	std::vector<float> getBillValues();
 }
