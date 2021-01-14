@@ -6,6 +6,7 @@ namespace {
 	float maxCoinValue = 0.00;
 	float accumulatedValue = 0.00;
 	std::deque<int> buffer;
+	bool inhibited = false;
 
 	float getCoinValue(const int &byteIn) {
 		const int index = byteIn - 1;
@@ -84,13 +85,23 @@ namespace coinAcceptor {
 		accumulatedValue = 0.00;
 	}
 
+	bool isOff() {
+		return inhibited;
+	}
+
+	bool isOn() {
+		return !inhibited;
+	}
+
 	void on() {
 		logger::write("Switching coin acceptor ON");
 		digitalWrite(COIN_ACCEPTOR_INHIBITING_PIN, HIGH);
+		inhibited = false;
 	}
 
 	void off() {
 		logger::write("Switching coin acceptor OFF");
 		digitalWrite(COIN_ACCEPTOR_INHIBITING_PIN, LOW);
+		inhibited = true;
 	}
 }

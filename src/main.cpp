@@ -75,7 +75,7 @@ void loop() {
 			double buyLimit = config::getBuyLimit();
 			#ifdef COIN_ACCEPTOR
 				float maxCoinValue = coinAcceptor::getMaxCoinValue();
-				if ((accumulatedValue + maxCoinValue) > buyLimit) {
+				if (buyLimit > 0 && coinAcceptor::isOn() && (accumulatedValue + maxCoinValue) > buyLimit) {
 					// Possible to exceed tx limit, so disallow entering more coins.
 					coinAcceptor::off();
 				}
