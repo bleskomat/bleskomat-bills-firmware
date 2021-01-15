@@ -20,6 +20,8 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 	* [Generating Your Local Config File](#generating-your-local-config-file)
 	* [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
 	* [Prepare SD Card](#prepare-sd-card)
+* [Reprogramming Bill Acceptor](#reprogramming-bill-acceptor)
+	* [Using VirtualBox](#using-virtualbox)
 * [Fonts](#fonts)
 * [License](#license)
 
@@ -411,6 +413,93 @@ TextBoundingBox text_box;
 renderText(text, &OpenSans_Light16pt7b, x, y, &text_box);
 ```
 
+
+## Reprogramming Bill Acceptor
+
+The NV9 bill acceptor can be reprogrammed by using the proprietary software and hardware provided by the vendor ("Innovative Technology"). You will need the [DA2 Programming Kit](https://innovative-technology.com/shop/accessories/da2-programming-kit-detail) before you can continue here.
+
+To download the software and currency sets, you will need to login to an account. Create a new account if you don't already have one. Once you're logged in, [download the software](https://www.innovative-technology.com/index.php/support/secure-download/software-download-secure) from the vendor. You will need to downloading each of the following:
+* "ITL Drivers"
+* "Validator Manager"
+
+You can download currency sets from the vendor's website [here](https://www.innovative-technology.com/index.php/support/secure-download/currency-download-secure). Be sure to select the "NV9 Range".
+
+The rest of the instructions depend upon your system.
+
+
+### Using VirtualBox
+
+The instructions provided here are what worked for me (chill - using Ubuntu). If you get stuck on a step, see the "SOFTWARE INSTALLATION AND CONFIGURATION" section of the NV9 Manual for further details.
+
+* [Installation instructions for VirtualBox](https://www.virtualbox.org/wiki/Linux_Downloads)
+* [Download a virtual machine from Microsoft](https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/) - be sure to use Windows 7 or Windows 8. Once the download is complete, extract the zip archive - it should contain a single file with .ova extension.
+
+
+#### Set the NV9 to Programming Mode
+
+Before you can connect to the NV9 via the IF17 programming kit, you will need to set the NV9 to SSP mode. You can check the NV9's mode first by pressing the red button on the side two times quickly ("double-click"). The red light on the front will flash a certain number of times indicating its current mode. One flash means that it is already set to SSP mode. See section "11.5 Switching to Programming Mode (SSP)" in the NV9 user manual for more details.
+
+
+#### Create and Configure VM
+
+Run VirtualBox. Go to "File" -> "Import Appliance" and select the .ova Windows VM file. Click next to start the import. Once completed, you should see a new virtual machine in your VirtualBox.
+
+The default amount of __video memory__ allocated to the VM is below the minimum requirement. So you will need to increase it to 32 MB (or more). Right-click the virtual machine and choose "Settings". Select "Display" from the menu on the left. Change the video memory here and then save it.
+
+Change the __graphics controller__ to "VBoxSVGA". This setting is located in the same screen as video memory.
+
+Disconnect the NV9's 16-pin serial connector. Connect the IF17 USB cable to your computer. Reconnect the NV9's serial connector. Open a terminal window and run the following:
+```bash
+sudo modprobe -r ftdi_sio
+sudo modprobe ftdi_sio vendor=0x0403 product=0x6001
+```
+For more information about what this is doing, see "2.3 Linux installation" in the Innovative Technology Customer Software Guide.
+
+Enable the __USB controller__. Select "USB 1.1". Add new USB filter and select "FTDI USB <-> Serial [0400]".
+
+Add a __shared folder__ to the virtual machine. We will use this folder to provide required files to the virtual machine (like device drivers). Mark the shared folder as "read-only".
+
+Download VirtualBox Guest Additions. You will need to find your VirtualBox's version folder [here](https://download.virtualbox.org/virtualbox). Check your VirtualBox version from the "Help" -> "About VirtualBox" menu. It is an .iso image file that you will mount as a optical disk in the Windows virtual machine.
+
+Start the virtual machine. The guest OS will capture your mouse cursor. To release the cursor back to the host OS, press the right CTRL key. Open the VirtualBox Guest Additions disk. Run the 64bit exe file. Follow the installation instructions. After complete, restart the VM.
+
+After booting for the second time, the shared folder should be accessible in the File Explorer.
+
+
+#### Install ITL Driver and Validator Manager
+
+On the Windows VM, open the shared folder. Find "ITL Drivers / IF17 / IF17 Driver Installer.exe". Copy this executable to the desktop.
+
+Before running the executable, you will need to reboot Windows into a special boot mode that will allow you to install unsigned drivers. Follow these instructions:
+```
+Windows 8 requires drivers to be signed by microsoft.  This will prevent installation of ITL 
+drivers being installed.
+
+If you have a windows 8 platform, the below instructions will disable this feature, and installation 
+can continue.
+
+Basically you have to boot in a non-standard mode.
+
+The easy way to do this is to use the Shutdown command with the  /o  parameter:
+So you open a admin level command prompt and type:
+
+shutdown.exe /r /o /f /t 0
+
+    /r         Full shutdown and restart the computer.
+    /o         Go to the advanced boot options menu and restart the computer.
+               Must be used with /r option.
+    /f         Force running applications to close without forewarning users.
+    /t xxx     Set the time-out period before shutdown to xxx seconds.
+
+When the system restarts you can select "Disable Driver Signature Enforcement" from the option screens.
+```
+Now run the copy of "IF17 Driver Installer.exe" on the desktop.
+
+Copy the "ITL Validator Manager(vs4.6).exe" (your version may be newer) to the desktop. Run the executable from the desktop.
+
+Restart Windows.
+
+Run the ITL Validator Manager. Click "Detect Devices". The red part of the IF17 device should start to blink. It will take up to a minute to finish communicating with the NV9.
 
 
 ## License
