@@ -418,11 +418,13 @@ renderText(text, &OpenSans_Light16pt7b, x, y, &text_box);
 
 The NV9 bill acceptor can be reprogrammed by using the proprietary software and hardware provided by the vendor ("Innovative Technology"). You will need the [DA2 Programming Kit](https://innovative-technology.com/shop/accessories/da2-programming-kit-detail) before you can continue here.
 
-To download the software and currency sets, you will need to login to an account. Create a new account if you don't already have one. Once you're logged in, [download the software](https://www.innovative-technology.com/index.php/support/secure-download/software-download-secure) from the vendor. You will need to downloading each of the following:
+To download the software and currency sets, you will need to login to an account. Create a new account if you don't already have one. Once you're logged in, [download the software](https://www.innovative-technology.com/index.php/support/secure-download/software-download-secure) from the vendor. You will need to download each of the following:
 * "ITL Drivers"
 * "Validator Manager"
 
-You can download currency sets from the vendor's website [here](https://www.innovative-technology.com/index.php/support/secure-download/currency-download-secure). Be sure to select the "NV9 Range".
+You can download currency sets from the vendor's website [here](https://www.innovative-technology.com/index.php/support/secure-download/currency-download-secure). Be sure to select the "NV9 Range". The dataset files are zip archives that typically contain more than one dataset file. These datasets have ".bv1" file extension and appear to be a proprietary binary data format. See "11.10 File Naming Convention" in the NV9 user manual for details about the naming conventions used for these dataset files.
+
+Before you can connect to the NV9 via the IF17 programming kit, you will need to set the NV9 to SSP mode ("programming mode"). You can check the NV9's current mode by pressing the red button on the side two times quickly ("double-click"). The red light on the front will flash a certain number of times indicating its current mode. One flash means that it is already set to SSP mode. To set the NV9 to SSP mode, hold down the red button for more than 3 seconds. See section "11.5 Switching to Programming Mode (SSP)" in the NV9 user manual for more details.
 
 The rest of the instructions depend upon your system.
 
@@ -433,11 +435,6 @@ The instructions provided here are what worked for me (chill - using Ubuntu). If
 
 * [Installation instructions for VirtualBox](https://www.virtualbox.org/wiki/Linux_Downloads)
 * [Download a virtual machine from Microsoft](https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/) - be sure to use Windows 7 or Windows 8. Once the download is complete, extract the zip archive - it should contain a single file with .ova extension.
-
-
-#### Set the NV9 to Programming Mode
-
-Before you can connect to the NV9 via the IF17 programming kit, you will need to set the NV9 to SSP mode. You can check the NV9's mode first by pressing the red button on the side two times quickly ("double-click"). The red light on the front will flash a certain number of times indicating its current mode. One flash means that it is already set to SSP mode. See section "11.5 Switching to Programming Mode (SSP)" in the NV9 user manual for more details.
 
 
 #### Create and Configure VM
@@ -455,11 +452,11 @@ sudo modprobe ftdi_sio vendor=0x0403 product=0x6001
 ```
 For more information about what this is doing, see "2.3 Linux installation" in the Innovative Technology Customer Software Guide.
 
-Enable the __USB controller__. Select "USB 1.1". Add new USB filter and select "FTDI USB <-> Serial [0400]".
+Enable the __USB controller__. Select "USB 3.0". Add a new USB filter and select "FTDI USB <-> Serial [0400]" from the list.
 
 Add a __shared folder__ to the virtual machine. We will use this folder to provide required files to the virtual machine (like device drivers). Mark the shared folder as "read-only".
 
-Download VirtualBox Guest Additions. You will need to find your VirtualBox's version folder [here](https://download.virtualbox.org/virtualbox). Check your VirtualBox version from the "Help" -> "About VirtualBox" menu. It is an .iso image file that you will mount as a optical disk in the Windows virtual machine.
+Download VirtualBox Guest Additions. You will need to find your VirtualBox's version folder [here](https://download.virtualbox.org/virtualbox). Check your VirtualBox version from the "Help" -> "About VirtualBox" menu. It is an .iso image file that you will mount as an optical disk in the Windows virtual machine.
 
 Start the virtual machine. The guest OS will capture your mouse cursor. To release the cursor back to the host OS, press the right CTRL key. Open the VirtualBox Guest Additions disk. Run the 64bit exe file. Follow the installation instructions. After complete, restart the VM.
 
@@ -468,9 +465,11 @@ After booting for the second time, the shared folder should be accessible in the
 
 #### Install ITL Driver and Validator Manager
 
+Copy the software and datasets that you downloaded from the vendor to the shared folder. Unzip the zip archives as needed.
+
 On the Windows VM, open the shared folder. Find "ITL Drivers / IF17 / IF17 Driver Installer.exe". Copy this executable to the desktop.
 
-Before running the executable, you will need to reboot Windows into a special boot mode that will allow you to install unsigned drivers. Follow these instructions:
+Before running the executable, you will need to reboot Windows into a special boot mode that will allow you to install unsigned drivers. Below are the installation instructions included with the ITL Driver software. Open Command Prompt as administrator to run the shutdown command.
 ```
 Windows 8 requires drivers to be signed by microsoft.  This will prevent installation of ITL 
 drivers being installed.
