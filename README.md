@@ -21,7 +21,10 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 	* [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
 	* [Prepare SD Card](#prepare-sd-card)
 * [Reprogramming Bill Acceptor](#reprogramming-bill-acceptor)
-	* [Using VirtualBox](#using-virtualbox)
+	* [VirtualBox Setup](#virtualbox-setup)
+		* [Create and Configure VM](#create-and-configure-vm)
+		* [Install ITL Driver and Validator Manager](#install-itl-driver-and-validator-manager)
+	* [Troubleshooting ITL Validator Manager](#troubleshooting-itl-validator-manager)
 * [Fonts](#fonts)
 * [License](#license)
 
@@ -409,8 +412,13 @@ Before you can connect to the NV9 via the IF17 programming kit, you will need to
 
 The rest of the instructions depend upon your system.
 
+* [VirtualBox Setup](#virtualbox-setup)
+	* [Create and Configure VM](#create-and-configure-vm)
+	* [Install ITL Driver and Validator Manager](#install-itl-driver-and-validator-manager)
+* [Troubleshooting ITL Validator Manager](#troubleshooting-itl-validator-manager)
 
-### Using VirtualBox
+
+### VirtualBox Setup
 
 The instructions provided here are what worked for me (chill - using Ubuntu). If you get stuck on a step, see the "SOFTWARE INSTALLATION AND CONFIGURATION" section of the NV9 Manual for further details.
 
@@ -480,6 +488,26 @@ Copy the "ITL Validator Manager(vs4.6).exe" (your version may be newer) to the d
 Restart Windows.
 
 Run the ITL Validator Manager. Click "Detect Devices". The red part of the IF17 device should start to blink. It will take up to a minute to finish communicating with the NV9.
+
+
+### Troubleshooting ITL Validator Manager
+
+In this section we will document common problems (and solutions!) that you might encounter while reprogramming the NV9.
+
+> No devices were found
+
+* Is the USB from the IF17 connected to your computer?
+* While USB is connected to your computer, disconnect the 16-pin serial connector from the NV9 then reconnect it. Wait for the NV9 to finish its start-up, then try to "Detect devices" again in the ITL Validator Manager.
+* Is the NV9 in SSP mode? Press the red button two times fast (double-click). The light on the bevel will flash once when the device is set to SSP mode. See section "11.5 Switching to Programming Mode (SSP)" in the NV9 user manual for more details.
+
+> Not supported by device/model
+
+* Check the ".bv1" file name. These dataset files have specific naming conventions to help you recognize which file will work with your device. See [Interpreting Dataset File Names](https://innovative-technology.com/support/faq-2/item/148-interpreting-dataset-file-names) on the vendor's website.
+
+> Update unsuccessful, please check your files are correct.
+
+* Change the baud rate to 38400 and try the upload again.
+* Note that you will need to disconnect/reconnect the 16-pin serial connector from the device before you can connect to it again with the ITL Validator Manager.
 
 
 ## License
