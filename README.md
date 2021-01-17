@@ -47,47 +47,28 @@ This section includes information about the requirements (software + hardware) t
 
 ### Hardware Requirements
 
-To build the physical device, you will need the following hardware components:
+The following list includes all the parts needed to build the commercial Bleskomat ATM. The list includes direct links to suppliers of each part.
+
 * [ESP-WROOM-32](https://www.espressif.com/en/products/modules/esp-wroom-32/overview) by espressif
 	* [laskarduino.cz](https://www.laskarduino.cz/iot-esp-32s-2-4ghz-dual-mode-wifi-bluetooth-rev-1--cp2102/)
 * [WaveShare 4.2 inch E-Paper Module (b/w)](https://www.waveshare.com/wiki/4.2inch_e-Paper_Module):
 	* [laskarduino.cz](https://www.laskarduino.cz/waveshare-4-2--400x300-epaper-displej-modul-bw/)
 * SD Card SPI Module:
 	* [laskarduino.cz](https://www.laskarduino.cz/sd-card-modul-spi/)
-* Bill Acceptor - [NV10](https://innovative-technology.com/products/products-main/127-nv10-usb)
-* Coin Acceptor - "Model HX-616"
+* [NV9 Banknote Validator](https://innovative-technology.com/products/products-main/378-nv9-usb-2) from Innovative Technology
+	* [COMAX LEISURE CZ,a.s.](https://www.akceptory-bankovek.cz/) (located outside of Prague)
+* DG600F Coin Acceptor:
+	* [Alibaba.com](https://www.alibaba.com/trade/search?fsb=y&IndexArea=product_en&CatId=&SearchText=DG600F)
+	* [Sparkfun.com](https://www.sparkfun.com/products/11636)
 * 12V DC power adapter (1.5A < 3A):
-	* [GME](https://www.gme.cz/napajeci-zdroj-sitovy-12v-2500ma-5-5-2-1mm-t3-sys1588-3012-t3)
-* USB (female) adapter:
-	* [laskarduino.cz](https://www.laskarduino.cz/usb-f-na-dip-adapter/)
-* Step-down converter:
+	* [2.5A (GME)](https://www.gme.cz/napajeci-zdroj-sitovy-12v-2500ma-5-5-2-1mm-t3-sys1588-3012-t3)
+* XL4005 Step-down converter:
 	* [laskarduino.cz](https://www.laskarduino.cz/step-down-menic-s-xl4005/)
-* Relay module:
-	* [laskarduino.cz](https://www.laskarduino.cz/1-kanal-5v-rele-modul--low-level--250vac-10a/)
-* Button:
-	* [GME](https://www.gme.cz/) has many available
-
-
-#### Parts Suppliers
-
-* [GM Electronic](https://www.gme.cz/):
-	* physical shop
-	* tools and electronics parts
-	* usually missing most components and not the most helpful staff
-* [laskarduino](https://www.laskarduino.cz/):
-	* eshop only
-	* hobby electronics projects
-	* cheap and good selection
-* [arduino-shop](https://arduino-shop.cz/):
-	* eshop only
-	* expensive and limited selection
-* [COMAX LEISURE CZ,a.s.](https://www.akceptory-bankovek.cz/)
-	* NV10 and other bank note acceptors
-	* physical shop
-	* Modletice 71, 251 70 MODLETICE
-	* info@comax.cz
-	* Main contact:  "Martin Zych" - martin.zych@comax.cz
-
+	* [Alibaba.com](https://www.alibaba.com//trade/search?fsb=y&IndexArea=product_en&CatId=&SearchText=xl4005)
+* Button (stainless steel, without LED):
+	* [12 mm (GME)](https://www.gme.cz/antivandal-spinac-hbgq12f-10-n)
+	* [16 mm (GME)](https://www.gme.cz/antivandal-spinac-hbgq16b-10-s)
+	* [22 mm (GME)](https://www.gme.cz/antivandal-spinac-hbgq22-11-s)
 
 
 ### Software Requirements
