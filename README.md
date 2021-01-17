@@ -108,9 +108,9 @@ Before proceeding, be sure that you have all the project's [hardware requirement
 
 #### Wiring Diagram
 
-Here is a wiring diagram for the Bleskomat ATM:
+!! TODO !!
 
-![](docs/wiring-diagram.png)
+New, up-to-date wiring diagram needs to be created with the latest components. Let's use the export of the wiring schematic from KiCad once the PCB design has been updated.
 
 
 #### Wiring the Power Supply
