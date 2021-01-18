@@ -497,8 +497,9 @@ In this section we will document common problems (and solutions!) that you might
 > No devices were found
 
 * Is the USB from the IF17 connected to your computer?
-* While USB is connected to your computer, disconnect the 16-pin serial connector from the NV9 then reconnect it. Wait for the NV9 to finish its start-up, then try to "Detect devices" again in the ITL Validator Manager.
 * Is the NV9 in SSP mode? Press the red button two times fast (double-click). The light on the bevel will flash once when the device is set to SSP mode. See section "11.5 Switching to Programming Mode (SSP)" in the NV9 user manual for more details.
+* While USB is connected to your computer, disconnect the 16-pin serial connector from the NV9 then reconnect it. Wait for the NV9 to finish its start-up, then try to "Detect devices" again in the ITL Validator Manager.
+* Try disconnecting/reconnecting both the USB from your computer and the 16-pin serial connector on the device.
 
 > Not supported by device/model
 
@@ -507,7 +508,8 @@ In this section we will document common problems (and solutions!) that you might
 > Update unsuccessful, please check your files are correct.
 
 * Change the baud rate to 38400 and try the upload again.
-* Note that you will need to disconnect/reconnect the 16-pin serial connector from the device before you can connect to it again with the ITL Validator Manager.
+* Note that you may need to disconnect/reconnect the 16-pin serial connector from the device before you can connect to it again with the ITL Validator Manager.
+
 
 
 ## License
