@@ -61,6 +61,9 @@ void loop() {
 				#ifdef COIN_ACCEPTOR
 					coinAcceptor::off();
 				#endif
+				#ifdef BILL_ACCEPTOR
+					billAcceptor::off();
+				#endif
 			} else {
 				// Button pressed with zero amount.
 				screen::showInstructionsScreen();
@@ -91,6 +94,7 @@ void loop() {
 			#endif
 			#ifdef BILL_ACCEPTOR
 				billAcceptor::reset();
+				billAcceptor::on();
 			#endif
 			amountShown = 0;
 			screen::showSplashScreen();

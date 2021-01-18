@@ -164,11 +164,12 @@ Connect the SD card SPI module to the ESP32 using the following table as a guide
 
 Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable mappings below:
 
-|  ESP32      | NV10 | Power Supply  |
-|-------------|------|---------------|
-| GPIO3 (RX0) | 1    |               |
-|             | 16   | - Ground      |
-|             | 15   | + 12V DC      |
+|  ESP32       | NV10/NV9 | Power Supply  |
+|--------------|----------|---------------|
+| GPIO3  (RX0) | 1        |               |
+| GPIO17 (TX2) | 5        |               |
+|              | 16       | - Ground      |
+|              | 15       | + 12V DC      |
 
 
 #### Wiring the Coin Acceptor
