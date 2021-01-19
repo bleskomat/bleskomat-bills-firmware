@@ -40,7 +40,9 @@
   "homepage": "https://github.com/samotari/bleskomat-device#readme",
   "dependencies": {
     "async": "3.2.0",
-    "bleskomat-server": "samotari/bleskomat-server#master",
     "underscore": "1.10.2"
+  },
+  "optionalDependencies": {
+    "bleskomat-server": "samotari/bleskomat-server#master"
   }
 }
