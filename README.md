@@ -435,6 +435,12 @@ The default amount of __video memory__ allocated to the VM is below the minimum 
 
 Change the __graphics controller__ to "VBoxSVGA". This setting is located in the same screen as video memory.
 
+Download and install the VirtualBox Extension Pack. It can be found in your VirtualBox's version folder [here](https://download.virtualbox.org/virtualbox). Check your VirtualBox version from the "Help" -> "About VirtualBox" menu.
+
+Download VirtualBox Guest Additions. It can be found in your VirtualBox's version folder [here](https://download.virtualbox.org/virtualbox). It is an .iso image file that you will mount as an optical disk in the Windows virtual machine.
+
+Start the virtual machine. The guest OS will capture your mouse cursor. To release the cursor back to the host OS, press the right CTRL key. Open the VirtualBox Guest Additions disk. Run the 64bit exe file. Follow the installation instructions. After complete, restart the VM. Shutdown the virtual machine.
+
 Disconnect the NV9's 16-pin serial connector. Connect the IF17 USB cable to your computer. Reconnect the NV9's serial connector. Open a terminal window and run the following:
 ```bash
 sudo modprobe -r ftdi_sio
@@ -444,11 +450,16 @@ For more information about what this is doing, see "2.3 Linux installation" in t
 
 Enable the __USB controller__. Select "USB 3.0". Add a new USB filter and select "FTDI USB <-> Serial [0400]" from the list.
 
+__IMPORTANT NOTE__:
+If your VirtualBox is not able to detect the "FTDI USB <-> Serial [0400]" device, you can try to configure a serial port instead:
+* Find the "Serial Ports" in the virtual machine's settings
+* Select "Port 1" and then click "Enable Serial Port"
+* Port Number should be set to "COM1"
+* Port Mode set to "Host Device"
+* Path/Address set to "/dev/ttyUSB0"
+* Change the owner of the device file to your user: `sudo chown $USER /dev/ttyUSB0`
+
 Add a __shared folder__ to the virtual machine. We will use this folder to provide required files to the virtual machine (like device drivers). Mark the shared folder as "read-only".
-
-Download VirtualBox Guest Additions. You will need to find your VirtualBox's version folder [here](https://download.virtualbox.org/virtualbox). Check your VirtualBox version from the "Help" -> "About VirtualBox" menu. It is an .iso image file that you will mount as an optical disk in the Windows virtual machine.
-
-Start the virtual machine. The guest OS will capture your mouse cursor. To release the cursor back to the host OS, press the right CTRL key. Open the VirtualBox Guest Additions disk. Run the 64bit exe file. Follow the installation instructions. After complete, restart the VM.
 
 After booting for the second time, the shared folder should be accessible in the File Explorer.
 
