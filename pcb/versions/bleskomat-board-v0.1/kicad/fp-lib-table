@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name bleskomat-board)(type KiCad)(uri ${KIPRJMOD}/bleskomat-board.pretty)(options "")(descr ""))
+)

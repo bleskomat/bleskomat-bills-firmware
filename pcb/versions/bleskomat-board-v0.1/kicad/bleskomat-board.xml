@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="D">
+  <design>
+    <source>/home/carlos/proyectos/samotari/bleskomat/bleskomat-device/pcb/bleskomat-board/bleskomat-board.sch</source>
+    <date>Wed 19 Aug 2020 18:59:35 CEST</date>
+    <tool>Eeschema 5.1.6-c6e7f7d~87~ubuntu18.04.1</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title>Bleskomat board</title>
+        <company/>
+        <rev>0.0.1</rev>
+        <date>2020-08-17</date>
+        <source>bleskomat-board.sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value="Authors: Carlos Garcia Ortiz and Charles Hill"/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="U1">
+      <value>esp32</value>
+      <footprint>Kitecraft_Boards:ESP32S_30Pin</footprint>
+      <libsource lib="bleskomat-components" part="esp32" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F3AD8CD</tstamp>
+    </comp>
+    <comp ref="R1">
+      <value>10k</value>
+      <footprint>Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F3B6176</tstamp>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="Device" part="R">
+      <description>Resistor</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>R_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">R</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="bleskomat-components" part="esp32">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">esp32</field>
+      </fields>
+      <pins>
+        <pin num="5" name="GND" type="input"/>
+        <pin num="8" name="SensVN" type="output"/>
+        <pin num="9" name="3v3" type="input"/>
+        <pin num="10" name="GPIO34" type="BiDi"/>
+        <pin num="11" name="GPIO35" type="BiDi"/>
+        <pin num="12" name="GPIO32" type="BiDi"/>
+        <pin num="13" name="GPIO33" type="BiDi"/>
+        <pin num="14" name="GPIO25" type="BiDi"/>
+        <pin num="15" name="GPIO26" type="BiDi"/>
+        <pin num="16" name="GPIO27" type="BiDi"/>
+        <pin num="17" name="GPIO14" type="BiDi"/>
+        <pin num="18" name="GPIO12" type="BiDi"/>
+        <pin num="20" name="GPIO13" type="BiDi"/>
+        <pin num="21" name="GPIO15" type="BiDi"/>
+        <pin num="22" name="GPIO02" type="BiDi"/>
+        <pin num="24" name="GPIO04" type="BiDi"/>
+        <pin num="25" name="GPIO16" type="BiDi"/>
+        <pin num="27" name="GPIO17" type="BiDi"/>
+        <pin num="34" name="GPIO05" type="BiDi"/>
+        <pin num="35" name="GPIO18" type="BiDi"/>
+        <pin num="36" name="GPIO23" type="BiDi"/>
+        <pin num="38" name="GPIO19" type="BiDi"/>
+        <pin num="39" name="GPIO22" type="BiDi"/>
+        <pin num="40" name="GPIO3" type="BiDi"/>
+        <pin num="41" name="GPIO1" type="BiDi"/>
+        <pin num="42" name="GPIO21" type="BiDi"/>
+        <pin num="~" name="GND" type="input"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="Device">
+      <uri>/usr/share/kicad/library/Device.lib</uri>
+    </library>
+    <library logical="bleskomat-components">
+      <uri>/home/carlos/proyectos/samotari/bleskomat/bleskomat-device/pcb/bleskomat-board/bleskomat-components.lib</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="Net-(R1-Pad1)">
+      <node ref="R1" pin="1"/>
+    </net>
+    <net code="2" name="Net-(U1-Pad41)">
+      <node ref="U1" pin="41"/>
+    </net>
+    <net code="3" name="Net-(U1-Pad42)">
+      <node ref="U1" pin="42"/>
+    </net>
+    <net code="4" name="Net-(U1-Pad5)">
+      <node ref="U1" pin="5"/>
+    </net>
+    <net code="5" name="Net-(U1-Pad5)">
+      <node ref="U1" pin="5"/>
+    </net>
+    <net code="6" name="Net-(U1-Pad8)">
+      <node ref="U1" pin="8"/>
+    </net>
+    <net code="7" name="Net-(U1-Pad9)">
+      <node ref="U1" pin="9"/>
+    </net>
+    <net code="8" name="Net-(U1-Pad9)">
+      <node ref="U1" pin="9"/>
+    </net>
+    <net code="9" name="Net-(U1-Pad~)">
+      <node ref="U1" pin="~"/>
+    </net>
+    <net code="10" name="Net-(U1-Pad~)">
+      <node ref="U1" pin="~"/>
+    </net>
+    <net code="11" name="Net-(U1-Pad40)">
+      <node ref="U1" pin="40"/>
+    </net>
+    <net code="12" name="Net-(R1-Pad2)">
+      <node ref="R1" pin="2"/>
+    </net>
+    <net code="15" name="Net-(U1-Pad21)">
+      <node ref="U1" pin="21"/>
+    </net>
+    <net code="16" name="Net-(U1-Pad11)">
+      <node ref="U1" pin="11"/>
+    </net>
+    <net code="17" name="Net-(U1-Pad12)">
+      <node ref="U1" pin="12"/>
+    </net>
+    <net code="18" name="Net-(U1-Pad13)">
+      <node ref="U1" pin="13"/>
+    </net>
+    <net code="19" name="Net-(U1-Pad14)">
+      <node ref="U1" pin="14"/>
+    </net>
+    <net code="20" name="Net-(U1-Pad15)">
+      <node ref="U1" pin="15"/>
+    </net>
+    <net code="21" name="Net-(U1-Pad16)">
+      <node ref="U1" pin="16"/>
+    </net>
+    <net code="22" name="Net-(U1-Pad17)">
+      <node ref="U1" pin="17"/>
+    </net>
+    <net code="23" name="Net-(U1-Pad18)">
+      <node ref="U1" pin="18"/>
+    </net>
+    <net code="24" name="Net-(U1-Pad20)">
+      <node ref="U1" pin="20"/>
+    </net>
+    <net code="25" name="Net-(U1-Pad10)">
+      <node ref="U1" pin="10"/>
+    </net>
+    <net code="26" name="Net-(U1-Pad22)">
+      <node ref="U1" pin="22"/>
+    </net>
+    <net code="27" name="Net-(U1-Pad24)">
+      <node ref="U1" pin="24"/>
+    </net>
+    <net code="28" name="Net-(U1-Pad25)">
+      <node ref="U1" pin="25"/>
+    </net>
+    <net code="29" name="Net-(U1-Pad27)">
+      <node ref="U1" pin="27"/>
+    </net>
+    <net code="30" name="Net-(U1-Pad34)">
+      <node ref="U1" pin="34"/>
+    </net>
+    <net code="31" name="Net-(U1-Pad35)">
+      <node ref="U1" pin="35"/>
+    </net>
+    <net code="32" name="Net-(U1-Pad36)">
+      <node ref="U1" pin="36"/>
+    </net>
+    <net code="33" name="Net-(U1-Pad38)">
+      <node ref="U1" pin="38"/>
+    </net>
+    <net code="34" name="Net-(U1-Pad39)">
+      <node ref="U1" pin="39"/>
+    </net>
+  </nets>
+</export>
