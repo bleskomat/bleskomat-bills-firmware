@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="D">
+  <design>
+    <source>/home/carlos/proyectos/samotari/bleskomat/bleskomat-device/pcb/versions/test-board-esp32-assembly/test-board-esp32-assembly/test-board-esp32-assembly.sch</source>
+    <date>Mon 15 Feb 2021 22:12:10 CET</date>
+    <tool>Eeschema 5.1.7-a382d34a8~88~ubuntu18.04.1</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>test-board-esp32-assembly.sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="U1">
+      <value>ESP32-WROOM</value>
+      <footprint>bleskomat-footprints:ESP32-WROOM</footprint>
+      <libsource lib="bleskomat-board" part="ESP32-WROOM" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>6014C984</tstamp>
+    </comp>
+    <comp ref="J1">
+      <value>B8B-XH-A_LFSN</value>
+      <footprint>bleskomat-footprints:B8B-XH-A LFSN</footprint>
+      <libsource lib="bleskomat-board" part="B8B-XH-A_LFSN" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>6029253D</tstamp>
+    </comp>
+    <comp ref="J2">
+      <value>B8B-XH-A_LFSN</value>
+      <footprint>bleskomat-footprints:B8B-XH-A LFSN</footprint>
+      <libsource lib="bleskomat-board" part="B8B-XH-A_LFSN" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>602A59B4</tstamp>
+    </comp>
+    <comp ref="J3">
+      <value>B8B-XH-A_LFSN</value>
+      <footprint>bleskomat-footprints:B8B-XH-A LFSN</footprint>
+      <libsource lib="bleskomat-board" part="B8B-XH-A_LFSN" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>602D3150</tstamp>
+    </comp>
+    <comp ref="J4">
+      <value>B8B-XH-A_LFSN</value>
+      <footprint>bleskomat-footprints:B8B-XH-A LFSN</footprint>
+      <libsource lib="bleskomat-board" part="B8B-XH-A_LFSN" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>6030DED9</tstamp>
+    </comp>
+    <comp ref="J5">
+      <value>B8B-XH-A_LFSN</value>
+      <footprint>bleskomat-footprints:B8B-XH-A LFSN</footprint>
+      <libsource lib="bleskomat-board" part="B8B-XH-A_LFSN" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60319771</tstamp>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="bleskomat-board" part="B8B-XH-A_LFSN">
+      <footprints>
+        <fp>CONN_B8B-XH-A_JST</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">B8B-XH-A_LFSN</field>
+        <field name="Footprint">CONN_B8B-XH-A_JST</field>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="unspc"/>
+        <pin num="2" name="2" type="unspc"/>
+        <pin num="3" name="3" type="unspc"/>
+        <pin num="4" name="4" type="unspc"/>
+        <pin num="5" name="5" type="unspc"/>
+        <pin num="6" name="6" type="unspc"/>
+        <pin num="7" name="7" type="unspc"/>
+        <pin num="8" name="8" type="unspc"/>
+      </pins>
+    </libpart>
+    <libpart lib="bleskomat-board" part="ESP32-WROOM">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">ESP32-WROOM</field>
+        <field name="Footprint">ESP32-footprints-Lib:ESP32-WROOM</field>
+      </fields>
+      <pins>
+        <pin num="1" name="GND" type="power_out"/>
+        <pin num="2" name="3V3" type="power_in"/>
+        <pin num="3" name="EN" type="input"/>
+        <pin num="4" name="SENSOR_VP" type="input"/>
+        <pin num="5" name="SENSOR_VN" type="input"/>
+        <pin num="6" name="IO34" type="BiDi"/>
+        <pin num="7" name="IO35" type="BiDi"/>
+        <pin num="8" name="IO32" type="BiDi"/>
+        <pin num="9" name="IO33" type="BiDi"/>
+        <pin num="10" name="IO25" type="BiDi"/>
+        <pin num="11" name="IO26" type="BiDi"/>
+        <pin num="12" name="IO27" type="BiDi"/>
+        <pin num="13" name="IO14" type="BiDi"/>
+        <pin num="14" name="IO12" type="BiDi"/>
+        <pin num="15" name="GND" type="power_in"/>
+        <pin num="16" name="IO13" type="BiDi"/>
+        <pin num="17" name="SD2" type="BiDi"/>
+        <pin num="18" name="SD3" type="BiDi"/>
+        <pin num="19" name="CMD" type="BiDi"/>
+        <pin num="20" name="CLK" type="input"/>
+        <pin num="21" name="SDO" type="BiDi"/>
+        <pin num="22" name="SD1" type="BiDi"/>
+        <pin num="23" name="IO15" type="BiDi"/>
+        <pin num="24" name="IO2" type="BiDi"/>
+        <pin num="25" name="IO0" type="BiDi"/>
+        <pin num="26" name="IO4" type="input"/>
+        <pin num="27" name="IO16" type="BiDi"/>
+        <pin num="28" name="IO17" type="BiDi"/>
+        <pin num="29" name="IO5" type="BiDi"/>
+        <pin num="30" name="IO18" type="input"/>
+        <pin num="31" name="IO19" type="BiDi"/>
+        <pin num="32" name="NC" type="NotConnected"/>
+        <pin num="33" name="IO21" type="BiDi"/>
+        <pin num="34" name="RXD0" type="BiDi"/>
+        <pin num="35" name="TXD0" type="BiDi"/>
+        <pin num="36" name="IO22" type="BiDi"/>
+        <pin num="37" name="IO23" type="BiDi"/>
+        <pin num="38" name="GND" type="power_in"/>
+        <pin num="39" name="GND-PAD" type="power_in"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="bleskomat-board">
+      <uri>/home/carlos/proyectos/samotari/bleskomat/bleskomat-device/pcb/bleskomat-board-cache.lib</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="Net-(J4-Pad5)">
+      <node ref="U1" pin="33"/>
+      <node ref="J4" pin="5"/>
+    </net>
+    <net code="2" name="Net-(J3-Pad4)">
+      <node ref="J3" pin="4"/>
+      <node ref="U1" pin="21"/>
+    </net>
+    <net code="3" name="Net-(J3-Pad5)">
+      <node ref="U1" pin="20"/>
+      <node ref="J3" pin="5"/>
+    </net>
+    <net code="4" name="Net-(J3-Pad6)">
+      <node ref="U1" pin="19"/>
+      <node ref="J3" pin="6"/>
+    </net>
+    <net code="5" name="Net-(J3-Pad7)">
+      <node ref="U1" pin="18"/>
+      <node ref="J3" pin="7"/>
+    </net>
+    <net code="6" name="Net-(J3-Pad8)">
+      <node ref="U1" pin="17"/>
+      <node ref="J3" pin="8"/>
+    </net>
+    <net code="7" name="Net-(J2-Pad1)">
+      <node ref="U1" pin="16"/>
+      <node ref="J2" pin="1"/>
+    </net>
+    <net code="8" name="Net-(J4-Pad1)">
+      <node ref="J4" pin="1"/>
+      <node ref="U1" pin="37"/>
+    </net>
+    <net code="9" name="Net-(J4-Pad2)">
+      <node ref="J4" pin="2"/>
+      <node ref="U1" pin="36"/>
+    </net>
+    <net code="10" name="Net-(J4-Pad3)">
+      <node ref="U1" pin="35"/>
+      <node ref="J4" pin="3"/>
+    </net>
+    <net code="11" name="Net-(J4-Pad4)">
+      <node ref="J4" pin="4"/>
+      <node ref="U1" pin="34"/>
+    </net>
+    <net code="12" name="Net-(J3-Pad3)">
+      <node ref="U1" pin="22"/>
+      <node ref="J3" pin="3"/>
+    </net>
+    <net code="13" name="Net-(J4-Pad6)">
+      <node ref="J4" pin="6"/>
+      <node ref="U1" pin="32"/>
+    </net>
+    <net code="14" name="Net-(J4-Pad7)">
+      <node ref="J4" pin="7"/>
+      <node ref="U1" pin="31"/>
+    </net>
+    <net code="15" name="Net-(J4-Pad8)">
+      <node ref="J4" pin="8"/>
+      <node ref="U1" pin="30"/>
+    </net>
+    <net code="16" name="Net-(J2-Pad8)">
+      <node ref="U1" pin="8"/>
+      <node ref="J2" pin="8"/>
+    </net>
+    <net code="17" name="Net-(J2-Pad6)">
+      <node ref="U1" pin="10"/>
+      <node ref="J2" pin="6"/>
+    </net>
+    <net code="18" name="Net-(J3-Pad1)">
+      <node ref="U1" pin="24"/>
+      <node ref="J3" pin="1"/>
+    </net>
+    <net code="19" name="Net-(J3-Pad2)">
+      <node ref="J3" pin="2"/>
+      <node ref="U1" pin="23"/>
+    </net>
+    <net code="20" name="GND">
+      <node ref="U1" pin="38"/>
+      <node ref="U1" pin="39"/>
+      <node ref="U1" pin="15"/>
+      <node ref="U1" pin="1"/>
+      <node ref="J5" pin="6"/>
+      <node ref="J5" pin="7"/>
+      <node ref="J5" pin="8"/>
+    </net>
+    <net code="21" name="Net-(J5-Pad2)">
+      <node ref="U1" pin="28"/>
+      <node ref="J5" pin="2"/>
+    </net>
+    <net code="22" name="Net-(J5-Pad3)">
+      <node ref="U1" pin="27"/>
+      <node ref="J5" pin="3"/>
+    </net>
+    <net code="23" name="Net-(J5-Pad1)">
+      <node ref="J5" pin="1"/>
+      <node ref="U1" pin="29"/>
+    </net>
+    <net code="24" name="Net-(J5-Pad4)">
+      <node ref="J5" pin="4"/>
+      <node ref="U1" pin="26"/>
+    </net>
+    <net code="25" name="Net-(J5-Pad5)">
+      <node ref="J5" pin="5"/>
+      <node ref="U1" pin="25"/>
+    </net>
+    <net code="26" name="Net-(J1-Pad2)">
+      <node ref="J1" pin="2"/>
+      <node ref="U1" pin="6"/>
+    </net>
+    <net code="27" name="Net-(J1-Pad4)">
+      <node ref="U1" pin="4"/>
+      <node ref="J1" pin="4"/>
+    </net>
+    <net code="28" name="Net-(J1-Pad3)">
+      <node ref="U1" pin="5"/>
+      <node ref="J1" pin="3"/>
+    </net>
+    <net code="29" name="Net-(J1-Pad1)">
+      <node ref="U1" pin="7"/>
+      <node ref="J1" pin="1"/>
+    </net>
+    <net code="30" name="Net-(J2-Pad5)">
+      <node ref="U1" pin="11"/>
+      <node ref="J2" pin="5"/>
+    </net>
+    <net code="31" name="Net-(J2-Pad4)">
+      <node ref="U1" pin="12"/>
+      <node ref="J2" pin="4"/>
+    </net>
+    <net code="32" name="Net-(J2-Pad3)">
+      <node ref="U1" pin="13"/>
+      <node ref="J2" pin="3"/>
+    </net>
+    <net code="33" name="Net-(J2-Pad2)">
+      <node ref="J2" pin="2"/>
+      <node ref="U1" pin="14"/>
+    </net>
+    <net code="34" name="Net-(J1-Pad6)">
+      <node ref="J1" pin="6"/>
+      <node ref="U1" pin="2"/>
+      <node ref="J1" pin="7"/>
+      <node ref="J1" pin="8"/>
+    </net>
+    <net code="35" name="Net-(J1-Pad5)">
+      <node ref="U1" pin="3"/>
+      <node ref="J1" pin="5"/>
+    </net>
+    <net code="36" name="Net-(J2-Pad7)">
+      <node ref="U1" pin="9"/>
+      <node ref="J2" pin="7"/>
+    </net>
+  </nets>
+</export>
