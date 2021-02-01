@@ -16,12 +16,19 @@ float amountShown = 0;
 void loop() {
 	modules::loop();
 	const std::string currentScreen = screen::getCurrentScreen();
+	double buyLimit = config::getBuyLimit();
 	float accumulatedValue = 0;
 	#ifdef COIN_ACCEPTOR
 		accumulatedValue += coinAcceptor::getAccumulatedValue();
 	#endif
 	#ifdef BILL_ACCEPTOR
 		accumulatedValue += billAcceptor::getAccumulatedValue();
+		float billAcceptorEscrowValue = billAcceptor::getEscrowValue();
+		if (billAcceptorEscrowValue > 0 && billAcceptorEscrowValue + accumulatedValue > buyLimit) {
+			billAcceptor::rejectEscrow();
+		} else if (billAcceptorEscrowValue > 0) {
+			billAcceptor::acceptEscrow();
+		}
 	#endif
 	if (
 		accumulatedValue > 0 &&
@@ -75,7 +82,6 @@ void loop() {
 				screen::updateInsertFiatScreenAmount(accumulatedValue);
 				amountShown = accumulatedValue;
 			}
-			double buyLimit = config::getBuyLimit();
 			#ifdef COIN_ACCEPTOR
 				float maxCoinValue = coinAcceptor::getMaxCoinValue();
 				if (buyLimit > 0 && coinAcceptor::isOn() && (accumulatedValue + maxCoinValue) > buyLimit) {
