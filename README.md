@@ -5,7 +5,6 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 * [Overview](#overview)
 * [Requirements](#requirements)
 	* [Hardware Requirements](#hardware-requirements)
-		* [Parts Suppliers](#parts-suppliers)
 	* [Software Requirements](#software-requirements)
 * [Setup](#setup)
 	* [Building the Hardware Device](#building-the-hardware-device)
@@ -25,6 +24,7 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 		* [Create and Configure VM](#create-and-configure-vm)
 		* [Install ITL Driver and Validator Manager](#install-itl-driver-and-validator-manager)
 	* [Troubleshooting ITL Validator Manager](#troubleshooting-itl-validator-manager)
+	* [Standardization of Device Options](#standardization-of-device-options)
 * [Fonts](#fonts)
 * [License](#license)
 
@@ -443,8 +443,8 @@ Start the virtual machine. The guest OS will capture your mouse cursor. To relea
 
 Disconnect the NV9's 16-pin serial connector. Connect the IF17 USB cable to your computer. Reconnect the NV9's serial connector. Open a terminal window and run the following:
 ```bash
-sudo modprobe -r ftdi_sio
-sudo modprobe ftdi_sio vendor=0x0403 product=0x6001
+sudo modprobe -r ftdi_sio ; \
+	sudo modprobe ftdi_sio vendor=0x0403 product=0x6001
 ```
 For more information about what this is doing, see "2.3 Linux installation" in the Innovative Technology Customer Software Guide.
 
@@ -522,6 +522,38 @@ In this section we will document common problems (and solutions!) that you might
 * Change the baud rate to 38400 and try the upload again.
 * Note that you may need to disconnect/reconnect the 16-pin serial connector from the device before you can connect to it again with the ITL Validator Manager.
 
+> No Key Set
+
+This error can happen while attempting to change the device's options from the "Options" tab. Click the "Reload Options" button. Wait for the options to reload from the device. Make the changes you want. Then try "Apply Changes" again.
+
+
+### Standardization of Device Options
+
+This section describes how to set the options for your NV9.
+
+* Run the ITL Validator Manager program and "Detect Device".
+* Once connected, open the "Options" tab.
+* Click "Reload Options" to get the device's current configuration.
+
+Make sure the following options are set to the correct values:
+
+| Option                  | Value                   |
+|-------------------------|-------------------------|
+| Interface               | SIO (Simple Serial)     |
+
+Set the interface-related options as follows:
+
+| SIO Options             | Value         |
+|-------------------------|---------------|
+| Credit card rejection   | Off           |
+| Disable After Escrow    | Off           |
+| Escrow Timeout          | On            |
+| High Speed Baud         | On            |
+| Internal bezel          | On            |
+| PSU Monitor             | Off           |
+| Serial Output Only      | Off           |
+| Stacker Retry Time      | 1             |
+| Start State             | On            |
 
 
 ## License
