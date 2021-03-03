@@ -1,0 +1,5 @@
+(sym_lib_table
+  (lib (name bleskomat-board-cache)(type Legacy)(uri /home/carlos/proyectos/samotari/bleskomat/bleskomat-device/pcb/lib/symbols/bleskomat-board-cache.lib)(options "")(descr ""))
+  (lib (name 2021-03-03_15-28-59)(type Legacy)(uri /home/carlos/Downloads/KiCAD/B4B-XH-A/KiCAD/2021-03-03_15-28-59/2021-03-03_15-28-59.lib)(options "")(descr ""))
+  (lib (name test-board-esp32-assembly-rescue)(type Legacy)(uri ${KIPRJMOD}/test-board-esp32-assembly-rescue.lib)(options "")(descr ""))
+)

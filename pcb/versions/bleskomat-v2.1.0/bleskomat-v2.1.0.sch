@@ -1,0 +1,633 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L bleskomat-board:ESP32-WROOM-32_8MB U1
+U 1 1 6046903A
+P 4250 2350
+F 0 "U1" H 5850 2837 60  0000 C CNN
+F 1 "ESP32-WROOM-32_8MB" H 5850 2731 60  0000 C CNN
+F 2 "bleskomat-footprints:ESP32-WROOM-32 8MB" H 5850 2690 60  0001 C CNN
+F 3 "" H 4250 2350 60  0000 C CNN
+	1    4250 2350
+	1    0    0    -1  
+$EndComp
+$Comp
+L bleskomat-board:B8B-XH-A_LFSN J2
+U 1 1 60469EA4
+P 2500 2750
+F 0 "J2" H 2800 1850 60  0000 L CNN
+F 1 "epaper B8B-XH-A_LFSN" H 2300 1750 60  0000 L CNN
+F 2 "bleskomat-footprints:B8B-XH-A LFSN" H 2900 2290 60  0001 C CNN
+F 3 "" H 2500 2750 60  0000 C CNN
+	1    2500 2750
+	-1   0    0    1   
+$EndComp
+$Comp
+L bleskomat-board:B2B-XH-ALFSN J4
+U 1 1 6046BB44
+P 6350 900
+F 0 "J4" H 6878 903 60  0000 L CNN
+F 1 "button B2B-XH-ALFSN" H 6878 797 60  0000 L CNN
+F 2 "bleskomat-footprints:B2B-XH-ALFSN" H 6750 840 60  0001 C CNN
+F 3 "" H 6350 900 60  0000 C CNN
+	1    6350 900 
+	1    0    0    -1  
+$EndComp
+$Comp
+L bleskomat-board:B5B-XH-A_LFSN J6
+U 1 1 6046C33A
+P 9300 3750
+F 0 "J6" H 9650 3900 60  0000 L CNN
+F 1 "coin acceptor B5B-XH-A_LFSN" H 9000 4000 60  0000 L CNN
+F 2 "bleskomat-footprints:B5B-XH-A LFSN" H 9700 3490 60  0001 C CNN
+F 3 "" H 9300 3750 60  0000 C CNN
+	1    9300 3750
+	1    0    0    -1  
+$EndComp
+$Comp
+L bleskomat-board:30316-6002HB J3
+U 1 1 6046D485
+P 2500 4950
+F 0 "J3" H 3028 4253 60  0000 L CNN
+F 1 "NV9 30316-6002HB" H 3028 4147 60  0000 L CNN
+F 2 "bleskomat-footprints:30316-6002HB" H 2900 4090 60  0001 C CNN
+F 3 "" H 2500 4950 60  0000 C CNN
+	1    2500 4950
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R1
+U 1 1 6047074F
+P 5300 1300
+F 0 "R1" H 5370 1346 50  0000 L CNN
+F 1 "R 10K button" H 5370 1255 50  0000 L CNN
+F 2 "bleskomat-footprints:CFR-25JB-52-10K" V 5230 1300 50  0001 C CNN
+F 3 "~" H 5300 1300 50  0001 C CNN
+	1    5300 1300
+	1    0    0    -1  
+$EndComp
+$Comp
+L bleskomat-board:step-down-R-78E3.3-1.0 PS1
+U 1 1 60470DE0
+P 5200 6650
+F 0 "PS1" H 5200 7017 50  0000 C CNN
+F 1 "step-down-R-78E3.3-1.0" H 5200 6926 50  0000 C CNN
+F 2 "bleskomat-footprints:CONV_R-78E3.3-1.0" H 5200 6650 50  0001 L BNN
+F 3 "" H 5200 6650 50  0001 L BNN
+F 4 "Manufacturer Recommendations" H 5200 6650 50  0001 L BNN "STANDARD"
+F 5 "10.40mm" H 5200 6650 50  0001 L BNN "MAXIMUM_PACKAGE_HEIGHT"
+F 6 "RECOM" H 5200 6650 50  0001 L BNN "MANUFACTURER"
+F 7 "6" H 5200 6650 50  0001 L BNN "PARTREV"
+	1    5200 6650
+	1    0    0    -1  
+$EndComp
+$Comp
+L bleskomat-board:SD_CARD_HOLDER_DM3D-SF J5
+U 1 1 60478507
+P 9300 2250
+F 0 "J5" H 9600 2600 60  0000 L CNN
+F 1 "SD_CARD_HOLDER_DM3D-SF" H 9100 2450 60  0000 L CNN
+F 2 "bleskomat-footprints:DM3D-SF" H 9700 1790 60  0001 C CNN
+F 3 "" H 9300 2250 60  0000 C CNN
+	1    9300 2250
+	1    0    0    -1  
+$EndComp
+$Comp
+L bleskomat-board:JS202011CQN U2
+U 1 1 60483F0F
+P 6150 5650
+F 0 "U2" H 6950 6037 60  0000 C CNN
+F 1 "switch power JS202011CQN" H 6950 5931 60  0000 C CNN
+F 2 "bleskomat-footprints:JS202011CQN" H 6950 5890 60  0001 C CNN
+F 3 "" H 6150 5650 60  0000 C CNN
+	1    6150 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L bleskomat-board:LED-LTST-C194TBKT D1
+U 1 1 604863CA
+P 9750 5200
+F 0 "D1" H 9830 5296 50  0000 L CNN
+F 1 "LED-LTST-C194TBKT" H 9830 5205 50  0000 L CNN
+F 2 "bleskomat-footprints:0603" H 9750 5200 50  0001 L BNN
+F 3 "" H 9750 5200 50  0001 L BNN
+	1    9750 5200
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR03
+U 1 1 604DD5F9
+P 2500 7400
+F 0 "#PWR03" H 2500 7150 50  0001 C CNN
+F 1 "GND" H 2505 7227 50  0000 C CNN
+F 2 "" H 2500 7400 50  0001 C CNN
+F 3 "" H 2500 7400 50  0001 C CNN
+	1    2500 7400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2500 7350 2500 7400
+$Comp
+L power:GND #PWR06
+U 1 1 604DEEB1
+P 6300 7150
+F 0 "#PWR06" H 6300 6900 50  0001 C CNN
+F 1 "GND" H 6305 6977 50  0000 C CNN
+F 2 "" H 6300 7150 50  0001 C CNN
+F 3 "" H 6300 7150 50  0001 C CNN
+	1    6300 7150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5800 6750 6300 6750
+Wire Wire Line
+	6300 6750 6300 7150
+Wire Wire Line
+	5800 6550 6150 6550
+Wire Wire Line
+	6150 5750 5950 5750
+Wire Wire Line
+	5950 5750 5950 6200
+Wire Wire Line
+	4300 2450 4250 2450
+Wire Wire Line
+	3750 2450 3750 5150
+Wire Wire Line
+	3750 5150 8700 5150
+Wire Wire Line
+	8700 5150 8700 5750
+Connection ~ 4250 2450
+Wire Wire Line
+	4250 2450 4050 2450
+Wire Wire Line
+	5950 6200 8700 6200
+Wire Wire Line
+	8700 6200 8700 5750
+Connection ~ 8700 5750
+Wire Wire Line
+	8700 5750 9750 5750
+Wire Wire Line
+	9750 5750 9750 5400
+$Comp
+L power:GND #PWR09
+U 1 1 605379C5
+P 10600 5050
+F 0 "#PWR09" H 10600 4800 50  0001 C CNN
+F 1 "GND" H 10605 4877 50  0000 C CNN
+F 2 "" H 10600 5050 50  0001 C CNN
+F 3 "" H 10600 5050 50  0001 C CNN
+	1    10600 5050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9750 5100 9750 5050
+Wire Wire Line
+	9750 5050 10600 5050
+$Comp
+L power:GND #PWR05
+U 1 1 60582C6E
+P 4700 1550
+F 0 "#PWR05" H 4700 1300 50  0001 C CNN
+F 1 "GND" H 4705 1377 50  0000 C CNN
+F 2 "" H 4700 1550 50  0001 C CNN
+F 3 "" H 4700 1550 50  0001 C CNN
+	1    4700 1550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4700 1550 4250 1550
+Wire Wire Line
+	4250 1550 4250 2350
+$Comp
+L bleskomat-board:B6B-XH-ALFSN J1
+U 1 1 60585444
+P 2300 6050
+F 0 "J1" H 2542 5263 60  0000 C CNN
+F 1 "firmware B6B-XH-ALFSN" H 2542 5369 60  0000 C CNN
+F 2 "bleskomat-footprints:B6B-XH-ALFSN" H 2700 5790 60  0001 C CNN
+F 3 "" H 2300 6050 60  0000 C CNN
+	1    2300 6050
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	2300 5950 5500 5950
+Wire Wire Line
+	5500 5650 5500 5950
+$Comp
+L power:GND #PWR02
+U 1 1 6058DFCA
+P 2000 6700
+F 0 "#PWR02" H 2000 6450 50  0001 C CNN
+F 1 "GND" H 2005 6527 50  0000 C CNN
+F 2 "" H 2000 6700 50  0001 C CNN
+F 3 "" H 2000 6700 50  0001 C CNN
+	1    2000 6700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2300 5850 2550 5850
+Wire Wire Line
+	2550 5850 2550 6700
+Wire Wire Line
+	2550 6700 2000 6700
+Wire Wire Line
+	2500 2750 3450 2750
+Wire Wire Line
+	3450 2750 3450 3250
+Wire Wire Line
+	3450 3250 4250 3250
+Text Label 1800 2800 0    50   ~ 0
+Busy
+Text Label 1850 2700 0    50   ~ 0
+RST
+Text Label 1900 2600 0    50   ~ 0
+DC
+Text Label 1900 2500 0    50   ~ 0
+CS
+Text Label 1850 2400 0    50   ~ 0
+CLK
+Text Label 1850 2300 0    50   ~ 0
+DIN
+Text Label 1850 2200 0    50   ~ 0
+GND
+Text Label 1850 2100 0    50   ~ 0
+VCC
+$Comp
+L power:GND #PWR04
+U 1 1 60613C97
+P 3100 1500
+F 0 "#PWR04" H 3100 1250 50  0001 C CNN
+F 1 "GND" H 3105 1327 50  0000 C CNN
+F 2 "" H 3100 1500 50  0001 C CNN
+F 3 "" H 3100 1500 50  0001 C CNN
+	1    3100 1500
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	2500 2150 3100 2150
+Wire Wire Line
+	3100 2150 3100 1500
+Wire Wire Line
+	2500 2050 3750 2050
+Wire Wire Line
+	3750 2050 3750 2450
+Connection ~ 3750 2450
+Wire Wire Line
+	2500 2650 3300 2650
+Wire Wire Line
+	3300 2650 3300 3350
+Wire Wire Line
+	3300 3350 4250 3350
+Wire Wire Line
+	2500 2550 3200 2550
+Wire Wire Line
+	3200 2550 3200 3450
+Wire Wire Line
+	3200 3450 4250 3450
+Wire Wire Line
+	2500 2450 3050 2450
+Wire Wire Line
+	3050 2450 3050 4550
+Wire Wire Line
+	3050 4550 4250 4550
+Wire Wire Line
+	2500 2350 3500 2350
+Wire Wire Line
+	3500 2350 3500 3850
+Wire Wire Line
+	3500 3850 4250 3850
+Wire Wire Line
+	2500 2250 3600 2250
+Wire Wire Line
+	3600 2250 3600 3550
+Wire Wire Line
+	3600 3550 4250 3550
+$Comp
+L power:GND #PWR01
+U 1 1 60628371
+P 1550 3200
+F 0 "#PWR01" H 1550 2950 50  0001 C CNN
+F 1 "GND" H 1555 3027 50  0000 C CNN
+F 2 "" H 1550 3200 50  0001 C CNN
+F 3 "" H 1550 3200 50  0001 C CNN
+	1    1550 3200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2500 3450 2500 3200
+Wire Wire Line
+	2500 3200 1550 3200
+Wire Wire Line
+	2500 3550 2900 3550
+Wire Wire Line
+	2900 3550 2900 6550
+Connection ~ 2900 6550
+Wire Wire Line
+	2500 4950 7900 4950
+Wire Wire Line
+	7900 4950 7900 3650
+Wire Wire Line
+	7900 3650 7700 3650
+Wire Wire Line
+	2500 4850 7800 4850
+Wire Wire Line
+	7800 4850 7800 4250
+Wire Wire Line
+	7800 4250 7450 4250
+Text Label 9850 3750 0    50   ~ 0
+INHIBIT
+Text Label 9850 3850 0    50   ~ 0
+COUNTER
+Text Label 9850 3950 0    50   ~ 0
+GND
+Text Label 9850 4050 0    50   ~ 0
+SIGNAL
+Text Label 9850 4150 0    50   ~ 0
+DC12V
+Wire Wire Line
+	2900 6550 4350 6550
+Wire Wire Line
+	2900 7350 2500 7350
+Wire Wire Line
+	2900 7200 2900 6550
+$Comp
+L bleskomat-board:12V-SOCKET POWER1
+U 1 1 604716A4
+P 2950 7400
+F 0 "POWER1" H 3528 7571 50  0000 L CNN
+F 1 "12V-SOCKET" H 3528 7480 50  0000 L CNN
+F 2 "bleskomat-footprints:Barrel_Jack_5.5mmODx2.1mmID_PJ-202A" H 2950 7400 50  0001 C CNN
+F 3 "" H 2950 7400 50  0001 C CNN
+	1    2950 7400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9300 4150 9300 7450
+Wire Wire Line
+	9300 7450 4350 7450
+Wire Wire Line
+	4350 7450 4350 6550
+Connection ~ 4350 6550
+Wire Wire Line
+	4350 6550 4600 6550
+Wire Wire Line
+	9300 4050 8100 4050
+Wire Wire Line
+	8100 4050 8100 4350
+Wire Wire Line
+	8100 4350 7450 4350
+Wire Wire Line
+	9300 3750 7450 3750
+$Comp
+L power:GND #PWR07
+U 1 1 606787F1
+P 8700 4550
+F 0 "#PWR07" H 8700 4300 50  0001 C CNN
+F 1 "GND" H 8705 4377 50  0000 C CNN
+F 2 "" H 8700 4550 50  0001 C CNN
+F 3 "" H 8700 4550 50  0001 C CNN
+	1    8700 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9300 3950 8700 3950
+Wire Wire Line
+	8700 3950 8700 4550
+Text Label 1800 3450 0    50   ~ 0
+GND
+Text Label 1750 3600 0    50   ~ 0
+DC12V
+Text Label 1900 5000 0    50   ~ 0
+TX
+Text Label 1900 4850 0    50   ~ 0
+RX
+Text Label 9850 2250 0    50   ~ 0
+DAT2_CS
+Text Label 9850 2350 0    50   ~ 0
+DAT3_MOSI
+Text Label 9850 2550 0    50   ~ 0
+VDD_3V3
+Text Label 9850 2650 0    50   ~ 0
+CLK_SCK
+Text Label 9850 2750 0    50   ~ 0
+VSS_GND
+Text Label 9850 2850 0    50   ~ 0
+DAT0_MISO
+Text Label 9850 2950 0    50   ~ 0
+DAT1_X
+Wire Wire Line
+	3750 2050 3750 900 
+Wire Wire Line
+	3750 900  6350 900 
+Connection ~ 3750 2050
+Wire Wire Line
+	6400 1000 6350 1000
+Wire Wire Line
+	5300 1000 5300 1150
+Connection ~ 6350 1000
+Wire Wire Line
+	6350 1000 5300 1000
+Wire Wire Line
+	5300 1450 4700 1450
+Wire Wire Line
+	4700 1450 4700 1550
+Connection ~ 4700 1550
+Wire Wire Line
+	6350 1000 6350 1800
+Wire Wire Line
+	6350 1800 3800 1800
+Wire Wire Line
+	3800 1800 3800 3150
+Wire Wire Line
+	3800 3150 4250 3150
+Text Label 1600 5900 0    50   ~ 0
+GND
+Text Label 1600 6000 0    50   ~ 0
+3.3V
+Text Label 1600 6100 0    50   ~ 0
+en
+Text Label 1600 5800 0    50   ~ 0
+TXD
+Text Label 1600 5700 0    50   ~ 0
+DCOM
+Text Label 1600 5600 0    50   ~ 0
+RX0
+Wire Wire Line
+	2300 5550 5300 5550
+Wire Wire Line
+	5300 5550 5300 2550
+Wire Wire Line
+	5300 2550 6750 2550
+Wire Wire Line
+	6750 2550 6750 2000
+Wire Wire Line
+	6750 2000 7850 2000
+Wire Wire Line
+	7850 2000 7850 3550
+Wire Wire Line
+	7850 3550 7450 3550
+Wire Wire Line
+	2300 5750 5400 5750
+Wire Wire Line
+	5400 5750 5400 2650
+Wire Wire Line
+	5400 2650 6850 2650
+Wire Wire Line
+	6850 2650 6850 2150
+Wire Wire Line
+	6850 2150 7700 2150
+Wire Wire Line
+	7700 2150 7700 3650
+Connection ~ 7700 3650
+Wire Wire Line
+	7700 3650 7450 3650
+Wire Wire Line
+	2300 6050 4000 6050
+Wire Wire Line
+	4000 6050 4000 2550
+Wire Wire Line
+	4000 2550 4250 2550
+Wire Wire Line
+	2300 5650 4900 5650
+Wire Wire Line
+	4900 5650 4900 5050
+Wire Wire Line
+	4900 5050 8050 5050
+Wire Wire Line
+	8050 5050 8050 4650
+Wire Wire Line
+	8050 4650 7450 4650
+Wire Wire Line
+	7450 4550 7450 4650
+Connection ~ 7450 4650
+Text Label 9850 2450 0    50   ~ 0
+CMD_GND
+Wire Wire Line
+	9300 2250 8000 2250
+Wire Wire Line
+	8000 2250 8000 4150
+Wire Wire Line
+	8000 4150 7450 4150
+Wire Wire Line
+	9300 2350 8050 2350
+Wire Wire Line
+	8050 2350 8050 3350
+Wire Wire Line
+	8050 3350 7450 3350
+$Comp
+L power:GND #PWR08
+U 1 1 6051513F
+P 8850 1500
+F 0 "#PWR08" H 8850 1250 50  0001 C CNN
+F 1 "GND" H 8855 1327 50  0000 C CNN
+F 2 "" H 8850 1500 50  0001 C CNN
+F 3 "" H 8850 1500 50  0001 C CNN
+	1    8850 1500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9300 2450 9000 2450
+Wire Wire Line
+	9000 2450 9000 1500
+Wire Wire Line
+	9000 1500 8850 1500
+Wire Wire Line
+	9300 2550 8850 2550
+Wire Wire Line
+	8850 1900 4050 1900
+Wire Wire Line
+	4050 1900 4050 2450
+Wire Wire Line
+	8850 1900 8850 2550
+Connection ~ 4050 2450
+Wire Wire Line
+	4050 2450 3750 2450
+Wire Wire Line
+	9300 2650 8150 2650
+Wire Wire Line
+	8150 2650 8150 3900
+Wire Wire Line
+	8150 3900 7750 3900
+Wire Wire Line
+	7750 3900 7750 4050
+Wire Wire Line
+	7750 4050 7450 4050
+Wire Wire Line
+	9300 2750 9000 2750
+Wire Wire Line
+	9000 2750 9000 2450
+Connection ~ 9000 2450
+Wire Wire Line
+	9300 2850 8250 2850
+Wire Wire Line
+	8250 2850 8250 3850
+Wire Wire Line
+	8250 3850 7650 3850
+Wire Wire Line
+	7650 3850 7650 3950
+Wire Wire Line
+	7650 3950 7450 3950
+$Comp
+L power:GND #PWR0101
+U 1 1 60571000
+P 7550 1600
+F 0 "#PWR0101" H 7550 1350 50  0001 C CNN
+F 1 "GND" H 7555 1427 50  0000 C CNN
+F 2 "" H 7550 1600 50  0001 C CNN
+F 3 "" H 7550 1600 50  0001 C CNN
+	1    7550 1600
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	7450 3250 7450 3150
+Wire Wire Line
+	7450 3050 7450 3150
+Connection ~ 7450 3150
+Wire Wire Line
+	7450 3050 7450 2950
+Connection ~ 7450 3050
+Wire Wire Line
+	7450 2950 7450 2850
+Connection ~ 7450 2950
+Wire Wire Line
+	7450 2850 7450 2750
+Connection ~ 7450 2850
+Wire Wire Line
+	7450 2750 7450 2650
+Connection ~ 7450 2750
+Wire Wire Line
+	7450 2650 7450 2550
+Connection ~ 7450 2650
+Wire Wire Line
+	7450 2550 7450 2450
+Connection ~ 7450 2550
+Wire Wire Line
+	7450 2450 7450 2350
+Connection ~ 7450 2450
+Wire Wire Line
+	7450 2350 7450 1600
+Wire Wire Line
+	7450 1600 7550 1600
+Connection ~ 7450 2350
+Wire Wire Line
+	5500 5650 6150 5650
+Wire Wire Line
+	6150 5850 6150 6550
+Text Label 7350 7500 0    50   ~ 0
+Bleskomat_v2.1.0
+Text Label 8150 7650 0    50   ~ 0
+10_03_2021
+$EndSCHEMATC

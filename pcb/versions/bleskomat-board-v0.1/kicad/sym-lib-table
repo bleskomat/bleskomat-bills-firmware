@@ -1,4 +1,0 @@
-(sym_lib_table
-  (lib (name bleskomat-components)(type Legacy)(uri ${KIPRJMOD}/bleskomat-components.lib)(options "")(descr ""))
-  (lib (name bleskomat-board-rescue)(type Legacy)(uri ${KIPRJMOD}/bleskomat-board-rescue.lib)(options "")(descr ""))
-)

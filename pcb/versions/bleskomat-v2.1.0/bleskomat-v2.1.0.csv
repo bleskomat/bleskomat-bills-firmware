@@ -1,0 +1,13 @@
+Reference, Value, Footprint, Datasheet, MANUFACTURER, MAXIMUM_PACKAGE_HEIGHT, PARTREV, STANDARD
+"U1","ESP32-WROOM-32_8MB","bleskomat-footprints:ESP32-WROOM-32 8MB",""
+"J2","epaper B8B-XH-A_LFSN","bleskomat-footprints:B8B-XH-A LFSN",""
+"J4","button B2B-XH-ALFSN","bleskomat-footprints:B2B-XH-ALFSN",""
+"J6","coin acceptor B5B-XH-A_LFSN","bleskomat-footprints:B5B-XH-A LFSN",""
+"J3","NV9 30316-6002HB","bleskomat-footprints:30316-6002HB",""
+"R1","R 10K button","bleskomat-footprints:CFR-25JB-52-10K","~"
+"PS1","step-down-R-78E3.3-1.0","bleskomat-footprints:CONV_R-78E3.3-1.0","","RECOM","10.40mm","6","Manufacturer Recommendations"
+"J5","SD_CARD_HOLDER_DM3D-SF","bleskomat-footprints:DM3D-SF",""
+"U2","switch power JS202011CQN","bleskomat-footprints:JS202011CQN",""
+"D1","LED-LTST-C194TBKT","bleskomat-footprints:0603",""
+"J1","firmware B6B-XH-ALFSN","bleskomat-footprints:B6B-XH-ALFSN",""
+"POWER1","12V-SOCKET","bleskomat-footprints:Barrel_Jack_5.5mmODx2.1mmID_PJ-202A",""

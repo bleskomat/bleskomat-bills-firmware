@@ -1,7 +1,0 @@
-!PADS-POWERPCB-V2.0-MILS!
-*PART*
- U1 Kitecraft_Boards:ESP32S_30Pin
- R1 Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal
-
-*NET*
-*END*
