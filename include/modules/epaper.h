@@ -68,6 +68,4 @@ namespace epaper {
 	void showTransactionCompleteScreen(const float &amount, const std::string &qrcodeData);
 }
 
-namespace screen = epaper;
-
 #endif

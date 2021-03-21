@@ -15,10 +15,8 @@ namespace modules {
 			button::init();
 			logger::write("Button OK");
 		#endif
-		#ifdef EPAPER
-			screen::init();
-			logger::write("Screen OK");
-		#endif
+		screen::init();
+		logger::write("Screen OK");
 	}
 
 	void loop() {

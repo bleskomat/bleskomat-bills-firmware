@@ -18,6 +18,9 @@
 
 #ifdef EPAPER
 	#include "modules/epaper.h"
+	namespace screen = epaper;
+#else
+	#include "modules/dummy/screen.h"
 #endif
 
 namespace modules {

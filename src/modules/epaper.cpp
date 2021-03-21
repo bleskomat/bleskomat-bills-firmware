@@ -194,14 +194,14 @@ namespace epaper {
 			logger::write("E-Paper display initialized and ready for use");
 			initialized = true;
 			display.setRotation(0);
-			screen::showSplashScreen();
+			epaper::showSplashScreen();
 			// Uncomment the following lines to render each screen after a short delay between each.
 			// delay(2000);
-			// screen::showInstructionsScreen();
+			// epaper::showInstructionsScreen();
 			// delay(2000);
-			// screen::showInsertFiatScreen(0);
+			// epaper::showInsertFiatScreen(0);
 			// delay(2000);
-			// screen::showTransactionCompleteScreen(0, "LNURL1DP68GURN8GHJ7UM9WFMXJCM99E3K7MF0V9CXJ0M385EKVCENXC6R2C35XVUKXEFCV5MKVV34X5EKZD3EV56NYD3HXQURZEPEXEJXXEPNXSCRVWFNV9NXZCN9XQ6XYEFHVGCXXCMYXYMNSERXFQ5FNS");
+			// epaper::showTransactionCompleteScreen(0, "LNURL1DP68GURN8GHJ7UM9WFMXJCM99E3K7MF0V9CXJ0M385EKVCENXC6R2C35XVUKXEFCV5MKVV34X5EKZD3EV56NYD3HXQURZEPEXEJXXEPNXSCRVWFNV9NXZCN9XQ6XYEFHVGCXXCMYXYMNSERXFQ5FNS");
 		} else {
 			logger::write("Unknown display connected. This device supports WaveShare 4.2 inch e-paper b/w");
 		}
