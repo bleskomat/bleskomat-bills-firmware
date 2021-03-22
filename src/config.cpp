@@ -223,6 +223,20 @@ namespace config {
 			}
 		}
 		endNVS();
+		// Hard-coded configuration overrides - for development purposes.
+		// Uncomment the following lines, as needed, to override config options.
+		// values.lnurl.apiKey.id = "";
+		// values.lnurl.apiKey.key = "";
+		// values.lnurl.apiKey.encoding = "";
+		// values.lnurl.callbackUrl = "http://localhost:3000/u";
+		// values.lnurl.fiatCurrency = "CZK";
+		// values.lnurl.shorten = true;
+		// values.uriSchemaPrefix = "lightning:";
+		// values.fiatPrecision = 0;
+		// values.buyLimit = 25000;
+		// values.coinValues = { 1, 2, 5, 10, 20, 50 };
+		// values.billValues = { 100, 200, 500, 1000, 2000, 5000 };
+		// values.instructionsUrl = "https://www.bleskomat.com/intro?id={{API_KEY_ID}}";
 		printConfig();
 	}
 
