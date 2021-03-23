@@ -12,7 +12,11 @@ namespace screen {
 	void showInstructionsScreen();
 	void showInsertFiatScreen(const float &amount);
 	void updateInsertFiatScreenAmount(const float &amount);
-	void showTransactionCompleteScreen(const float &amount, const std::string &qrcodeData);
+	void showTransactionCompleteScreen(
+		const float &amount,
+		const std::string &qrcodeData,
+		const std::string &referenceCode = ""
+	);
 }
 
 #endif

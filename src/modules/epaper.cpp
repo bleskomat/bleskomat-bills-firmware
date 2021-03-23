@@ -201,7 +201,12 @@ namespace epaper {
 			// delay(2000);
 			// epaper::showInsertFiatScreen(0);
 			// delay(2000);
-			// epaper::showTransactionCompleteScreen(0, "LNURL1DP68GURN8GHJ7UM9WFMXJCM99E3K7MF0V9CXJ0M385EKVCENXC6R2C35XVUKXEFCV5MKVV34X5EKZD3EV56NYD3HXQURZEPEXEJXXEPNXSCRVWFNV9NXZCN9XQ6XYEFHVGCXXCMYXYMNSERXFQ5FNS");
+			// const std::string referenceCode = util::generateRandomWords(5);
+			// epaper::showTransactionCompleteScreen(
+			// 	2,
+			// 	util::toUpperCase(util::lnurlEncode(util::createSignedWithdrawUrl(2, referenceCode))),
+			// 	referenceCode
+			// );
 		} else {
 			logger::write("Unknown display connected. This device supports WaveShare 4.2 inch e-paper b/w");
 		}
@@ -283,29 +288,56 @@ namespace epaper {
 		renderText(text, &font, x, y, &renderedAmountTextBoundingBox);
 	}
 
-	void showTransactionCompleteScreen(const float &amount,const std::string &qrcodeData) {
+	void showTransactionCompleteScreen(
+		const float &amount,
+		const std::string &qrcodeData,
+		const std::string &referenceCode
+	) {
 		if (!isInitialized()) return;
 		display.clearScreen();
 
 		// Render QR code.
-		int16_t qr_x = display.width() / 2;
-		int16_t qr_y = display.height() / 2;
-		uint16_t qr_max_w = display.width();
+		// Use the left 2/3rds of the screen.
+		uint16_t qr_max_w = (display.width() * 2) / 3;
 		uint16_t qr_max_h = 216;
+		int16_t qr_x = qr_max_w / 2;
+		int16_t qr_y = display.height() / 2;
 		renderQRCode(qrcodeData, qr_x, qr_y, qr_max_w, qr_max_h);
+
+		std::cout << "QR Code: " << qrcodeData << std::endl;
 
 		// Render amount + fiat currency symbol (top-center).
 		const std::string text = getAmountFiatCurrencyString(amount);
 		int16_t margin = 24;
 		int16_t text_x = (display.width() / 2);// center
 		int16_t text_y = margin;
-		renderText(text, &Courier_Prime_Code12pt7b, text_x, text_y, NULL);
+		TextBoundingBox text_bbox;
+		renderText(text, &Courier_Prime_Code12pt7b, text_x, text_y, &text_bbox);
 
 		// Render instructional text (bottom-center).
 		const std::string text2 = "scan with your mobile wallet app";
 		int16_t text2_x = (display.width() / 2);// center
 		int16_t text2_y = display.height() - margin;// bottom + margin
 		renderText(text2, &OpenSans_Light9pt7b, text2_x, text2_y, NULL);
+
+		if (referenceCode != "") {
+			// Render reference code.
+			// Use the right 1/3rd of the screen.
+			const std::string text3 = "ref. code:";
+			int16_t text3_x = (((display.width() * 2) / 3) + (display.width() / 6)) - 18;
+			int16_t text3_y = text_bbox.h + 56;
+			TextBoundingBox text3_bbox;
+			renderText(text3, &OpenSans_Light9pt7b, text3_x, text3_y, &text3_bbox);
+			TextSize word_textsize = calculateTextSize("check", &Courier_Prime_Code12pt7b);
+			std::vector<std::string> referenceCodeWords = util::stringListToStringVector(referenceCode, ' ');
+			for (int index = 0; index < referenceCodeWords.size(); index++) {
+				std::string word = referenceCodeWords.at(index);
+				int16_t word_x = text3_x;
+				int16_t word_y = text3_bbox.y + text3_bbox.h + 24 + (index * (word_textsize.h + 14));
+				renderText(word, &Courier_Prime_Code12pt7b, word_x, word_y, NULL);
+			}
+		}
+
 		currentScreen = "transactionComplete";
 	}
 }
