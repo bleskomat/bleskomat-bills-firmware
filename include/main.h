@@ -4,6 +4,7 @@
 #include "config.h"
 #include "logger.h"
 #include "modules.h"
+#include "network.h"
 #include "util.h"
 
 #include <lnurl.h>

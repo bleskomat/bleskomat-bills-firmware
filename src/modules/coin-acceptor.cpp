@@ -32,7 +32,7 @@ namespace {
 					const int byte3 = buffer.front();
 					buffer.pop_front();
 					if (byte3 == (byte1 ^ byte2)) {
-						logger::write("Coin inserted with value = " + util::floatToString(coinValue));
+						logger::write("Coin inserted with value = " + std::to_string(coinValue));
 						accumulatedValue += coinValue;
 					}
 				}
@@ -66,7 +66,7 @@ namespace coinAcceptor {
 		while (Serial2.available()) {
 			const int byteReceived = Serial2.read();
 			if (byteReceived > 0 && byteReceived < 254) {
-				logger::write("Coin acceptor byte received: " + util::byteToString(byteReceived));
+				logger::write("Coin acceptor byte received: " + std::to_string(byteReceived));
 				buffer.push_back(byteReceived);
 			}
 		}

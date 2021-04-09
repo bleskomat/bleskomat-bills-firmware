@@ -86,36 +86,6 @@ namespace util {
 		return stringList;
 	}
 
-	std::string floatToString(const float &number) {
-		std::ostringstream ss;
-		ss << number;
-		return ss.str();
-	}
-
-	std::string doubleToString(const double &number) {
-		std::ostringstream ss;
-		ss << number;
-		return ss.str();
-	}
-
-	std::string shortToString(const short &number) {
-		std::ostringstream ss;
-		ss << number;
-		return ss.str();
-	}
-
-	std::string unsignedIntToString(const unsigned int &number) {
-		std::ostringstream ss;
-		ss << +number;
-		return ss.str();
-	}
-
-	std::string byteToString(const byte &byteIn) {
-		std::ostringstream ss;
-		ss << +byteIn;
-		return ss.str();
-	}
-
 	std::string replaceFirstOccurrence(
 		std::string& s,
 		const std::string& toReplace,
