@@ -58,6 +58,15 @@ This will produce the one file per each of the layers that the PCB is going to h
 8. BOM (Bill of Material)
 Once you have finshed everything you can generate you BOM file. This file can be in different formats, we are using `csv`. You can generate this file if you click on `Generate Bill of Material` in the program `eeSchema` and use the script `bom2csv` like:
 `xsltproc -o "%bleskomat-bom-v2.1.csv" "/usr/share/kicad/plugins/bom2csv.xsl" "%I"`.
+9. Centroid/ Pick & Place file is a file with extension `.pos` that is required sometimes by the manufacturer to assembly automatically.
+  - https://www.pcbway.com/helpcenter/technical_support/Generate_Position_File_in_Kicad.html
+  - https://electronics.stackexchange.com/questions/456671/kicad-no-footprint-for-automated-placement
+  A.Set the origin point
+    Select the menu bar Place-> Drilling and Position Offset, place the origin at the bottom left corner of the PCB board frame, and then place [Layer Alignment Mark] to the position of the origin just placed.
+  B.Generate Footprint Position File
+    Click the menu [File] >> [Fabrication Output] >> [Footprint Position (.pos) File], select the output directory, other default, click [Generate Position File]. Open the package location file with Notepad or text editor. You can see the contents have reference number, value, package, X Y coordinate, orientation, board surface, etc.
+
+    The checkbox 'Include footprints with SMD pads even if not marked Surface Mount' should be selected.
 
 
 ### KiCad design rules

@@ -1,0 +1,9 @@
+### Module positions - created on Thu Apr  8 22:11:21 2021 ###
+### Printed by Pcbnew version kicad 5.1.7-a382d34a8~88~ubuntu18.04.1
+## Unit = mm, Angle = deg.
+## Side : All
+# Ref     Val                 Package                  PosX       PosY       Rot  Side
+D1        LED-LTST-C194TBKT   0603                  16.5100    19.0500    0.0000  top
+J5        SD_CARD             DM3D-SF                7.8740    54.8640    0.0000  top
+U1        ESP32-WROOM-32_8MB  ESP32-WROOM-32_8MB    10.8555    34.1290    0.0000  top
+## End
