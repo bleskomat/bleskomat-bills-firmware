@@ -20,7 +20,9 @@ namespace {
 		"buyLimit",
 		"coinValues",
 		"billValues",
-		"instructionsUrl"
+		"instructionsUrl",
+		"wifi.ssid",
+		"wifi.password"
 	};
 
 	// Using Preferences library as a wrapper to Non-Volatile Storage (flash memory):
@@ -58,6 +60,10 @@ namespace {
 			t_values.fiatPrecision = (char)( *value.c_str() - '0' );
 		} else if (key == "instructionsUrl") {
 			t_values.instructionsUrl = value;
+		} else if (key == "wifi.ssid") {
+			t_values.wifi.ssid = value;
+		} else if (key == "wifi.password") {
+			t_values.wifi.password = value;
 		} else {
 			return false;
 		}
@@ -80,15 +86,19 @@ namespace {
 		} else if (key == "uriSchemaPrefix") {
 			return t_values.uriSchemaPrefix;
 		} else if (key == "buyLimit") {
-			return util::doubleToString(t_values.buyLimit);
+			return std::to_string(t_values.buyLimit);
 		} else if (key == "coinValues") {
 			return util::floatVectorToStringList(t_values.coinValues);
 		} else if (key == "billValues") {
 			return util::floatVectorToStringList(t_values.billValues);
 		} else if (key == "fiatPrecision") {
-			return util::shortToString(t_values.fiatPrecision);
+			return std::to_string(t_values.fiatPrecision);
 		} else if (key == "instructionsUrl") {
 			return t_values.instructionsUrl;
+		} else if (key == "wifi.ssid") {
+			return t_values.wifi.ssid;
+		} else if (key == "wifi.password") {
+			return t_values.wifi.password;
 		}
 		return "";
 	}
@@ -237,11 +247,17 @@ namespace config {
 		// values.coinValues = { 1, 2, 5, 10, 20, 50 };
 		// values.billValues = { 100, 200, 500, 1000, 2000, 5000 };
 		// values.instructionsUrl = "https://www.bleskomat.com/intro?id={{API_KEY_ID}}";
+		// values.wifi.ssid = "";
+		// values.wifi.password = "";
 		printConfig();
 	}
 
 	LnurlSignerConfig getLnurlSignerConfig() {
 		return values.lnurl;
+	}
+
+	BleskomatWifiConfig getWifiConfig() {
+		return values.wifi;
 	}
 
 	BleskomatConfig getAll() {

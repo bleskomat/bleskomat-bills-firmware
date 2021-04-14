@@ -28,7 +28,7 @@ namespace {
 					buffer.pop_front();
 					float billValue = getBillValue(byte3);
 					if (billValue > 0) {
-						logger::write("Bill inserted with value = " + util::floatToString(billValue));
+						logger::write("Bill inserted with value = " + std::to_string(billValue));
 						escrowValue += billValue;
 					}
 				}
@@ -50,7 +50,7 @@ namespace billAcceptor {
 		while (Serial1.available()) {
 			byte byteIn = Serial1.read();
 			if (byteIn > 0) {
-				logger::write("Bill acceptor byte received: " + util::byteToString(byteIn));
+				logger::write("Bill acceptor byte received: " + std::to_string(byteIn));
 				buffer.push_back(byteIn);
 			}
 		}

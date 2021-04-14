@@ -31,7 +31,7 @@ namespace {
 
 	typedef std::vector<GFXfont> FontList;
 
-	const FontList amountTextFonts = {
+	const FontList monospaceFonts = {
 		// Ordered from largest to smallest.
 		Courier_Prime_Code32pt7b,
 		Courier_Prime_Code30pt7b,
@@ -284,7 +284,7 @@ namespace epaper {
 		const std::string text = getAmountFiatCurrencyString(amount);
 		int16_t x = (display.width() / 2);
 		int16_t y = (display.height() / 2) + insertFiatScreenAmountMarginTop;
-		GFXfont font = getBestFitFont(text, amountTextFonts);
+		GFXfont font = getBestFitFont(text, monospaceFonts);
 		renderText(text, &font, x, y, &renderedAmountTextBoundingBox);
 	}
 

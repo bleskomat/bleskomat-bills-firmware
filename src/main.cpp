@@ -6,6 +6,8 @@ void setup() {
 	logger::write("Bleskomat firmware version=" + firmwareVersion + ",commit=" + firmwareCommitHash);
 	config::init();
 	logger::write("Config OK");
+	network::init();
+	logger::write("Network OK");
 	modules::init();
 	logger::write("Modules OK");
 	logger::write("Setup OK");
@@ -14,6 +16,7 @@ void setup() {
 float amountShown = 0;
 
 void loop() {
+	network::loop();
 	modules::loop();
 	const std::string currentScreen = screen::getCurrentScreen();
 	double buyLimit = config::getBuyLimit();

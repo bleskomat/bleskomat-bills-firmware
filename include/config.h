@@ -14,6 +14,11 @@
 #include <sstream>
 #include <vector>
 
+struct BleskomatWifiConfig {
+	std::string ssid = "";
+	std::string password = "";
+};
+
 struct BleskomatConfig {
 	struct LnurlSignerConfig lnurl;
 	std::string uriSchemaPrefix = "LIGHTNING";
@@ -22,11 +27,13 @@ struct BleskomatConfig {
 	std::vector<float> coinValues;
 	std::vector<float> billValues;
 	std::string instructionsUrl = "https://www.bleskomat.com/intro?id={{API_KEY_ID}}";
+	struct BleskomatWifiConfig wifi;
 };
 
 namespace config {
 	void init();
 	LnurlSignerConfig getLnurlSignerConfig();
+	BleskomatWifiConfig getWifiConfig();
 	BleskomatConfig getAll();
 	std::string get(const char* &t_key);
 	std::string get(const std::string &key);
