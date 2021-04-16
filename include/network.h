@@ -6,9 +6,10 @@
 
 #include <WiFi.h>
 
+#define FETCH_EXCHANGE_RATE
+
 #ifdef FETCH_EXCHANGE_RATE
 #include <WiFiClientSecure.h>
-// #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #endif
 
@@ -19,7 +20,8 @@ namespace network {
 	void loop();
 	void connect();
 	bool isConnected();
-	void fetchExchangeRate(String currency);
+	void fetchExchangeRate(std::string currency);
+	void printExchangeRate();
 }
 
 #endif

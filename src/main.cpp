@@ -11,19 +11,13 @@ void setup() {
 	modules::init();
 	logger::write("Modules OK");
 	logger::write("Setup OK");
+
 }
 
 float amountShown = 0;
 
 void loop() {
 	network::loop();
-
-#ifdef FETCH_EXCHANGE_RATE
-	if ( network::isConnected()) {
-		network::fetchExchangeRate("USD");
-	}
-#endif
-
 	modules::loop();
 	const std::string currentScreen = screen::getCurrentScreen();
 	double buyLimit = config::getBuyLimit();
