@@ -8,7 +8,8 @@
 
 #ifdef FETCH_EXCHANGE_RATE
 #include <WiFiClientSecure.h>
-// #include <ArduinoJson.h>
+// #include <HTTPClient.h>
+#include <ArduinoJson.h>
 #endif
 
 #include <string>
