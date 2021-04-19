@@ -142,3 +142,51 @@ Detailed list of components to be mounted on the PCB:
   * https://www.digikey.com/en/products/detail/c-k/JS202011CQN/1640097 - middle pins will connect to the ESP32's 3V3 pin
   * Symbol and footprint -> https://app.ultralibrarian.com/details/57BD9AFF-2115-11E9-AB3A-0A3560A4CCCC/C-K/JS202011CQN?ref=digikey
 
+
+## Circuit boot and flash mode
+
+When booting ESP32 if GPIO0 is high, the device will normal boot while if GPIO0 is low, it will boot into flash mode allowing us to upload a new application into the device's flash storage.
+We create the circuit below to allow us to boot and boot into flash mode in an easly way.
+
+* Boot button circuit
+
+When pin `EN` is set to low ESP32 is rebooting. This can be used for debugging to start the program from the beginning or for setting ESP32 into flash mode in combination with `Flash button`.
+
+![](../docs/pcb-boot-circuit.png)
+
+* Flash button circuit
+
+When pressing the button GPIO0 is set to low and therefore when booting if the button is pressed, the microcontroler knows that we want to boot in flash mode.
+
+![](../docs/pcb-flash-circuit.png)
+
+
+## Communication with custom PCB
+
+When building our own PCB, for sake of simplicity we are not including the USB to UART communications part so we use those parts as separate modules that we can connect to our PCB when we need to update (flash) firmware or listen to serial outputs communication for debugging. For connecting to our PCB we have created "Firmware connector" that exposes the ESP32 pins that are required to connect to separated USB to UART external component. Below you can see a list of those USB to UART components:
+
+* [CP2102 GME USB-UART, RESET pin](https://www.gme.cz/prevodnik-usb-uart-reset-pin-product-38325)
+  * Definitely your best option
+  * It has LEDs that tell you if it is connected and if there is communication going to TXD or RXD. Very helpful.
+* [OLIMEX ESP-PROG](https://www.olimex.com/Products/IoT/Programmer/ESP-PROG/open-source-hardware)
+  * It does not have any LED to let you know if something is happening
+
+
+### Wiring USB-UART with ESP32
+
+|  ESP32      | USB-UART |
+|-------------|----------|
+| TX0         | RX       |
+| RX0         | TX       |
+| GND         | GND      |
+| 3.3V        | 3.3V     |
+
+
+### Flashing ESP32
+Whether you are using a PCB that has include buttons for flashing and boot or you use a PCB without it and build the [circuit](circuit-boot-and-flash-mode) as separte part to change to flash mode: hold the "EN" button down while pressing and releasing "Boot" while you are running `npm run build:upload`
+
+
+### Listenig to serial monitor
+
+When connecting the USB-UART component to the PCB and your computer you can listen to serial monitor as usualy using `npm run monitor`.
+
