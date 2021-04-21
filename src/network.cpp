@@ -107,8 +107,7 @@ namespace {
 
 namespace network {
 
-#ifdef FETCH_EXCHANGE_RATE
-	float exchange_rate;
+	double exchange_rate = 0.0;
 	bool has_exchange_rate = false;
 	unsigned long last_fetched_exchange_rate = 0;
 	const unsigned long exchange_rate_update_interval = 5*60*1000; // 5 minutes
@@ -136,7 +135,6 @@ namespace network {
 		"ksLi4xaNmjICq44Y3ekQEe5+NauQrz4wlHrQMz2nZQ/1/I6eYs9HRCwBXbsdtTLS\n" \
 		"R9I4LtD+gdwyah617jzV/OeBHRnDJELqYzmp\n" \
 		"-----END CERTIFICATE-----\n";
-#endif
 
 
 	void init() {
@@ -166,11 +164,9 @@ namespace network {
 		} else if (status == WL_CONNECTED && lastConnectionAttemptTime > 0) {
 			lastConnectionAttemptTime = 0;
 		}
-#ifdef FETCH_EXCHANGE_RATE
 		if (isConnected() && ( ! has_exchange_rate || (millis() - last_fetched_exchange_rate) > exchange_rate_update_interval) ){
 				network::fetchExchangeRate(config::get("fiatCurrency"));
 		}
-#endif
 	}
 
 	void connect() {
@@ -178,7 +174,6 @@ namespace network {
 		tryConnectWithConfig(wifiConfig);
 	}
 
-#ifdef FETCH_EXCHANGE_RATE
 	void fetchExchangeRate(std::string fiatCurrency) {
 
 		String currency = String(fiatCurrency.c_str());
@@ -221,7 +216,10 @@ namespace network {
 			logger::write("exchange rate has a weird value");
 		}
 	}
-#endif // FETCH_EXCHANGE_RATE
+
+	double getExchangeRate() {
+		return exchange_rate;
+	}
 
 	bool isConnected() {
 		return WiFi.status() == WL_CONNECTED;

@@ -26,6 +26,7 @@ namespace util {
 		defaultDescription << "Bleskomat: " << accumulatedValue << " " << config::get("fiatCurrency");
 		params.defaultDescription = defaultDescription.str();
 		params.custom["ref"] = referenceCode;
+		params.custom["exchangeRate"] = std::to_string(network::getExchangeRate());
 		return signer.create_url(params, nonce);
 	}
 

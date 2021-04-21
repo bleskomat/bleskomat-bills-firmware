@@ -2,6 +2,7 @@
 #define BLESKOMAT_UTIL_H
 
 #include "config.h"
+#include "network.h"
 #include "bip39-wordlist/en.h"
 
 #include <Arduino.h>
