@@ -5,6 +5,7 @@ namespace {
 	int lastState;
 	unsigned long lastStateChangeTime = 0;// Last time the button pin was toggled.
 	unsigned long debounceDelay = 50;// Debounce time; increase it if the output flickers
+	unsigned long lastPressedTime = 0;
 }
 
 namespace button {
@@ -19,6 +20,7 @@ namespace button {
 			if (state != lastState) {
 				if (state == HIGH) {
 					pressed = true;
+					lastPressedTime = millis();
 					logger::write("Button pressed");
 				} else {
 					pressed = false;
@@ -34,5 +36,16 @@ namespace button {
 
 	bool isPressed() {
 		return pressed;
+	}
+
+	bool wasPressedAndReleased(const unsigned long &maxPressedTime) {
+		return !pressed && lastPressedTime > 0 && (maxPressedTime == 0 || (millis() - lastPressedTime) < maxPressedTime);
+	}
+
+	unsigned long getTimePressed() {
+		if (pressed) {
+			return millis() - lastStateChangeTime;
+		}
+		return 0;
 	}
 }

@@ -41,16 +41,62 @@ void loop() {
 		screen::showInsertFiatScreen(accumulatedValue);
 		amountShown = accumulatedValue;
 	}
+	#ifdef WIFI_ACCESS_POINT
+		wifiAccessPoint::loop();
+		if (wifiAccessPoint::isAvailable()) {
+			// WiFi access point is currently available.
+			if (wifiAccessPoint::hasClientsConnected()) {
+				// At least one client is currently connected.
+				// Show the WiFi access point open web interface screen, if not already shown.
+				if (currentScreen != "wifiAccessPointOpenWebInterface") {
+					screen::showWifiAccessPointOpenWebInterfaceScreen(
+						wifiAccessPoint::getURL()
+					);
+				}
+			}else {
+				// No clients connected.
+				// Show the WiFi access point connection details screen, if not already shown.
+				if (currentScreen != "wifiAccessPointConnectionDetails") {
+					screen::showWifiAccessPointConnectionDetailsScreen(
+						wifiAccessPoint::getSSID(),
+						wifiAccessPoint::getPassword(),
+						wifiAccessPoint::getConfigurationString()
+					);
+				}
+			}
+			// Use button to stop the access point.
+			if (button::wasPressedAndReleased(500)) {
+				wifiAccessPoint::stop();
+			}
+			// Stop WiFi access point automatically after set time limit.
+			if (wifiAccessPoint::getTimeAvailable() >= 300000) {
+				wifiAccessPoint::stop();
+			}
+		} else {
+			// WiFi access point is not currently available.
+			// Show the splash screen, if any of the WiFi access point screens are currently shown.
+			if (
+				currentScreen == "wifiAccessPointConnectionDetails" ||
+				currentScreen == "wifiAccessPointOpenWebInterface"
+			) {
+				screen::showSplashScreen();
+			}
+			// Use button to start the WiFi access point.
+			if (button::getTimePressed() >= 3000) {
+				wifiAccessPoint::start();
+			}
+		}
+	#endif
 	if (currentScreen == "splash") {
-		if (button::isPressed()) {
+		if (button::wasPressedAndReleased(500)) {
 			screen::showInstructionsScreen();
 		}
 	} else if (currentScreen == "instructions") {
-		if (button::isPressed()) {
+		if (button::wasPressedAndReleased(500)) {
 			screen::showInsertFiatScreen(0);
 		}
 	} else if (currentScreen == "insertFiat") {
-		if (button::isPressed()) {
+		if (button::wasPressedAndReleased(500)) {
 			if (accumulatedValue > 0) {
 				// Button pushed while insert fiat screen shown and accumulated value greater than 0.
 				// Generate random words that will be displayed to the user as a human-friendly proof/reference code.
@@ -96,7 +142,7 @@ void loop() {
 			#endif
 		}
 	} else if (currentScreen == "transactionComplete") {
-		if (button::isPressed()) {
+		if (button::wasPressedAndReleased(500)) {
 			// Button pushed while showing the transaction complete screen.
 			// Reset accumulated values.
 			#ifdef COIN_ACCEPTOR

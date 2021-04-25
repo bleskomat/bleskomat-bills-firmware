@@ -13,6 +13,8 @@ namespace button {
 	void init();
 	void loop();
 	bool isPressed();
+	bool wasPressedAndReleased(const unsigned long &maxPressedTime = 0);
+	unsigned long getTimePressed();
 }
 
 #endif

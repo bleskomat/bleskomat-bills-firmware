@@ -7,6 +7,10 @@
 #include "network.h"
 #include "util.h"
 
+#ifdef WIFI_ACCESS_POINT
+	#include "wifi-access-point.h"
+#endif
+
 #include <lnurl.h>
 #include <string>
 

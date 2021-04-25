@@ -34,4 +34,16 @@ namespace screen {
 	void showTransactionCompleteScreen(const float &amount, const std::string &qrcodeData, const std::string &referenceCode) {
 		currentScreen = "transactionComplete";
 	}
+
+	void showWifiAccessPointConnectionDetailsScreen(
+		const std::string &ssid,
+		const std::string &password,
+		const std::string &configurationString
+	) {
+		currentScreen = "wifiAccessPointConnectionDetails";
+	}
+
+	void showWifiAccessPointOpenWebInterfaceScreen(const std::string &url) {
+		currentScreen = "wifiAccessPointOpenWebInterface";
+	}
 }

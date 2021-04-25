@@ -340,4 +340,71 @@ namespace epaper {
 
 		currentScreen = "transactionComplete";
 	}
+
+	void showWifiAccessPointConnectionDetailsScreen(
+		const std::string &ssid,
+		const std::string &password,
+		const std::string &configurationString
+	) {
+		if (!isInitialized()) return;
+		display.clearScreen();
+
+		int16_t margin = 24;
+
+		// Render SSID as text (top-center).
+		const std::string ssid_text = "SSID: " + ssid;
+		GFXfont ssid_font = getBestFitFont(ssid_text, monospaceFonts);
+		int16_t ssid_text_x = (display.width() / 2);// center
+		int16_t ssid_text_y = margin;// top + margin
+		TextBoundingBox ssid_text_bbox;
+		renderText(ssid_text, &ssid_font, ssid_text_x, ssid_text_y, &ssid_text_bbox);
+
+		// Render password as text (bottom-center).
+		const std::string password_text = "PW: " + password;
+		GFXfont password_font = getBestFitFont(password_text, monospaceFonts);
+		int16_t password_text_x = (display.width() / 2);// center
+		int16_t password_text_y = display.height() - margin;// bottom + margin
+		TextBoundingBox password_text_bbox;
+		renderText(password_text, &password_font, password_text_x, password_text_y, &password_text_bbox);
+
+		// Render WiFi connection details as QR code (center).
+		uint16_t qr_max_w = display.width();
+		uint16_t qr_max_h = display.height() - (ssid_text_bbox.h + password_text_bbox.h + (margin * 2));
+		int16_t qr_x = display.width() / 2;// center
+		int16_t qr_y = display.height() / 2;// center
+		renderQRCode(configurationString, qr_x, qr_y, qr_max_w, qr_max_h);
+
+		currentScreen = "wifiAccessPointConnectionDetails";
+	}
+
+	void showWifiAccessPointOpenWebInterfaceScreen(const std::string &url) {
+		if (!isInitialized()) return;
+		display.clearScreen();
+
+		int16_t margin = 24;
+
+		// Render instructions (top-center).
+		const std::string instructions = "Open web page in your browser";
+		GFXfont instructions_font = getBestFitFont(instructions, monospaceFonts);
+		int16_t instructions_x = (display.width() / 2);// center
+		int16_t instructions_y = margin;// top + margin
+		TextBoundingBox instructions_bbox;
+		renderText(instructions, &instructions_font, instructions_x, instructions_y, &instructions_bbox);
+
+		// Render URL as text (bottom-center).
+		GFXfont url_font = getBestFitFont(url, monospaceFonts);
+		int16_t url_x = (display.width() / 2);// center
+		int16_t url_y = display.height() - margin;// bottom + margin
+		TextBoundingBox url_bbox;
+		renderText(url, &url_font, url_x, url_y, &url_bbox);
+
+		// Render URL as QR code (center).
+		uint16_t qr_max_w = display.width();
+		uint16_t qr_max_h = display.height() - (instructions_bbox.h + url_bbox.h + (margin * 2));
+		int16_t qr_x = display.width() / 2;// center
+		int16_t qr_y = display.height() / 2;// center
+		renderQRCode(url, qr_x, qr_y, qr_max_w, qr_max_h);
+
+		currentScreen = "wifiAccessPointOpenWebInterface";
+	}
 }

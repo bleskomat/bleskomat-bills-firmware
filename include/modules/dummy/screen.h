@@ -17,6 +17,12 @@ namespace screen {
 		const std::string &qrcodeData,
 		const std::string &referenceCode = ""
 	);
+	void showWifiAccessPointConnectionDetailsScreen(
+		const std::string &ssid,
+		const std::string &password,
+		const std::string &configurationString
+	);
+	void showWifiAccessPointOpenWebInterfaceScreen(const std::string &url);
 }
 
 #endif
