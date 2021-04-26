@@ -265,7 +265,7 @@ namespace config {
 		// values.billValues = { 5, 10, 20, 50, 100, 200 };
 		// values.statusUrl = "https://www.bleskomat.com/api/v1/status";
 		// values.instructionsUrl = "https://www.bleskomat.com/intro?id={{API_KEY_ID}}";
-		values.referencePhrase = "absurd cake";
+		// values.referencePhrase = "absurd cake";
 		// values.wifi.ssid = "";
 		// values.wifi.password = "";
 		printConfig();
