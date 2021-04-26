@@ -24,7 +24,7 @@ namespace {
 
 	TextBoundingBox renderedAmountTextBoundingBox;
 
-	int16_t insertFiatScreenAmountMarginTop = -32;
+	int16_t insertFiatScreenAmountMarginTop = -64;
 
 	const auto backgroundColor = GxEPD_WHITE;
 	const auto textColor = GxEPD_BLACK;
@@ -285,19 +285,21 @@ namespace epaper {
 
 		const double buyLimit = config::getBuyLimit();
 		if (buyLimit > 0) {
-			const std::string limitText = "Limit = " + config::get("buyLimit") + " " + config::get("fiatCurrency");
-			int16_t limitText_y = prevText_box.y + prevText_box.h + 15;
+			std::string limitText = "Limit = ";
+			limitText += util::doubleToStringWithPrecision(buyLimit, config::getFiatPrecision());
+			limitText += " " + config::get("fiatCurrency");
+			int16_t limitText_y = prevText_box.y + prevText_box.h + 24;
 			renderText(limitText, &OpenSans_Light9pt7b, center_x, limitText_y, &prevText_box);
 		}
 
 		// Instructional text #1:
 		const std::string text1 = "insert bills and/or coins";
-		int16_t text1_y = prevText_box.y + prevText_box.h + 45;
+		int16_t text1_y = prevText_box.y + prevText_box.h + 48;
 		renderText(text1, &OpenSans_Light12pt7b, center_x, text1_y, &prevText_box);
 
 		// Instructional text #2:
 		const std::string text2 = "(press button when done)";
-		int16_t text2_y = prevText_box.y + prevText_box.h + 15;
+		int16_t text2_y = prevText_box.y + prevText_box.h + 16;
 		renderText(text2, &OpenSans_Light9pt7b, center_x, text2_y, &prevText_box);
 
 		currentScreen = "insertFiat";
