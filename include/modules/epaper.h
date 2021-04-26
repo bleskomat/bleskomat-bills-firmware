@@ -3,6 +3,8 @@
 
 #include "fonts/OpenSans_Light9pt7b.h"
 #include "fonts/OpenSans_Light12pt7b.h"
+#include "fonts/Courier_Prime_Code8pt7b.h"
+#include "fonts/Courier_Prime_Code10pt7b.h"
 #include "fonts/Courier_Prime_Code12pt7b.h"
 #include "fonts/Courier_Prime_Code16pt7b.h"
 #include "fonts/Courier_Prime_Code20pt7b.h"

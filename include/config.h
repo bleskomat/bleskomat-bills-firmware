@@ -30,6 +30,7 @@ struct BleskomatConfig {
 	std::vector<float> billValues;
 	std::string statusUrl = "https://www.bleskomat.com/api/v1/status";
 	std::string instructionsUrl = "https://www.bleskomat.com/intro?id={{API_KEY_ID}}";
+	std::string referencePhrase = "";
 	struct BleskomatWifiConfig wifi;
 };
 

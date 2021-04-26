@@ -41,7 +41,9 @@ namespace {
 		Courier_Prime_Code22pt7b,
 		Courier_Prime_Code20pt7b,
 		Courier_Prime_Code16pt7b,
-		Courier_Prime_Code12pt7b
+		Courier_Prime_Code12pt7b,
+		Courier_Prime_Code10pt7b,
+		Courier_Prime_Code8pt7b
 	};
 
 	std::string currentScreen = "";
@@ -103,21 +105,33 @@ namespace {
 		clearPartialArea(box.x, box.y, box.w, box.h);
 	}
 
-	void renderText(const std::string &t_text, const GFXfont *f, const int16_t &x, const int16_t &y, TextBoundingBox *textBoundingBox) {
+	void renderText(
+		const std::string &t_text,
+		const GFXfont *f,
+		const int16_t &x,
+		const int16_t &y,
+		TextBoundingBox *textBoundingBox,
+		const bool &centerJustify = true
+	) {
 		const char* text = t_text.c_str();
 		display.setFont(f);
 		display.setTextColor(textColor);
 		int16_t tbx, tby;
 		uint16_t tbw, tbh;
 		display.getTextBounds(text, 0, 0, &tbx, &tby, &tbw, &tbh);
-		uint16_t w_adjust = tbw * .15;
-		uint16_t h_adjust = tbh * .5;
+		int16_t box_x = x;
+		int16_t box_y = y;
+		int16_t w_adjust = 4;
+		int16_t h_adjust = 8;
 		tbw += w_adjust;
 		tbh += h_adjust;
-		int16_t box_x = x - (tbw / 2);
-		int16_t box_y = y - (tbh / 2);
-		int16_t cursor_x = box_x + (w_adjust / 2);
-		int16_t cursor_y = (box_y + tbh) - (h_adjust * .8);// Cursor y-coordinate is the text baseline.
+		if (centerJustify) {
+			box_x -= (tbw / 2);
+			box_y -= (tbh / 2);
+		}
+		int16_t cursor_x = box_x;
+		int16_t cursor_y = box_y + tbh;
+		cursor_y -= (h_adjust - 2);
 		display.setPartialWindow(box_x, box_y, tbw, tbh);
 		// Uncomment the following line to print debug info to serial monitor:
 		// std::cout << "renderText \"" << t_text << "\" / x, y, w, h: " << +box_x << ", " << +box_y << ", " << +tbw << ", " << +tbh << " " << std::endl;
@@ -137,7 +151,14 @@ namespace {
 		}
 	}
 
-	void renderQRCode(const std::string &t_data, const int16_t &x, const int16_t &y, const uint16_t &max_w, const uint16_t &max_h) {
+	void renderQRCode(
+		const std::string &t_data,
+		const int16_t &x,
+		const int16_t &y,
+		const uint16_t &max_w,
+		const uint16_t &max_h,
+		const bool &centerJustify = true
+	) {
 		const char* data = t_data.c_str();
 		const int version = getBestFitQRCodeVersion(t_data);
 		QRCode qrcode;
@@ -148,8 +169,12 @@ namespace {
 		int scale = std::min(std::floor(max_w / qrcode.size), std::floor(max_h / qrcode.size));
 		w = qrcode.size * scale;
 		h = qrcode.size * scale;
-		int16_t box_x = x - (w / 2);
-		int16_t box_y = y - (h / 2);
+		int16_t box_x = x;
+		int16_t box_y = y;
+		if (centerJustify) {
+			box_x -= (w / 2);
+			box_y -= (h / 2);
+		}
 		display.setPartialWindow(box_x, box_y, w, h);
 		display.firstPage();
 		do {
@@ -201,12 +226,16 @@ namespace epaper {
 			// delay(2000);
 			// epaper::showInsertFiatScreen(0);
 			// delay(2000);
+			// const double amount = 1.00;
 			// const std::string referencePhrase = util::generateRandomPhrase(5);
-			// epaper::showTransactionCompleteScreen(
-			// 	2,
-			// 	util::toUpperCase(util::lnurlEncode(util::createSignedLnurlWithdraw(2, referencePhrase))),
-			// 	referencePhrase
-			// );
+			// Lnurl::Query customParams;
+			// customParams["r"] = referencePhrase;
+			// const double exchangeRate = config::getExchangeRate();
+			// if (exchangeRate > 0) {
+			// 	customParams["er"] = std::to_string(exchangeRate);
+			// }
+			// const std::string qrcodeData = util::toUpperCase(util::lnurlEncode(util::createSignedLnurlWithdraw(amount, customParams)));
+			// epaper::showTransactionCompleteScreen(amount, qrcodeData, referencePhrase);
 		} else {
 			logger::write("Unknown display connected. This device supports WaveShare 4.2 inch e-paper b/w");
 		}
@@ -296,44 +325,54 @@ namespace epaper {
 		if (!isInitialized()) return;
 		display.clearScreen();
 
+		// Margin between rendered elements.
+		int16_t margin = 16;
+
+		// Render amount + fiat currency symbol (top-left).
+		const std::string text = getAmountFiatCurrencyString(amount);
+		int16_t text_x = margin;// left
+		int16_t text_y = margin;
+		TextBoundingBox text_bbox;
+		renderText(text, &Courier_Prime_Code12pt7b, text_x, text_y, &text_bbox, false);
+
+		const std::string instr_text1 = "scan with mobile app to redeem";
+		const std::string instr_text2 = "and take a picture for your records";
+		TextSize instr_text1_size = calculateTextSize(instr_text1, &OpenSans_Light9pt7b);
+		TextSize instr_text2_size = calculateTextSize(instr_text2, &OpenSans_Light9pt7b);
+
 		// Render QR code.
 		// Use the left 2/3rds of the screen.
 		uint16_t qr_max_w = (display.width() * 2) / 3;
-		uint16_t qr_max_h = 216;
-		int16_t qr_x = qr_max_w / 2;
-		int16_t qr_y = display.height() / 2;
-		renderQRCode(qrcodeData, qr_x, qr_y, qr_max_w, qr_max_h);
+		uint16_t qr_max_h = display.height() - (margin + text_bbox.h + margin + margin + instr_text2_size.h + (margin / 2) + instr_text1_size.h + margin);
+		int16_t qr_x = margin;
+		int16_t qr_y = (margin + text_bbox.h + margin);
+		renderQRCode(qrcodeData, qr_x, qr_y, qr_max_w, qr_max_h, false);
 
-		// Render amount + fiat currency symbol (top-center).
-		const std::string text = getAmountFiatCurrencyString(amount);
-		int16_t margin = 24;
-		int16_t text_x = (display.width() / 2);// center
-		int16_t text_y = margin;
-		TextBoundingBox text_bbox;
-		renderText(text, &Courier_Prime_Code12pt7b, text_x, text_y, &text_bbox);
+		// Render instructional text (bottom-left).
+		int16_t instr_text2_x = margin;// left
+		int16_t instr_text2_y = display.height() - (instr_text2_size.h + (margin * 1.5));// bottom
+		TextBoundingBox instr_text2_bbox;
+		renderText(instr_text2, &OpenSans_Light9pt7b, instr_text2_x, instr_text2_y, &instr_text2_bbox, false);
 
-		// Render instructional text (bottom-center).
-		const std::string text2 = "scan with your mobile wallet app";
-		int16_t text2_x = (display.width() / 2);// center
-		int16_t text2_y = display.height() - margin;// bottom + margin
-		renderText(text2, &OpenSans_Light9pt7b, text2_x, text2_y, NULL);
+		int16_t instr_text1_x = margin;// left
+		int16_t instr_text1_y = instr_text2_bbox.y - (instr_text1_size.h + (margin / 2));// bottom
+		renderText(instr_text1, &OpenSans_Light9pt7b, instr_text1_x, instr_text1_y, NULL, false);
 
-		if (referencePhrase != "") {
-			// Render reference code.
-			// Use the right 1/3rd of the screen.
-			const std::string text3 = "ref. code:";
-			int16_t text3_x = (((display.width() * 2) / 3) + (display.width() / 6)) - 18;
-			int16_t text3_y = text_bbox.h + 56;
-			TextBoundingBox text3_bbox;
-			renderText(text3, &OpenSans_Light9pt7b, text3_x, text3_y, &text3_bbox);
-			TextSize word_textsize = calculateTextSize("check", &Courier_Prime_Code12pt7b);
-			std::vector<std::string> words = util::stringListToStringVector(referencePhrase, ' ');
-			for (int index = 0; index < words.size(); index++) {
-				std::string word = words.at(index);
-				int16_t word_x = text3_x;
-				int16_t word_y = text3_bbox.y + text3_bbox.h + 24 + (index * (word_textsize.h + 14));
-				renderText(word, &Courier_Prime_Code12pt7b, word_x, word_y, NULL);
-			}
+		// Render reference code.
+		// Use the right 1/3rd of the screen.
+		std::vector<std::string> words = util::stringListToStringVector(referencePhrase, ' ');
+		const std::string deviceReferencePhrase = config::get("referencePhrase");
+		if (deviceReferencePhrase != "") {
+			const std::vector<std::string> deviceWords = util::stringListToStringVector(deviceReferencePhrase, ' ');
+			words.insert(words.end(), deviceWords.begin(), deviceWords.end());
+		}
+		TextBoundingBox last_word_bbox;
+		for (int index = 0; index < words.size(); index++) {
+			std::string word = util::toUpperCase(words.at(index));
+			TextSize word_textsize = calculateTextSize(word, &Courier_Prime_Code10pt7b);
+			int16_t word_x = display.width() - (word_textsize.w + margin);// right
+			int16_t word_y = last_word_bbox.y + last_word_bbox.h + (margin * .65);
+			renderText(word, &Courier_Prime_Code10pt7b, word_x, word_y, &last_word_bbox, false);
 		}
 
 		currentScreen = "transactionComplete";

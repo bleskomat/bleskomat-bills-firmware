@@ -23,6 +23,7 @@ namespace {
 		"billValues",
 		"statusUrl",
 		"instructionsUrl",
+		"referencePhrase",
 		"wifi.ssid",
 		"wifi.password"
 	};
@@ -67,6 +68,8 @@ namespace {
 			t_values.statusUrl = value;
 		} else if (key == "instructionsUrl") {
 			t_values.instructionsUrl = value;
+		} else if (key == "referencePhrase") {
+			t_values.referencePhrase = value;
 		} else if (key == "wifi.ssid") {
 			t_values.wifi.ssid = value;
 		} else if (key == "wifi.password") {
@@ -106,6 +109,8 @@ namespace {
 			return t_values.statusUrl;
 		} else if (key == "instructionsUrl") {
 			return t_values.instructionsUrl;
+		} else if (key == "referencePhrase") {
+			return t_values.referencePhrase;
 		} else if (key == "wifi.ssid") {
 			return t_values.wifi.ssid;
 		} else if (key == "wifi.password") {
@@ -260,6 +265,7 @@ namespace config {
 		// values.billValues = { 5, 10, 20, 50, 100, 200 };
 		// values.statusUrl = "https://www.bleskomat.com/api/v1/status";
 		// values.instructionsUrl = "https://www.bleskomat.com/intro?id={{API_KEY_ID}}";
+		values.referencePhrase = "absurd cake";
 		// values.wifi.ssid = "";
 		// values.wifi.password = "";
 		printConfig();
