@@ -19,7 +19,8 @@ void loop() {
 	network::loop();
 	modules::loop();
 	const std::string currentScreen = screen::getCurrentScreen();
-	double buyLimit = config::getBuyLimit();
+	const double exchangeRate = config::getExchangeRate();
+	const double buyLimit = config::getBuyLimit();
 	float accumulatedValue = 0;
 	#ifdef COIN_ACCEPTOR
 		accumulatedValue += coinAcceptor::getAccumulatedValue();
@@ -54,9 +55,14 @@ void loop() {
 			if (accumulatedValue > 0) {
 				// Button pushed while insert fiat screen shown and accumulated value greater than 0.
 				// Generate random words that will be displayed to the user as a human-friendly proof/reference code.
-				const std::string referenceCode = util::generateRandomWords(5);
+				const std::string referencePhrase = util::generateRandomPhrase(5);
+				Lnurl::Query customParams;
+				customParams["r"] = referencePhrase;
+				if (exchangeRate > 0) {
+					customParams["er"] = std::to_string(exchangeRate);
+				}
 				// Create a withdraw request and render it as a QR code.
-				const std::string signedUrl = util::createSignedWithdrawUrl(accumulatedValue, referenceCode);
+				const std::string signedUrl = util::createSignedLnurlWithdraw(accumulatedValue, customParams);
 				const std::string encoded = util::lnurlEncode(signedUrl);
 				const std::string uriSchemaPrefix = config::get("uriSchemaPrefix");
 				std::string qrcodeData = "";
@@ -67,7 +73,7 @@ void loop() {
 				}
 				// QR codes with only uppercase letters are less complex (easier to scan).
 				qrcodeData += util::toUpperCase(encoded);
-				screen::showTransactionCompleteScreen(accumulatedValue, qrcodeData, referenceCode);
+				screen::showTransactionCompleteScreen(accumulatedValue, qrcodeData, referencePhrase);
 				// Save the transaction for debugging and auditing purposes.
 				logger::logTransaction(signedUrl);
 				#ifdef COIN_ACCEPTOR

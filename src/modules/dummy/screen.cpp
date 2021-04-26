@@ -31,7 +31,11 @@ namespace screen {
 
 	void updateInsertFiatScreenAmount(const float &amount) {}
 
-	void showTransactionCompleteScreen(const float &amount, const std::string &qrcodeData, const std::string &referenceCode) {
+	void showTransactionCompleteScreen(
+		const float &amount,
+		const std::string &qrcodeData,
+		const std::string &referencePhrase
+	) {
 		currentScreen = "transactionComplete";
 	}
 }

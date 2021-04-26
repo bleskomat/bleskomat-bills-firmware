@@ -15,7 +15,7 @@ namespace screen {
 	void showTransactionCompleteScreen(
 		const float &amount,
 		const std::string &qrcodeData,
-		const std::string &referenceCode = ""
+		const std::string &referencePhrase = ""
 	);
 }
 

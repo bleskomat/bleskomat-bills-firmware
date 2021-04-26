@@ -201,11 +201,11 @@ namespace epaper {
 			// delay(2000);
 			// epaper::showInsertFiatScreen(0);
 			// delay(2000);
-			// const std::string referenceCode = util::generateRandomWords(5);
+			// const std::string referencePhrase = util::generateRandomPhrase(5);
 			// epaper::showTransactionCompleteScreen(
 			// 	2,
-			// 	util::toUpperCase(util::lnurlEncode(util::createSignedWithdrawUrl(2, referenceCode))),
-			// 	referenceCode
+			// 	util::toUpperCase(util::lnurlEncode(util::createSignedLnurlWithdraw(2, referencePhrase))),
+			// 	referencePhrase
 			// );
 		} else {
 			logger::write("Unknown display connected. This device supports WaveShare 4.2 inch e-paper b/w");
@@ -291,7 +291,7 @@ namespace epaper {
 	void showTransactionCompleteScreen(
 		const float &amount,
 		const std::string &qrcodeData,
-		const std::string &referenceCode
+		const std::string &referencePhrase
 	) {
 		if (!isInitialized()) return;
 		display.clearScreen();
@@ -303,8 +303,6 @@ namespace epaper {
 		int16_t qr_x = qr_max_w / 2;
 		int16_t qr_y = display.height() / 2;
 		renderQRCode(qrcodeData, qr_x, qr_y, qr_max_w, qr_max_h);
-
-		std::cout << "QR Code: " << qrcodeData << std::endl;
 
 		// Render amount + fiat currency symbol (top-center).
 		const std::string text = getAmountFiatCurrencyString(amount);
@@ -320,7 +318,7 @@ namespace epaper {
 		int16_t text2_y = display.height() - margin;// bottom + margin
 		renderText(text2, &OpenSans_Light9pt7b, text2_x, text2_y, NULL);
 
-		if (referenceCode != "") {
+		if (referencePhrase != "") {
 			// Render reference code.
 			// Use the right 1/3rd of the screen.
 			const std::string text3 = "ref. code:";
@@ -329,9 +327,9 @@ namespace epaper {
 			TextBoundingBox text3_bbox;
 			renderText(text3, &OpenSans_Light9pt7b, text3_x, text3_y, &text3_bbox);
 			TextSize word_textsize = calculateTextSize("check", &Courier_Prime_Code12pt7b);
-			std::vector<std::string> referenceCodeWords = util::stringListToStringVector(referenceCode, ' ');
-			for (int index = 0; index < referenceCodeWords.size(); index++) {
-				std::string word = referenceCodeWords.at(index);
+			std::vector<std::string> words = util::stringListToStringVector(referencePhrase, ' ');
+			for (int index = 0; index < words.size(); index++) {
+				std::string word = words.at(index);
 				int16_t word_x = text3_x;
 				int16_t word_y = text3_bbox.y + text3_bbox.h + 24 + (index * (word_textsize.h + 14));
 				renderText(word, &Courier_Prime_Code12pt7b, word_x, word_y, NULL);

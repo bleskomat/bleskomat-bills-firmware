@@ -15,9 +15,10 @@
 
 namespace util {
 
-	std::string createSignedWithdrawUrl(const double &accumulatedValue, const std::string &referenceCode = "");
+	std::string createSignedUrl(const std::string t_baseUrl, const Lnurl::Query &t_query);
+	std::string createSignedLnurlWithdraw(const double &amount, const Lnurl::Query &customParams);
 	std::string lnurlEncode(const std::string &text);
-	std::string generateRandomWords(const unsigned int numWords = 3);
+	std::string generateRandomPhrase(const unsigned int numWords = 3, const std::string delimiter = " ");
 	std::string toUpperCase(std::string s);
 	std::vector<std::string> stringListToStringVector(const std::string &stringList, const char &delimiter = ',');
 	std::vector<float> stringListToFloatVector(const std::string &stringList, const char &delimiter = ',');
@@ -28,6 +29,7 @@ namespace util {
 		const std::string& replaceWith
 	);
 	std::string urlEncode(const std::string &value);
+	std::string doubleToStringWithPrecision(const double &value, const int &precision = 6);
 }
 
 #endif

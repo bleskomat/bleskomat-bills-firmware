@@ -13,13 +13,15 @@ namespace {
 		"apiKey.key",
 		"apiKey.encoding",
 		"callbackUrl",
-		"fiatCurrency",
 		"shorten",
 		"uriSchemaPrefix",
+		"fiatCurrency",
 		"fiatPrecision",
+		"exchangeRate",
 		"buyLimit",
 		"coinValues",
 		"billValues",
+		"statusUrl",
 		"instructionsUrl",
 		"wifi.ssid",
 		"wifi.password"
@@ -42,12 +44,15 @@ namespace {
 			t_values.lnurl.apiKey.encoding = value;
 		} else if (key == "callbackUrl") {
 			t_values.lnurl.callbackUrl = value;
-		} else if (key == "fiatCurrency") {
-			t_values.lnurl.fiatCurrency = value;
 		} else if (key == "shorten") {
 			t_values.lnurl.shorten = (value == "true" || value == "1");
 		} else if (key == "uriSchemaPrefix") {
 			t_values.uriSchemaPrefix = value;
+		} else if (key == "fiatCurrency") {
+			t_values.fiatCurrency = value;
+		} else if (key == "exchangeRate") {
+			// Convert string to double:
+			t_values.exchangeRate = std::strtod(value.c_str(), NULL);
 		} else if (key == "buyLimit") {
 			// Convert string to double:
 			t_values.buyLimit = std::strtod(value.c_str(), NULL);
@@ -58,6 +63,8 @@ namespace {
 		} else if (key == "fiatPrecision") {
 			// Convert string to short:
 			t_values.fiatPrecision = (char)( *value.c_str() - '0' );
+		} else if (key == "statusUrl") {
+			t_values.statusUrl = value;
 		} else if (key == "instructionsUrl") {
 			t_values.instructionsUrl = value;
 		} else if (key == "wifi.ssid") {
@@ -79,12 +86,14 @@ namespace {
 			return t_values.lnurl.apiKey.encoding;
 		} else if (key == "callbackUrl") {
 			return t_values.lnurl.callbackUrl;
-		} else if (key == "fiatCurrency") {
-			return t_values.lnurl.fiatCurrency;
 		} else if (key == "shorten") {
 			return t_values.lnurl.shorten ? "true" : "false";
 		} else if (key == "uriSchemaPrefix") {
 			return t_values.uriSchemaPrefix;
+		} else if (key == "fiatCurrency") {
+			return t_values.fiatCurrency;
+		} else if (key == "exchangeRate") {
+			return std::to_string(t_values.exchangeRate);
 		} else if (key == "buyLimit") {
 			return std::to_string(t_values.buyLimit);
 		} else if (key == "coinValues") {
@@ -93,6 +102,8 @@ namespace {
 			return util::floatVectorToStringList(t_values.billValues);
 		} else if (key == "fiatPrecision") {
 			return std::to_string(t_values.fiatPrecision);
+		} else if (key == "statusUrl") {
+			return t_values.statusUrl;
 		} else if (key == "instructionsUrl") {
 			return t_values.instructionsUrl;
 		} else if (key == "wifi.ssid") {
@@ -238,21 +249,23 @@ namespace config {
 		// values.lnurl.apiKey.id = "";
 		// values.lnurl.apiKey.key = "";
 		// values.lnurl.apiKey.encoding = "";
-		// values.lnurl.callbackUrl = "http://localhost:3000/u";
-		// values.lnurl.fiatCurrency = "CZK";
+		// values.lnurl.callbackUrl = "https://ln.bleskomat.com/u";
 		// values.lnurl.shorten = true;
-		// values.uriSchemaPrefix = "lightning:";
-		// values.fiatPrecision = 0;
-		// values.buyLimit = 25000;
-		// values.coinValues = { 1, 2, 5, 10, 20, 50 };
-		// values.billValues = { 100, 200, 500, 1000, 2000, 5000 };
+		// values.uriSchemaPrefix = "LIGHTNING:";
+		// values.fiatCurrency = "EUR";
+		// values.fiatPrecision = 2;
+		// values.exchangeRate = 0.00;
+		// values.buyLimit = 100.00;
+		// values.coinValues = { 0.05, 0.10, 0.20, 0.50, 1.00, 2.00 };
+		// values.billValues = { 5, 10, 20, 50, 100, 200 };
+		// values.statusUrl = "https://www.bleskomat.com/api/v1/status";
 		// values.instructionsUrl = "https://www.bleskomat.com/intro?id={{API_KEY_ID}}";
 		// values.wifi.ssid = "";
 		// values.wifi.password = "";
 		printConfig();
 	}
 
-	LnurlSignerConfig getLnurlSignerConfig() {
+	Lnurl::SignerConfig getLnurlSignerConfig() {
 		return values.lnurl;
 	}
 
@@ -275,6 +288,10 @@ namespace config {
 
 	unsigned short getFiatPrecision() {
 		return values.fiatPrecision;
+	}
+
+	double getExchangeRate() {
+		return values.exchangeRate;
 	}
 
 	double getBuyLimit() {

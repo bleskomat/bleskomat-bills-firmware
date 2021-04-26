@@ -16,16 +16,34 @@ namespace {
 
 namespace util {
 
-	std::string createSignedWithdrawUrl(const double &accumulatedValue, const std::string &referenceCode) {
-		LnurlSigner signer(config::getLnurlSignerConfig());
-		const std::string nonce = generate_nonce();
-		LnurlWithdrawParamsFiat params;
-		params.minWithdrawable = accumulatedValue;
-		params.maxWithdrawable = accumulatedValue;
-		std::ostringstream defaultDescription;
-		defaultDescription << "Bleskomat: " << accumulatedValue << " " << config::get("fiatCurrency");
-		params.defaultDescription = defaultDescription.str();
-		params.custom["ref"] = referenceCode;
+	std::string createSignedUrl(const std::string t_baseUrl, const Lnurl::Query &t_query) {
+		Lnurl::SignerConfig signerConfig = config::getLnurlSignerConfig();
+		signerConfig.callbackUrl = t_baseUrl;
+		Lnurl::Signer signer(signerConfig);
+		return signer.create_url(t_query);
+	}
+
+	std::string createSignedLnurlWithdraw(const double &t_amount, const Lnurl::Query &customParams) {
+		Lnurl::Signer signer(config::getLnurlSignerConfig());
+		std::string nonce = "";
+		bool hasReferencePhrase = customParams.count("r") > 0;
+		if (hasReferencePhrase == false) {
+			// Generate a random nonce only if the reference phrase is missing.
+			nonce = generate_nonce();
+		} else {
+			// Must have a non-empty nonce.
+			// Put "r" as a reminder that the reference phrase acts as our nonce.
+			nonce = "r";
+		}
+		Lnurl::WithdrawParams params;
+		std::string amount = doubleToStringWithPrecision(t_amount, config::getFiatPrecision());
+		params.minWithdrawable = amount;
+		params.maxWithdrawable = amount;
+		params.defaultDescription = "";
+		for (auto const &it : customParams) {
+			params.custom[it.first] = it.second;
+		}
+		params.custom["f"] = config::get("fiatCurrency");
 		return signer.create_url(params, nonce);
 	}
 
@@ -33,16 +51,16 @@ namespace util {
 		return Lnurl::encode(text);
 	}
 
-	std::string generateRandomWords(const unsigned int numWords) {
-		std::string words = "";
+	std::string generateRandomPhrase(const unsigned int numWords, const std::string delimiter) {
+		std::string phrase = "";
 		unsigned int num = 0;
 		while (num++ < numWords) {
 			unsigned int index = esp_random() % BIP39_WORDLIST_EN.size();
 			std::string word = BIP39_WORDLIST_EN[index];
-			words += word + " ";
+			phrase += word + delimiter;
 		}
-		words.pop_back();// Remove last space.
-		return words;
+		phrase.pop_back();// Remove last delimiter.
+		return phrase;
 	}
 
 	std::string toUpperCase(std::string s) {
@@ -114,5 +132,12 @@ namespace util {
 			escaped << std::nouppercase;
 		}
 		return escaped.str();
+	}
+
+	std::string doubleToStringWithPrecision(const double &value, const int &precision) {
+		std::ostringstream out;
+		out.precision(precision);
+		out << std::fixed << value;
+		return out.str();
 	}
 }
