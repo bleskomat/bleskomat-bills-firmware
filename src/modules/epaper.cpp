@@ -200,12 +200,9 @@ namespace {
 
 	std::string getInstructionsUrl() {
 		const std::string apiKeyId = config::get("apiKey.id");
-		std::string instructionsUrl = config::get("instructionsUrl");
-		return util::replaceFirstOccurrence(
-			instructionsUrl,
-			"{{API_KEY_ID}}",
-			util::urlEncode(apiKeyId)
-		);
+		std::string instructionsUrl = config::get("webUrl");
+		instructionsUrl += "/intro?id=" + util::urlEncode(apiKeyId);
+		return instructionsUrl;
 	}
 }
 

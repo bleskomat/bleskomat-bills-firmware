@@ -5,7 +5,10 @@
 #include "logger.h"
 
 #include <WiFi.h>
+#include <WiFiClientSecure.h>
 
+#include <map>
+#include <sstream>
 #include <string>
 
 namespace network {

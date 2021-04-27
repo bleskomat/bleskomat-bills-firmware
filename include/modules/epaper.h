@@ -59,6 +59,7 @@
 #include <GxEPD2_BW.h>
 
 #include <cmath>
+#include <sstream>
 #include <vector>
 
 namespace epaper {

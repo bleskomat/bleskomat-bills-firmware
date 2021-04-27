@@ -19,8 +19,11 @@ namespace util {
 	std::string createSignedUrl(const std::string t_baseUrl, const Lnurl::Query &t_query) {
 		Lnurl::SignerConfig signerConfig = config::getLnurlSignerConfig();
 		signerConfig.callbackUrl = t_baseUrl;
+		signerConfig.shorten = false;
 		Lnurl::Signer signer(signerConfig);
-		return signer.create_url(t_query);
+		Lnurl::Query query = t_query;
+		query["id"] = signerConfig.apiKey.id;
+		return signer.create_url(query);
 	}
 
 	std::string createSignedLnurlWithdraw(const double &t_amount, const Lnurl::Query &customParams) {
@@ -102,17 +105,6 @@ namespace util {
 			stringList.pop_back();// Remove the last instance of delimiter.
 		}
 		return stringList;
-	}
-
-	std::string replaceFirstOccurrence(
-		std::string& s,
-		const std::string& toReplace,
-		const std::string& replaceWith
-	)
-	{
-		std::size_t pos = s.find(toReplace);
-		if (pos == std::string::npos) return s;
-		return s.replace(pos, toReplace.length(), replaceWith);
 	}
 
 	std::string urlEncode(const std::string &value) {

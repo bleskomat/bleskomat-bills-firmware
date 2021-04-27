@@ -23,11 +23,6 @@ namespace util {
 	std::vector<std::string> stringListToStringVector(const std::string &stringList, const char &delimiter = ',');
 	std::vector<float> stringListToFloatVector(const std::string &stringList, const char &delimiter = ',');
 	std::string floatVectorToStringList(const std::vector<float> floatVector, const char &delimiter = ',');
-	std::string replaceFirstOccurrence(
-		std::string& s,
-		const std::string& toReplace,
-		const std::string& replaceWith
-	);
 	std::string urlEncode(const std::string &value);
 	std::string doubleToStringWithPrecision(const double &value, const int &precision = 6);
 }

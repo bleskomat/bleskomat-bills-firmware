@@ -317,8 +317,8 @@ exchangeRate=0
 buyLimit=20000
 coinValues=1,2,5,10,20,50
 billValues=100,200,500,1000,2000,5000
-statusUrl=https://www.bleskomat.com/api/v1/status
-instructionsUrl=https://www.bleskomat.com/intro?id={{API_KEY_ID}}
+webUrl=https://www.bleskomat.com
+webCACert=-----BEGIN CERTIFICATE-----\nMIIEZTCCA02gAwIBAgIQQAF1BIMUpMghjISpDBbN3zANBgkqhkiG9w0BAQsFADA/\nMSQwIgYDVQQKExtEaWdpdGFsIFNpZ25hdHVyZSBUcnVzdCBDby4xFzAVBgNVBAMT\nDkRTVCBSb290IENBIFgzMB4XDTIwMTAwNzE5MjE0MFoXDTIxMDkyOTE5MjE0MFow\nMjELMAkGA1UEBhMCVVMxFjAUBgNVBAoTDUxldCdzIEVuY3J5cHQxCzAJBgNVBAMT\nAlIzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuwIVKMz2oJTTDxLs\njVWSw/iC8ZmmekKIp10mqrUrucVMsa+Oa/l1yKPXD0eUFFU1V4yeqKI5GfWCPEKp\nTm71O8Mu243AsFzzWTjn7c9p8FoLG77AlCQlh/o3cbMT5xys4Zvv2+Q7RVJFlqnB\nU840yFLuta7tj95gcOKlVKu2bQ6XpUA0ayvTvGbrZjR8+muLj1cpmfgwF126cm/7\ngcWt0oZYPRfH5wm78Sv3htzB2nFd1EbjzK0lwYi8YGd1ZrPxGPeiXOZT/zqItkel\n/xMY6pgJdz+dU/nPAeX1pnAXFK9jpP+Zs5Od3FOnBv5IhR2haa4ldbsTzFID9e1R\noYvbFQIDAQABo4IBaDCCAWQwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8E\nBAMCAYYwSwYIKwYBBQUHAQEEPzA9MDsGCCsGAQUFBzAChi9odHRwOi8vYXBwcy5p\nZGVudHJ1c3QuY29tL3Jvb3RzL2RzdHJvb3RjYXgzLnA3YzAfBgNVHSMEGDAWgBTE\np7Gkeyxx+tvhS5B1/8QVYIWJEDBUBgNVHSAETTBLMAgGBmeBDAECATA/BgsrBgEE\nAYLfEwEBATAwMC4GCCsGAQUFBwIBFiJodHRwOi8vY3BzLnJvb3QteDEubGV0c2Vu\nY3J5cHQub3JnMDwGA1UdHwQ1MDMwMaAvoC2GK2h0dHA6Ly9jcmwuaWRlbnRydXN0\nLmNvbS9EU1RST09UQ0FYM0NSTC5jcmwwHQYDVR0OBBYEFBQusxe3WFbLrlAJQOYf\nr52LFMLGMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjANBgkqhkiG9w0B\nAQsFAAOCAQEA2UzgyfWEiDcx27sT4rP8i2tiEmxYt0l+PAK3qB8oYevO4C5z70kH\nejWEHx2taPDY/laBL21/WKZuNTYQHHPD5b1tXgHXbnL7KqC401dk5VvCadTQsvd8\nS8MXjohyc9z9/G2948kLjmE6Flh9dDYrVYA9x2O+hEPGOaEOa1eePynBgPayvUfL\nqjBstzLhWVQLGAkXXmNs+5ZnPBxzDJOLxhF2JIbeQAcH5H0tZrUlo5ZYyOqA7s9p\nO5b85o3AM/OJ+CktFBQtfvBhcJVd9wvlwPsk+uyOy2HI7mNxKKgsBTt375teA2Tw\nUdHkhVNcsAKX1H7GNNLOEADksd86wuoXvg==\n-----END CERTIFICATE-----\n
 ```
 Copy this file to the SD card.
 
@@ -346,8 +346,10 @@ The following is a list of all possible configuration options that can be set vi
 * `billValues` - Same as coin values (above), but for the bill acceptor. Examples:
 	* CZK: `100,200,500,1000,2000,5000`
 	* EUR: `5,10,20,50,100,200,500`
-* `statusUrl` - The base URL for the API status end-point. This is used to fetch the current device's configuration options, latest exchange rate, and to inform the server that the device is online.
-* `instructionsUrl` - The full URL to the web server's instructions page. For the Bleskomat server this is "https://www.bleskomat.com/intro?id={{API_KEY_ID}}". The `{{API_KEY_ID}}` is replaced with the device's API key ID (URL-encoded). This URL is rendered as a QR code on the device's instructions screen.
+* `webUrl` - The base URL for the web platform. If non-empty, it will be the base URL for:
+	* `/api/v1/status` - API status end-point - To fetch the current device's configuration options, latest exchange rate, and to inform the server that the device is online.
+	* `/intro?id=API_KEY_ID` - URL shown as a QR code on the instructions screen.
+* `webCACert` - The DER-encoded root CA certificate for the web platform. This is required to make secure HTTPS (TLS) requests to the web platform.
 
 
 ## Fonts

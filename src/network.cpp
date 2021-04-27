@@ -6,13 +6,12 @@
 // How to listen for various WiFi-related events:
 // https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/examples/WiFiClientEvents/WiFiClientEvents.ino
 
-// How to make HTTP requests:
-// https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/examples/WiFiClient/WiFiClient.ino
-
 namespace {
 
 	unsigned long lastConnectionAttemptTime = 0;
 	unsigned long connectionAttemptDelay = 10000;// milliseconds
+	unsigned long lastStatusCheckTime = 0;
+	unsigned long statusCheckDelay = 300000;// milliseconds
 
 	// Un-comment the following to print all events related to the WiFi module:
 	// void logWiFiEvent(WiFiEvent_t event) {
@@ -103,6 +102,142 @@ namespace {
 		// Set "Station" mode.
 		WiFi.mode(WIFI_MODE_STA);
 	}
+
+	std::map <std::string, std::string> getHostFromUrl(const std::string &t_url) {
+		std::string domain = t_url;
+		const std::string protocolDelimiter = "://";
+		const std::size_t protocolDelimiterPos = domain.find(protocolDelimiter);
+		if (protocolDelimiterPos != std::string::npos) {
+			domain = domain.substr(protocolDelimiterPos + protocolDelimiter.size());
+		}
+		const std::string hostDelimiter = "/";
+		const std::size_t hostDelimiterPos = domain.find(hostDelimiter);
+		if (hostDelimiterPos != std::string::npos) {
+			domain = domain.substr(0, hostDelimiterPos);
+		}
+		std::string port = "443";
+		const std::string portDelimiter = ":";
+		const std::size_t portDelimiterPos = domain.find(portDelimiter);
+		if (portDelimiterPos != std::string::npos) {
+			port = domain.substr(portDelimiterPos + portDelimiter.size());
+			domain = domain.substr(0, portDelimiterPos - portDelimiter.size());
+		}
+		std::map <std::string, std::string> host;
+		host["domain"] = domain;
+		host["port"] = port;
+		return host;
+	}
+
+	typedef std::map <std::string, std::string> HttpHeaders;
+
+	struct HttpResponse {
+		HttpHeaders headers;
+		int status;
+		std::string body;
+	};
+
+	struct HttpRequest {
+		std::string method = "GET";
+		std::string url;
+		HttpHeaders headers;
+		std::string body;
+	};
+
+	HttpResponse doHttpRequest(const HttpRequest &request) {
+		HttpResponse response;
+		try {
+			// See:
+			// https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFiClientSecure/examples/WiFiClientSecure/WiFiClientSecure.ino
+			WiFiClientSecure client;
+			const std::string webCACert = config::get("webCACert");
+			const std::map <std::string, std::string> host = getHostFromUrl(request.url);
+			const char* server = host.at("domain").c_str();
+			const int port = std::stoi(host.at("port"));
+			const std::string method = util::toUpperCase(request.method);
+			client.setCACert(webCACert.c_str());
+			if (!client.connect(server, port)) {
+				response.status = 0;
+			} else {
+				// Client connected.
+				// Send HTTP request headers and body (if any).
+				client.println(std::string(method + " " + request.url + " HTTP/1.1").c_str());
+				if (request.headers.find("Host") == request.headers.end()) {
+					client.println(std::string("Host: " + std::string(server)).c_str());
+				}
+				for (auto const &it : request.headers) {
+					std::string name = it.first;
+					std::string value = it.second;
+					client.println(std::string(name + ": " + value).c_str());
+				}
+				if (request.headers.find("User-Agent") == request.headers.end()) {
+					client.println("User-Agent: Bleskomat-ESP32");
+				}
+				if (request.headers.find("Connection") == request.headers.end()) {
+					client.println("Connection: close");
+				}
+				if (request.body != "") {
+					client.println(request.body.c_str());
+				}
+				// Send final, empty line.
+				client.println();
+				// Wait for response then begin by parsing response headers.
+				const std::string headerDelimiter = ": ";
+				while (client.connected()) {
+					std::string line = client.readStringUntil('\n').c_str();
+					std::string statusDelimiter = "HTTP/1.1 ";
+					if (line.substr(0, std::string(statusDelimiter).size()) == statusDelimiter) {
+						// First line of HTTP headers.
+						// Get the status code.
+						response.status = std::stoi(line.substr(statusDelimiter.size(), 3));
+					}
+					std::size_t headerDelimiterPos = line.find(headerDelimiter);
+					if (headerDelimiterPos != std::string::npos) {
+						std::string name = line.substr(0, headerDelimiterPos);
+						std::string value = line.substr(headerDelimiterPos + headerDelimiter.size());
+						response.headers[name] = value;
+					}
+					if (line == "\r") {
+						// End of HTTP headers.
+						break;
+					}
+				}
+				// Read the response body.
+				std::ostringstream stream;
+				while (client.available()) {
+					stream << client.readStringUntil('\r').c_str();
+				}
+				response.body = stream.str();
+				logger::write(response.body);
+				client.stop();
+			}
+		} catch (const std::exception &e) {
+			std::cerr << e.what() << std::endl;
+		}
+		return response;
+	}
+
+	void doStatusCheck() {
+		try {
+			logger::write("Performing remote status check");
+			HttpRequest request;
+			Lnurl::Query query;
+			request.url = util::createSignedUrl(
+				config::get("webUrl") + "/api/v1/device/status",
+				query
+			);
+			HttpResponse response = doHttpRequest(request);
+			for (auto const &it : response.headers) {
+				std::string name = it.first;
+				std::string value = it.second;
+			}
+			if (response.status == 200) {
+				config::ValuesMap valuesMap = config::parseConfigLines(response.body);
+				config::saveConfigurations(valuesMap);
+			}
+		} catch (const std::exception &e) {
+			std::cerr << e.what() << std::endl;
+		}
+	}
 }
 
 namespace network {
@@ -131,8 +266,17 @@ namespace network {
 					logger::write(e.what());
 				}
 			}
-		} else if (status == WL_CONNECTED && lastConnectionAttemptTime > 0) {
-			lastConnectionAttemptTime = 0;
+		} else if (status == WL_CONNECTED) {
+			if (lastConnectionAttemptTime > 0) {
+				logger::write("Connected to WiFi network");
+				lastConnectionAttemptTime = 0;
+			}
+			if ((lastStatusCheckTime == 0 || millis() - lastStatusCheckTime >= statusCheckDelay)) {
+				lastStatusCheckTime = millis();
+				if (config::get("webUrl") != "" && config::get("webCACert") != "") {
+					doStatusCheck();
+				}
+			}
 		}
 	}
 

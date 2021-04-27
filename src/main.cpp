@@ -31,6 +31,9 @@ void loop() {
 		}
 	} else {
 		// Enabled.
+		if (currentScreen == "disabled") {
+			screen::showSplashScreen();
+		}
 		const double exchangeRate = config::getExchangeRate();
 		const double buyLimit = config::getBuyLimit();
 		float accumulatedValue = 0;
