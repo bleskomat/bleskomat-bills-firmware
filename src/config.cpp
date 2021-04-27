@@ -24,6 +24,7 @@ namespace {
 		"statusUrl",
 		"instructionsUrl",
 		"referencePhrase",
+		"enabled",
 		"wifi.ssid",
 		"wifi.password"
 	};
@@ -70,6 +71,8 @@ namespace {
 			t_values.instructionsUrl = value;
 		} else if (key == "referencePhrase") {
 			t_values.referencePhrase = value;
+		} else if (key == "enabled") {
+			t_values.enabled = (value == "true" || value == "1");
 		} else if (key == "wifi.ssid") {
 			t_values.wifi.ssid = value;
 		} else if (key == "wifi.password") {
@@ -111,6 +114,8 @@ namespace {
 			return t_values.instructionsUrl;
 		} else if (key == "referencePhrase") {
 			return t_values.referencePhrase;
+		} else if (key == "enabled") {
+			return t_values.enabled ? "true" : "false";
 		} else if (key == "wifi.ssid") {
 			return t_values.wifi.ssid;
 		} else if (key == "wifi.password") {
@@ -266,6 +271,7 @@ namespace config {
 		// values.statusUrl = "https://www.bleskomat.com/api/v1/status";
 		// values.instructionsUrl = "https://www.bleskomat.com/intro?id={{API_KEY_ID}}";
 		// values.referencePhrase = "absurd cake";
+		// values.enabled = false;
 		// values.wifi.ssid = "";
 		// values.wifi.password = "";
 		printConfig();
@@ -310,5 +316,9 @@ namespace config {
 
 	std::vector<float> getBillValues() {
 		return values.billValues;
+	}
+
+	bool isEnabled() {
+		return values.enabled;
 	}
 }

@@ -219,8 +219,10 @@ namespace epaper {
 			logger::write("E-Paper display initialized and ready for use");
 			initialized = true;
 			display.setRotation(0);
-			epaper::showSplashScreen();
 			// Uncomment the following lines to render each screen after a short delay between each.
+			// epaper::showSplashScreen();
+			// delay(2000);
+			// epaper::showDisabledScreen();
 			// delay(2000);
 			// epaper::showInstructionsScreen();
 			// delay(2000);
@@ -259,6 +261,23 @@ namespace epaper {
 		int16_t text_y = display.height() - margin;// bottom
 		renderText(text, &OpenSans_Light9pt7b, text_x, text_y, NULL);
 		currentScreen = "splash";
+	}
+
+	void showDisabledScreen() {
+		if (!isInitialized()) return;
+		display.clearScreen();
+		int16_t margin = 24;
+		const std::string text = "Temporarily disabled";
+		int16_t text_x = (display.width() / 2);// center
+		int16_t text_y = (display.height() / 2) - margin;
+		GFXfont font = getBestFitFont(text, monospaceFonts);
+		TextBoundingBox text_bbox;
+		renderText(text, &font, text_x, text_y, &text_bbox);
+		const std::string text2 = "Please check again later";
+		int16_t text2_x = display.width() / 2;// center
+		int16_t text2_y = text_bbox.h + text_bbox.y + margin;// bottom
+		renderText(text2, &OpenSans_Light9pt7b, text2_x, text2_y, NULL);
+		currentScreen = "disabled";
 	}
 
 	void showInstructionsScreen() {

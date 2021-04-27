@@ -31,6 +31,7 @@ struct BleskomatConfig {
 	std::string statusUrl = "https://www.bleskomat.com/api/v1/status";
 	std::string instructionsUrl = "https://www.bleskomat.com/intro?id={{API_KEY_ID}}";
 	std::string referencePhrase = "";
+	bool enabled = true;
 	struct BleskomatWifiConfig wifi;
 };
 
@@ -46,6 +47,7 @@ namespace config {
 	double getBuyLimit();
 	std::vector<float> getCoinValues();
 	std::vector<float> getBillValues();
+	bool isEnabled();
 }
 
 #endif

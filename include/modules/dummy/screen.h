@@ -9,6 +9,7 @@ namespace screen {
 	void init();
 	std::string getCurrentScreen();
 	void showSplashScreen();
+	void showDisabledScreen();
 	void showInstructionsScreen();
 	void showInsertFiatScreen(const float &amount);
 	void updateInsertFiatScreenAmount(const float &amount);

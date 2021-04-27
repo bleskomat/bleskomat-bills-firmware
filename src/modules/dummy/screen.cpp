@@ -21,6 +21,10 @@ namespace screen {
 		currentScreen = "splash";
 	}
 
+	void showDisabledScreen() {
+		currentScreen = "disabled";
+	}
+
 	void showInstructionsScreen() {
 		currentScreen = "instructions";
 	}
