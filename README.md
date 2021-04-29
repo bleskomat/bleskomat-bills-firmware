@@ -294,7 +294,7 @@ The following is a list of all possible configuration options that can be set vi
 * `webUrl` - The base URL for the web platform. If non-empty, it will be the base URL for:
 	* `/api/v1/status` - API status end-point - To fetch the current device's configuration options, latest exchange rate, and to inform the server that the device is online.
 	* `/intro?id=API_KEY_ID` - URL shown as a QR code on the instructions screen.
-* `webCACert` - The DER-encoded root CA certificate for the web platform. This is required to make secure HTTPS (TLS) requests to the web platform. Create a CA cert file with the following command:
+* `webCACert` - The PEM-encoded root CA certificate for the web platform. This is required to make secure HTTPS (TLS) requests to the web platform. Create a CA cert file with the following command:
 	* `make fetchCACert HOST=www.bleskomat.com PORT=443 > webCACert.pem`
 
 
