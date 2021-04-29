@@ -1,8 +1,9 @@
 # bleskomat-device
 
-The Lightning Network ATM with simple components and a simple setup - just plug it in and it works!
+The next generation Bitcoin ATM: Instant payments, low fees, easy setup.
 
-* [Overview](#overview)
+This repository contains the source and build instructions for the physical device. The source code and documentation for the HTTP server component is located in a [separate repository](https://github.com/samotari/bleskomat-server).
+
 * [Requirements](#requirements)
 	* [Hardware Requirements](#hardware-requirements)
 	* [Software Requirements](#software-requirements)
@@ -16,7 +17,6 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 		* [Wiring the Coin Acceptor](#wiring-the-coin-acceptor)
 	* [Configure and Train Coin Acceptor](#configure-and-train-coin-acceptor)
 	* [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
-	* [Generating Your Local Config File](#generating-your-local-config-file)
 	* [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
 	* [Prepare SD Card](#prepare-sd-card)
 * [Reprogramming Bill Acceptor](#reprogramming-bill-acceptor)
@@ -27,20 +27,6 @@ The Lightning Network ATM with simple components and a simple setup - just plug 
 	* [Standardization of Device Options](#standardization-of-device-options)
 * [Fonts](#fonts)
 * [License](#license)
-
-
-## Overview
-
-Key features include:
-* Works offline - no WiFi required
-* Inexpensive, easily-sourced components
-* Easily hackable and extendible
-
-The project consists of two parts:
-* __Physical Device (ATM)__ - user inserts bills or coins, device generates a signed URL and displays as QR code, user's app (which supports lnurl-withdraw) scans QR code and makes request to HTTP server, withdraw process is completed and the user has successfully bought satoshis with fiat money.
-* __HTTP Server__ - supports [lnurl-withdraw](https://github.com/btcontract/lnurl-rfc/blob/master/lnurl-withdraw.md) with additional request handlers for fiat-currency -> satoshi conversion and request signing.
-
-This repository contains the source and build instructions for the physical device. The source code and documentation for the HTTP server component is located in a [separate repository](https://github.com/samotari/bleskomat-server).
 
 
 ## Requirements
@@ -76,8 +62,8 @@ The following list includes all the parts needed to build the commercial Bleskom
 
 ### Software Requirements
 
+* [make](https://www.gnu.org/software/make/) - used as a meta task runner
 * [PlatformIO Core (CLI)](https://docs.platformio.org/en/latest/core/)
-* [nodejs](https://nodejs.org/) - For Linux and Mac install node via [nvm](https://github.com/creationix/nvm)
 
 
 ## Setup
@@ -226,72 +212,38 @@ coinValues=1,2,5,10,20,50
 
 Before proceeding, be sure that you have all the project's [software requirements](#software-requirements).
 
-First thing to do is to install npm dependencies:
+Use make to install libraries and dependencies for the device firmware:
 ```bash
-npm install
+make install
 ```
-Node is used as a task runner and to generate new (or read existing) API keys.
+* The firmware's dependencies are defined in its platformio.ini file located at `./platformio.ini`
 
-Next you will need to install required libraries for the C/C++ builds:
+If while developing you need to install a new library for the device firmware, use the following as a guide:
 ```bash
-platformio lib install
+platformio lib install LIBRARY_NAME[@VERSION]
 ```
-See the `platformio.ini` file for a list of libraries that will be downloaded and installed.
-
-If while developing you need to install a new library, use the following command as a guide:
-```bash
-platformio lib install --save LIBRARY_NAME[@VERSION]
-```
-The `--save` flag tells platformio to add the library to the project's `platformio.ini` file.
-
 You can find PlatformIO's libraries repository [here](https://platformio.org/lib).
-
-
-### Generating Your Local Config File
-
-A helper script is used to generate the local configuration file that is needed to connect to the server's Postgres database, encrypt/decrypt sensitive data (like API key secrets), and to set other required configuration options for the device build process. Let's get started:
-```bash
-npm run config -- init
-```
-This will walk you thru the process of generating the local config file.
-
-You can choose to generate an encrypted or decrypted config file. You should note that the build process will require an unencrypted config file in order to run. It is possible to decrypt the config file as follows:
-```bash
-npm run config -- decrypt
-```
-Or to encrypt it:
-```bash
-npm run config -- encrypt
-```
 
 
 ### Compiling and Uploading to Device
 
-To compile the project (without uploading to a device):
+To compile the firmware (without uploading to a device):
 ```bash
-npm run compile:only
-```
-To run the build with dummy/invalid API-key-related build flags:
-```bash
-npm run compile:only
+make compile
 ```
 
 To compile and upload to your device:
 ```bash
-DEVICE=/dev/ttyUSB0 npm run compile:upload
+make upload DEVICE=/dev/ttyUSB0
 ```
 The device path for your operating system might be different. If you receive a "Permission denied" error about `/dev/ttyUSB0` then you will need to set permissions for that file on your system:
 ```bash
 sudo chown $USER:$USER /dev/ttyUSB0
 ```
-To run the build with dummy/invalid API-key-related build flags:
-```bash
-DEVICE=/dev/ttyUSB0 npm run compile:upload
-```
 
 To open the serial monitor:
 ```bash
-DEVICE=/dev/ttyUSB0 npm run monitor
+make monitor DEVICE=/dev/ttyUSB0
 ```
 Again the device path here could be different for your operating system.
 
@@ -300,11 +252,9 @@ Again the device path here could be different for your operating system.
 
 Before continuing here, see [Wiring the SD card](#wiring-the-sd-card).
 
-Format the SD card with FAT32. Create a configuration file with the following command:
-```bash
-npm run print:config "6d830ddeb0" > ./bleskomat.conf
-```
-This will generate a new configuration file named `bleskomat.conf` for the API key ID `"6d830ddeb0"`. The contents of the config file will be something like this:
+Format the SD card with FAT32.
+
+The following is an example `bleskomat.conf` file that you could use to configure a bleskomat device. Create the file and copy it to the root directory of the SD card.
 ```
 apiKey.id=6d830ddeb0
 apiKey.key=b11cd6b002916691ccf3097eee3b49e51759225704dde88ecfced76ad95324c9
@@ -320,12 +270,7 @@ billValues=100,200,500,1000,2000,5000
 webUrl=https://www.bleskomat.com
 webCACert=-----BEGIN CERTIFICATE-----\nMIIEZTCCA02gAwIBAgIQQAF1BIMUpMghjISpDBbN3zANBgkqhkiG9w0BAQsFADA/\nMSQwIgYDVQQKExtEaWdpdGFsIFNpZ25hdHVyZSBUcnVzdCBDby4xFzAVBgNVBAMT\nDkRTVCBSb290IENBIFgzMB4XDTIwMTAwNzE5MjE0MFoXDTIxMDkyOTE5MjE0MFow\nMjELMAkGA1UEBhMCVVMxFjAUBgNVBAoTDUxldCdzIEVuY3J5cHQxCzAJBgNVBAMT\nAlIzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuwIVKMz2oJTTDxLs\njVWSw/iC8ZmmekKIp10mqrUrucVMsa+Oa/l1yKPXD0eUFFU1V4yeqKI5GfWCPEKp\nTm71O8Mu243AsFzzWTjn7c9p8FoLG77AlCQlh/o3cbMT5xys4Zvv2+Q7RVJFlqnB\nU840yFLuta7tj95gcOKlVKu2bQ6XpUA0ayvTvGbrZjR8+muLj1cpmfgwF126cm/7\ngcWt0oZYPRfH5wm78Sv3htzB2nFd1EbjzK0lwYi8YGd1ZrPxGPeiXOZT/zqItkel\n/xMY6pgJdz+dU/nPAeX1pnAXFK9jpP+Zs5Od3FOnBv5IhR2haa4ldbsTzFID9e1R\noYvbFQIDAQABo4IBaDCCAWQwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8E\nBAMCAYYwSwYIKwYBBQUHAQEEPzA9MDsGCCsGAQUFBzAChi9odHRwOi8vYXBwcy5p\nZGVudHJ1c3QuY29tL3Jvb3RzL2RzdHJvb3RjYXgzLnA3YzAfBgNVHSMEGDAWgBTE\np7Gkeyxx+tvhS5B1/8QVYIWJEDBUBgNVHSAETTBLMAgGBmeBDAECATA/BgsrBgEE\nAYLfEwEBATAwMC4GCCsGAQUFBwIBFiJodHRwOi8vY3BzLnJvb3QteDEubGV0c2Vu\nY3J5cHQub3JnMDwGA1UdHwQ1MDMwMaAvoC2GK2h0dHA6Ly9jcmwuaWRlbnRydXN0\nLmNvbS9EU1RST09UQ0FYM0NSTC5jcmwwHQYDVR0OBBYEFBQusxe3WFbLrlAJQOYf\nr52LFMLGMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjANBgkqhkiG9w0B\nAQsFAAOCAQEA2UzgyfWEiDcx27sT4rP8i2tiEmxYt0l+PAK3qB8oYevO4C5z70kH\nejWEHx2taPDY/laBL21/WKZuNTYQHHPD5b1tXgHXbnL7KqC401dk5VvCadTQsvd8\nS8MXjohyc9z9/G2948kLjmE6Flh9dDYrVYA9x2O+hEPGOaEOa1eePynBgPayvUfL\nqjBstzLhWVQLGAkXXmNs+5ZnPBxzDJOLxhF2JIbeQAcH5H0tZrUlo5ZYyOqA7s9p\nO5b85o3AM/OJ+CktFBQtfvBhcJVd9wvlwPsk+uyOy2HI7mNxKKgsBTt375teA2Tw\nUdHkhVNcsAKX1H7GNNLOEADksd86wuoXvg==\n-----END CERTIFICATE-----\n
 ```
-Copy this file to the SD card.
 
-You can also print dummy configuration values by omitting the API key ID:
-```bash
-npm run print:config > ./bleskomat.conf
-```
 
 ### Configuration Options
 
@@ -349,7 +294,8 @@ The following is a list of all possible configuration options that can be set vi
 * `webUrl` - The base URL for the web platform. If non-empty, it will be the base URL for:
 	* `/api/v1/status` - API status end-point - To fetch the current device's configuration options, latest exchange rate, and to inform the server that the device is online.
 	* `/intro?id=API_KEY_ID` - URL shown as a QR code on the instructions screen.
-* `webCACert` - The DER-encoded root CA certificate for the web platform. This is required to make secure HTTPS (TLS) requests to the web platform.
+* `webCACert` - The DER-encoded root CA certificate for the web platform. This is required to make secure HTTPS (TLS) requests to the web platform. Create a CA cert file with the following command:
+	* `make fetchCACert HOST=www.bleskomat.com PORT=443 > webCACert.pem`
 
 
 ## Fonts

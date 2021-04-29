@@ -183,10 +183,11 @@ When building our own PCB, for sake of simplicity we are not including the USB t
 
 
 ### Flashing ESP32
-Whether you are using a PCB that has include buttons for flashing and boot or you use a PCB without it and build the [circuit](circuit-boot-and-flash-mode) as separte part to change to flash mode: hold the "EN" button down while pressing and releasing "Boot" while you are running `npm run build:upload`
+
+Whether you are using a PCB that has include buttons for flashing and boot or you use a PCB without it and build the [circuit](#circuit-boot-and-flash-mode) as separate part to change to flash mode: hold the "EN" button down while pressing and releasing "Boot" while you are running `make upload`
 
 
 ### Listenig to serial monitor
 
-When connecting the USB-UART component to the PCB and your computer you can listen to serial monitor as usualy using `npm run monitor`.
+When connecting the USB-UART component to the PCB and your computer you can listen to serial monitor as usualy using `make monitor`.
 
