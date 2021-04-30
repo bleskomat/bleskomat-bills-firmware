@@ -15,6 +15,7 @@
 
 namespace util {
 
+	std::string createSignature(const std::string &payload);
 	std::string createSignedUrl(const std::string t_baseUrl, const Lnurl::Query &t_query);
 	std::string createSignedLnurlWithdraw(const double &amount, const Lnurl::Query &customParams);
 	std::string lnurlEncode(const std::string &text);

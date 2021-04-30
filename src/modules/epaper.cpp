@@ -229,7 +229,7 @@ namespace epaper {
 			// const std::string referencePhrase = util::generateRandomPhrase(5);
 			// Lnurl::Query customParams;
 			// customParams["r"] = referencePhrase;
-			// const double exchangeRate = config::getExchangeRate();
+			// const double exchangeRate = network::getExchangeRate();
 			// if (exchangeRate > 0) {
 			// 	customParams["er"] = std::to_string(exchangeRate);
 			// }

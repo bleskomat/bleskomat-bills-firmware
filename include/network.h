@@ -4,11 +4,12 @@
 #include "config.h"
 #include "logger.h"
 
+#include <ArduinoJson.h>
 #include <WiFi.h>
-#include <WiFiClientSecure.h>
+#include "esp_websocket_client.h"
 
 #include <map>
-#include <sstream>
+#include <stdexcept>
 #include <string>
 
 namespace network {
@@ -16,6 +17,8 @@ namespace network {
 	void loop();
 	void connect();
 	bool isConnected();
+	bool isConnectedToWebServer();
+	double getExchangeRate();
 }
 
 #endif
