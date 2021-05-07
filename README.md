@@ -1,8 +1,6 @@
-# bleskomat-device
+# bleskomat-firmware
 
-The next generation Bitcoin ATM: Instant payments, low fees, easy setup.
-
-This repository contains the source and build instructions for the physical device. The source code and documentation for the HTTP server component is located in a [separate repository](https://github.com/samotari/bleskomat-server).
+This repository contains the source code and documentation to compile, upload, and test the Bleskomat ATM's firmware.
 
 * [Requirements](#requirements)
 	* [Hardware Requirements](#hardware-requirements)
