@@ -12,6 +12,7 @@ PORT ?= 443
 DEVICE ?= /dev/ttyUSB0
 BAUDRATE ?= 115200
 SCRIPTS=./scripts
+PLATFORM=espressif32
 
 ## Targets
 #
@@ -37,6 +38,7 @@ fetchCACert
 
 install:
 	platformio lib install
+	platformio platform install ${PLATFORM}
 
 compile:
 	platformio run
