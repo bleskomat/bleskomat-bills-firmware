@@ -16,6 +16,12 @@ namespace {
 
 namespace util {
 
+	std::string createSignature(const std::string &payload) {
+		Lnurl::SignerConfig signerConfig = config::getLnurlSignerConfig();
+		Lnurl::Signer signer(signerConfig);
+		return signer.create_signature(payload);
+	}
+
 	std::string createSignedUrl(const std::string t_baseUrl, const Lnurl::Query &t_query) {
 		Lnurl::SignerConfig signerConfig = config::getLnurlSignerConfig();
 		signerConfig.callbackUrl = t_baseUrl;

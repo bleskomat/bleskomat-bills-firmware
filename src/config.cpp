@@ -18,11 +18,11 @@ namespace {
 		"fiatCurrency",
 		"fiatPrecision",
 		"feePercent",
-		"exchangeRate",
 		"buyLimit",
 		"coinValues",
 		"billValues",
 		"webUrl",
+		"webSocketUri",
 		"webCACert",
 		"referencePhrase",
 		"enabled",
@@ -35,7 +35,6 @@ namespace {
 		"fiatCurrency",
 		"fiatPrecision",
 		"feePercent",
-		"exchangeRate",
 		"buyLimit",
 		"referencePhrase",
 		"enabled"
@@ -67,9 +66,6 @@ namespace {
 			t_values.fiatCurrency = value;
 		} else if (key == "feePercent") {
 			t_values.feePercent = value;
-		} else if (key == "exchangeRate") {
-			// Convert string to double:
-			t_values.exchangeRate = std::strtod(value.c_str(), NULL);
 		} else if (key == "buyLimit") {
 			// Convert string to double:
 			t_values.buyLimit = std::strtod(value.c_str(), NULL);
@@ -82,6 +78,8 @@ namespace {
 			t_values.fiatPrecision = (char)( *value.c_str() - '0' );
 		} else if (key == "webUrl") {
 			t_values.webUrl = value;
+		} else if (key == "webSocketUri") {
+			t_values.webSocketUri = value;
 		} else if (key == "webCACert") {
 			t_values.webCACert = value;
 		} else if (key == "referencePhrase") {
@@ -115,8 +113,6 @@ namespace {
 			return t_values.fiatCurrency;
 		} else if (key == "feePercent") {
 			return t_values.feePercent;
-		} else if (key == "exchangeRate") {
-			return std::to_string(t_values.exchangeRate);
 		} else if (key == "buyLimit") {
 			return std::to_string(t_values.buyLimit);
 		} else if (key == "coinValues") {
@@ -127,6 +123,8 @@ namespace {
 			return std::to_string(t_values.fiatPrecision);
 		} else if (key == "webUrl") {
 			return t_values.webUrl;
+		} else if (key == "webSocketUri") {
+			return t_values.webSocketUri;
 		} else if (key == "webCACert") {
 			return t_values.webCACert;
 		} else if (key == "referencePhrase") {
@@ -297,12 +295,12 @@ namespace config {
 		// values.fiatCurrency = "EUR";
 		// values.fiatPrecision = 2;
 		// values.feePercent = "0.00";
-		// values.exchangeRate = 0.00;
 		// values.buyLimit = 100.00;
 		// values.coinValues = { 0.05, 0.10, 0.20, 0.50, 1.00, 2.00 };
 		// values.billValues = { 5, 10, 20, 50, 100, 200 };
 		// values.webUrl = "https://www.bleskomat.com";
-		// values.webCACert = "-----BEGIN CERTIFICATE-----\nMIIEZTCCA02gAwIBAgIQQAF1BIMUpMghjISpDBbN3zANBgkqhkiG9w0BAQsFADA/\nMSQwIgYDVQQKExtEaWdpdGFsIFNpZ25hdHVyZSBUcnVzdCBDby4xFzAVBgNVBAMT\nDkRTVCBSb290IENBIFgzMB4XDTIwMTAwNzE5MjE0MFoXDTIxMDkyOTE5MjE0MFow\nMjELMAkGA1UEBhMCVVMxFjAUBgNVBAoTDUxldCdzIEVuY3J5cHQxCzAJBgNVBAMT\nAlIzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuwIVKMz2oJTTDxLs\njVWSw/iC8ZmmekKIp10mqrUrucVMsa+Oa/l1yKPXD0eUFFU1V4yeqKI5GfWCPEKp\nTm71O8Mu243AsFzzWTjn7c9p8FoLG77AlCQlh/o3cbMT5xys4Zvv2+Q7RVJFlqnB\nU840yFLuta7tj95gcOKlVKu2bQ6XpUA0ayvTvGbrZjR8+muLj1cpmfgwF126cm/7\ngcWt0oZYPRfH5wm78Sv3htzB2nFd1EbjzK0lwYi8YGd1ZrPxGPeiXOZT/zqItkel\n/xMY6pgJdz+dU/nPAeX1pnAXFK9jpP+Zs5Od3FOnBv5IhR2haa4ldbsTzFID9e1R\noYvbFQIDAQABo4IBaDCCAWQwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8E\nBAMCAYYwSwYIKwYBBQUHAQEEPzA9MDsGCCsGAQUFBzAChi9odHRwOi8vYXBwcy5p\nZGVudHJ1c3QuY29tL3Jvb3RzL2RzdHJvb3RjYXgzLnA3YzAfBgNVHSMEGDAWgBTE\np7Gkeyxx+tvhS5B1/8QVYIWJEDBUBgNVHSAETTBLMAgGBmeBDAECATA/BgsrBgEE\nAYLfEwEBATAwMC4GCCsGAQUFBwIBFiJodHRwOi8vY3BzLnJvb3QteDEubGV0c2Vu\nY3J5cHQub3JnMDwGA1UdHwQ1MDMwMaAvoC2GK2h0dHA6Ly9jcmwuaWRlbnRydXN0\nLmNvbS9EU1RST09UQ0FYM0NSTC5jcmwwHQYDVR0OBBYEFBQusxe3WFbLrlAJQOYf\nr52LFMLGMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjANBgkqhkiG9w0B\nAQsFAAOCAQEA2UzgyfWEiDcx27sT4rP8i2tiEmxYt0l+PAK3qB8oYevO4C5z70kH\nejWEHx2taPDY/laBL21/WKZuNTYQHHPD5b1tXgHXbnL7KqC401dk5VvCadTQsvd8\nS8MXjohyc9z9/G2948kLjmE6Flh9dDYrVYA9x2O+hEPGOaEOa1eePynBgPayvUfL\nqjBstzLhWVQLGAkXXmNs+5ZnPBxzDJOLxhF2JIbeQAcH5H0tZrUlo5ZYyOqA7s9p\nO5b85o3AM/OJ+CktFBQtfvBhcJVd9wvlwPsk+uyOy2HI7mNxKKgsBTt375teA2Tw\nUdHkhVNcsAKX1H7GNNLOEADksd86wuoXvg==\n-----END CERTIFICATE-----\n";
+		// values.webSocketUri = "ws://www.bleskomat.com/device";
+		// values.webCACert = "";
 		// values.referencePhrase = "absurd cake";
 		// values.enabled = false;
 		// values.wifi.ssid = "";
@@ -331,10 +329,6 @@ namespace config {
 		return values.fiatPrecision;
 	}
 
-	double getExchangeRate() {
-		return values.exchangeRate;
-	}
-
 	double getBuyLimit() {
 		return values.buyLimit;
 	}
@@ -351,28 +345,8 @@ namespace config {
 		return values.enabled;
 	}
 
-	ValuesMap parseConfigLines(const std::string &lines) {
-		ValuesMap valuesMap;
-		try {
-			std::istringstream stream(lines);
-			const std::string keyValueDelimiter = "=";
-			std::string line = "";
-			while (std::getline(stream, line)) {
-				const auto pos = line.find(keyValueDelimiter);
-				if (pos != std::string::npos) {
-					const std::string key = line.substr(0, pos);
-					const std::string value = line.substr(pos + 1);
-					valuesMap[key] = value;
-				}
-			}
-		} catch (const std::exception &e) {
-			std::cerr << e.what() << std::endl;
-		}
-		return valuesMap;
-	}
-
 	// Save (allowed) configurations to NVS.
-	bool saveConfigurations(const ValuesMap &valuesMap) {
+	bool saveConfigurations(const JsonObject &json) {
 		if (!nvs_available) {
 			if (!initNVS()) {
 				return false;
@@ -380,8 +354,8 @@ namespace config {
 		}
 		for (int index = 0; index < allowSaveConfigKeys.size(); index++) {
 			const std::string key = allowSaveConfigKeys[index];
-			if (valuesMap.find(key) != valuesMap.end()) {
-				const std::string value = valuesMap.at(key);
+			if (json.containsKey(key)) {
+				const std::string value = json[key];
 				if (value != getConfigValue(key, nvs_values)) {
 					// Configuration has been changed.
 					// Save the new value to non-volatile storage.

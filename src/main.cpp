@@ -34,7 +34,7 @@ void loop() {
 		if (currentScreen == "disabled") {
 			screen::showSplashScreen();
 		}
-		const double exchangeRate = config::getExchangeRate();
+		const double exchangeRate = network::getExchangeRate();
 		const double buyLimit = config::getBuyLimit();
 		float accumulatedValue = 0;
 		#ifdef COIN_ACCEPTOR

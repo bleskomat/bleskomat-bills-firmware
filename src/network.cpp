@@ -6,12 +6,17 @@
 // How to listen for various WiFi-related events:
 // https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/examples/WiFiClientEvents/WiFiClientEvents.ino
 
+// ArduinoJson documentation:
+// https://arduinojson.org/
+
 namespace {
 
 	unsigned long lastConnectionAttemptTime = 0;
 	unsigned long connectionAttemptDelay = 10000;// milliseconds
-	unsigned long lastStatusCheckTime = 0;
-	unsigned long statusCheckDelay = 300000;// milliseconds
+
+	double exchangeRate = 0.00;
+	unsigned long lastExchangeRateRefreshTime = 0;
+	unsigned long exchangeRateMaxAge = 300000;// milliseconds
 
 	// Un-comment the following to print all events related to the WiFi module:
 	// void logWiFiEvent(WiFiEvent_t event) {
@@ -103,139 +108,124 @@ namespace {
 		WiFi.mode(WIFI_MODE_STA);
 	}
 
-	std::map <std::string, std::string> getHostFromUrl(const std::string &t_url) {
-		std::string domain = t_url;
-		const std::string protocolDelimiter = "://";
-		const std::size_t protocolDelimiterPos = domain.find(protocolDelimiter);
-		if (protocolDelimiterPos != std::string::npos) {
-			domain = domain.substr(protocolDelimiterPos + protocolDelimiter.size());
+	namespace ws {
+
+		// WebSocket implementation for ESP32:
+		// https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/api-reference/protocols/esp_websocket_client.html
+		// https://github.com/espressif/esp-idf/blob/master/components/esp_websocket_client/include/esp_websocket_client.h
+		// https://github.com/espressif/esp-idf/blob/master/components/esp_websocket_client/esp_websocket_client.c
+		// https://github.com/espressif/esp-idf/blob/master/examples/protocols/websocket/main/websocket_example.c
+
+		enum class State {
+			UNINITIALIZED,
+			INITIALIZED,
+			FAILED,
+			AUTHORIZED
+		};
+		State state = State::UNINITIALIZED;
+		esp_websocket_client_handle_t client;
+
+		void sendMessage(const std::string &message) {
+			const char* data = message.c_str();
+			logger::write("WEBSOCKET_WRITE: " + message);
+			esp_websocket_client_send_text(client, data, strlen(data), portMAX_DELAY);
 		}
-		const std::string hostDelimiter = "/";
-		const std::size_t hostDelimiterPos = domain.find(hostDelimiter);
-		if (hostDelimiterPos != std::string::npos) {
-			domain = domain.substr(0, hostDelimiterPos);
+
+		void onMessage(const std::string &message) {
+			try {
+				if (message != "") {
+					logger::write("WEBSOCKET_MESSAGE: " + message);
+					// !! Important !!
+					// Keep the JsonDocument instance until done reading from the deserialized document; more info:
+					// https://arduinojson.org/v6/issues/garbage-out/
+					DynamicJsonDocument docIn(1024);
+					const DeserializationError err = deserializeJson(docIn, message);
+					if (err) {
+						throw std::runtime_error("deserializeJson failed: " + std::string(err.c_str()));
+					}
+					const JsonObject json = docIn.as<JsonObject>();
+					const std::string type = json["type"].as<char*>();
+					if (type == "authorization") {
+						if (json["data"].containsKey("challenge")) {
+							const std::string challenge = json["data"]["challenge"];
+							const std::string signature = util::createSignature(challenge);
+							Lnurl::SignerConfig signerConfig = config::getLnurlSignerConfig();
+							DynamicJsonDocument docOut(1024);
+							docOut["id"] = signerConfig.apiKey.id.c_str();
+							docOut["signature"] = signature.c_str();
+							std::string json_string;
+							serializeJson(docOut, json_string);
+							sendMessage(json_string);
+						} else if (json["data"].containsKey("success")) {
+							const bool success = json["data"]["success"];
+							if (success) {
+								logger::write("WEBSOCKET_AUTHORIZED");
+								state = State::AUTHORIZED;
+							}
+						}
+					} else if (type == "deviceOptions") {
+						config::saveConfigurations(json["data"]);
+					} else if (type == "exchangeRate") {
+						const std::string fiatCurrency = json["data"]["fiatCurrency"];
+						if (fiatCurrency == config::get("fiatCurrency")) {
+							exchangeRate = std::strtod(json["data"]["exchangeRate"], NULL);
+							lastExchangeRateRefreshTime = millis();
+						} else {
+							logger::write("WEBSOCKET_EXCHANGE_RATE: Fiat currency mis-match");
+						}
+					} else if (type == "error") {
+						const std::string message = json["message"];
+					} else {
+						logger::write("WEBSOCKET_UNKNOWN_MESSAGE_TYPE: " + type);
+					}
+				}
+			} catch (const std::exception &e) {
+				std::cerr << e.what() << std::endl;
+			}
 		}
-		std::string port = "443";
-		const std::string portDelimiter = ":";
-		const std::size_t portDelimiterPos = domain.find(portDelimiter);
-		if (portDelimiterPos != std::string::npos) {
-			port = domain.substr(portDelimiterPos + portDelimiter.size());
-			domain = domain.substr(0, portDelimiterPos - portDelimiter.size());
+
+		void websocket_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
+			esp_websocket_event_data_t *data = (esp_websocket_event_data_t *)event_data;
+			if (event_id == WEBSOCKET_EVENT_CONNECTED) {
+				logger::write("WEBSOCKET_EVENT_CONNECTED");
+			} else if (event_id == WEBSOCKET_EVENT_DISCONNECTED) {
+				logger::write("WEBSOCKET_EVENT_DISCONNECTED");
+				state = State::INITIALIZED;
+			} else if (event_id == WEBSOCKET_EVENT_DATA) {
+				onMessage(std::string(data->data_ptr, data->payload_offset, data->payload_len));
+			} else if (event_id == WEBSOCKET_EVENT_ERROR) {
+				logger::write("WEBSOCKET_EVENT_ERROR");
+			}
 		}
-		std::map <std::string, std::string> host;
-		host["domain"] = domain;
-		host["port"] = port;
-		return host;
-	}
 
-	typedef std::map <std::string, std::string> HttpHeaders;
-
-	struct HttpResponse {
-		HttpHeaders headers;
-		int status;
-		std::string body;
-	};
-
-	struct HttpRequest {
-		std::string method = "GET";
-		std::string url;
-		HttpHeaders headers;
-		std::string body;
-	};
-
-	HttpResponse doHttpRequest(const HttpRequest &request) {
-		HttpResponse response;
-		try {
-			// See:
-			// https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFiClientSecure/examples/WiFiClientSecure/WiFiClientSecure.ino
-			WiFiClientSecure client;
+		void initialize() {
+			esp_websocket_client_config_t websocket_cfg = {};
+			const std::string webSocketUri = config::get("webSocketUri");
 			const std::string webCACert = config::get("webCACert");
-			const std::map <std::string, std::string> host = getHostFromUrl(request.url);
-			const char* server = host.at("domain").c_str();
-			const int port = std::stoi(host.at("port"));
-			const std::string method = util::toUpperCase(request.method);
-			client.setCACert(webCACert.c_str());
-			if (!client.connect(server, port)) {
-				response.status = 0;
+			logger::write("Initializing websocket connection to " + webSocketUri);
+			websocket_cfg.uri = webSocketUri.c_str();
+			if (webCACert != "") {
+				websocket_cfg.cert_pem = (char *)webCACert.c_str();
+			}
+			client = esp_websocket_client_init(&websocket_cfg);
+			esp_websocket_register_events(client, WEBSOCKET_EVENT_ANY, websocket_event_handler, (void *)client);
+			esp_err_t result = esp_websocket_client_start(client);
+			if (result == ESP_OK) {
+				state = State::INITIALIZED;
 			} else {
-				// Client connected.
-				// Send HTTP request headers and body (if any).
-				client.println(std::string(method + " " + request.url + " HTTP/1.1").c_str());
-				if (request.headers.find("Host") == request.headers.end()) {
-					client.println(std::string("Host: " + std::string(server)).c_str());
-				}
-				for (auto const &it : request.headers) {
-					std::string name = it.first;
-					std::string value = it.second;
-					client.println(std::string(name + ": " + value).c_str());
-				}
-				if (request.headers.find("User-Agent") == request.headers.end()) {
-					client.println("User-Agent: Bleskomat-ESP32");
-				}
-				if (request.headers.find("Connection") == request.headers.end()) {
-					client.println("Connection: close");
-				}
-				if (request.body != "") {
-					client.println(request.body.c_str());
-				}
-				// Send final, empty line.
-				client.println();
-				// Wait for response then begin by parsing response headers.
-				const std::string headerDelimiter = ": ";
-				while (client.connected()) {
-					std::string line = client.readStringUntil('\n').c_str();
-					std::string statusDelimiter = "HTTP/1.1 ";
-					if (line.substr(0, std::string(statusDelimiter).size()) == statusDelimiter) {
-						// First line of HTTP headers.
-						// Get the status code.
-						response.status = std::stoi(line.substr(statusDelimiter.size(), 3));
-					}
-					std::size_t headerDelimiterPos = line.find(headerDelimiter);
-					if (headerDelimiterPos != std::string::npos) {
-						std::string name = line.substr(0, headerDelimiterPos);
-						std::string value = line.substr(headerDelimiterPos + headerDelimiter.size());
-						response.headers[name] = value;
-					}
-					if (line == "\r") {
-						// End of HTTP headers.
-						break;
-					}
-				}
-				// Read the response body.
-				std::ostringstream stream;
-				while (client.available()) {
-					stream << client.readStringUntil('\r').c_str();
-				}
-				response.body = stream.str();
-				logger::write(response.body);
-				client.stop();
+				state = State::FAILED;
 			}
-		} catch (const std::exception &e) {
-			std::cerr << e.what() << std::endl;
 		}
-		return response;
-	}
 
-	void doStatusCheck() {
-		try {
-			logger::write("Performing remote status check");
-			HttpRequest request;
-			Lnurl::Query query;
-			request.url = util::createSignedUrl(
-				config::get("webUrl") + "/api/v1/device/status",
-				query
-			);
-			HttpResponse response = doHttpRequest(request);
-			for (auto const &it : response.headers) {
-				std::string name = it.first;
-				std::string value = it.second;
-			}
-			if (response.status == 200) {
-				config::ValuesMap valuesMap = config::parseConfigLines(response.body);
-				config::saveConfigurations(valuesMap);
-			}
-		} catch (const std::exception &e) {
-			std::cerr << e.what() << std::endl;
+		void close() {
+			logger::write("Closing websocket connection...");
+			esp_websocket_client_stop(client);
+			esp_websocket_client_destroy(client);
+			state = State::UNINITIALIZED;
+		}
+
+		bool isConnected() {
+			return esp_websocket_client_is_connected(client);
 		}
 	}
 }
@@ -271,11 +261,15 @@ namespace network {
 				logger::write("Connected to WiFi network");
 				lastConnectionAttemptTime = 0;
 			}
-			if ((lastStatusCheckTime == 0 || millis() - lastStatusCheckTime >= statusCheckDelay)) {
-				lastStatusCheckTime = millis();
-				if (config::get("webUrl") != "" && config::get("webCACert") != "") {
-					doStatusCheck();
+			if (ws::state == ws::State::UNINITIALIZED) {
+				if (config::get("webSocketUri") != "") {
+					ws::initialize();
 				}
+			}
+		} else {
+			// WiFi not connected.
+			if (ws::isConnected()) {
+				ws::close();
 			}
 		}
 	}
@@ -287,5 +281,18 @@ namespace network {
 
 	bool isConnected() {
 		return WiFi.status() == WL_CONNECTED;
+	}
+
+	bool isConnectedToWebServer() {
+		return network::isConnected() && ws::isConnected() && ws::state == ws::State::AUTHORIZED;
+	}
+
+	double getExchangeRate() {
+		if ((lastExchangeRateRefreshTime == 0 || millis() - lastExchangeRateRefreshTime >= exchangeRateMaxAge)) {
+			// Exchange rate is stale.
+			// Return 0, indicating that the exchange rate value should not be used.
+			return 0.00;
+		}
+		return exchangeRate;
 	}
 }

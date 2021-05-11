@@ -44,6 +44,7 @@ compile:
 	platformio run
 
 upload:
+	sudo chown ${USER}:${USER} ${DEVICE}
 	platformio run --upload-port ${DEVICE} --target upload
 
 monitor:
