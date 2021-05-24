@@ -1,14 +1,12 @@
 # bleskomat-firmware
 
-This repository contains the source code and documentation to compile, upload, and test the Bleskomat ATM's firmware.
+This repository contains the source code and basic documentation about how to compile, upload, and test the Bleskomat ATM's firmware.
 
 * [Requirements](#requirements)
 	* [Hardware Requirements](#hardware-requirements)
 	* [Software Requirements](#software-requirements)
 * [Setup](#setup)
 	* [Building the Hardware Device](#building-the-hardware-device)
-		* [Wiring Diagram](#wiring-diagram)
-		* [Wiring the Power Supply](#wiring-the-power-supply)
 		* [Wiring the E-Paper Module](#wiring-the-e-paper-module)
 		* [Wiring the SD Card SPI Module](#wiring-the-sd-card-spi-module)
 		* [Wiring the Bill Acceptor](#wiring-the-bill-acceptor)
@@ -73,43 +71,7 @@ Step-by-step setup process including both hardware and software.
 
 Before proceeding, be sure that you have all the project's [hardware requirements](#hardware-requirements).
 
-
-#### Wiring Diagram
-
-!! TODO !!
-
-New, up-to-date wiring diagram needs to be created with the latest components. Let's use the export of the wiring schematic from KiCad once the PCB design has been updated.
-
-
-#### Wiring the Power Supply
-
-The first step to building the device is wiring the power supply. If already plugged in, __unplug__ the 12V DC power supply now. Use scissors to cut the end off the power supply so that you can freely access the two wires within, as shown in the following image:
-
-![](docs/12v-dc-power-supply.jpg)
-
-It is important to test the wires to know for certain which is the ground. Use a [multimeter](https://duckduckgo.com/?q=multimeter&t=canonical&iar=images&iax=images&ia=images) to measure the voltage of the power supply:
-* Plug-in the power supply to electricity
-* Turn on your multimeter and set it to measure voltage in the appropriate range
-* Touch the __red__ lead of your multimeter to one of the wires
-* Touch the __black__ lead of your multimeter to the other wire
-* If you see a negative voltage reading, swap the leads between the two wires
-* The wire touched by the __black__ lead is the ground ("GND")
-* The wire touched by the __red__ lead is the hot wire ("PWR")
-* Unplug the power supply again
-
-Now use the [wiring diagram](#wiring-diagram) above as a guide to wire the ESP32 to the power supply.
-
-Note that powering the ESP32 via its micro USB port requires a regulated voltage of approximately 5V. The suggested step-down converter is the [XL4005](https://www.laskarduino.cz/step-down-menic-s-xl4005/). It does a good job of keeping a steady voltage and doesn't generate much heat.
-
-Once you've connected the step-down converter to the power supply, use your multimeter to measure the voltage at the out pins. Use a small screwdriver to turn the screw on the little blue box. Turning the screw counter clockwise should lower the voltage, turning it the opposite direction should increase the voltage. Once you have the voltage set to 5V, you can connect the USB (F) adapter to the out pins.
-
-Use a standard USB to micro USB cable to connect the ESP32.
-
-Do not forget to connect the ESP32 to the common ground. Without this connection, the ESP32 will not be able to receive pulses from the coin acceptor when the ESP32 is connected to your computer via USB.
-
-There are other options when powering the ESP32 - e.g via the 3.3V pin or the 5V/VIN pin. You should __never__ power the ESP32 via more than one of these options at the same time. For example, do not power the ESP32 via its 3.3V pin while also connecting the ESP32 via USB to your computer. This can damage the ESP32 and possibly also your computer.
-
-
+These are old instructions for connecting all the separate electronic components.
 
 
 #### Wiring the E-Paper Module
