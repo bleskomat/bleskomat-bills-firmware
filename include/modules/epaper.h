@@ -20,6 +20,7 @@
 
 #include "config.h"
 #include "logger.h"
+#include "network.h"
 #include "util.h"
 
 #ifndef EPAPER_CLK

@@ -34,7 +34,6 @@ void loop() {
 		if (currentScreen == "disabled") {
 			screen::showSplashScreen();
 		}
-		const double exchangeRate = network::getExchangeRate();
 		const double buyLimit = config::getBuyLimit();
 		float accumulatedValue = 0;
 		#ifdef COIN_ACCEPTOR
@@ -73,6 +72,7 @@ void loop() {
 					const std::string referencePhrase = util::generateRandomPhrase(5);
 					Lnurl::Query customParams;
 					customParams["r"] = referencePhrase;
+					const double exchangeRate = network::getExchangeRate();
 					if (exchangeRate > 0) {
 						customParams["er"] = std::to_string(exchangeRate);
 					}

@@ -308,6 +308,15 @@ namespace epaper {
 			renderText(limitText, &OpenSans_Light9pt7b, center_x, limitText_y, &prevText_box);
 		}
 
+		const double exchangeRate = network::getExchangeRate();
+		if (buyLimit > 0) {
+			std::string exchangeRateText = "1 BTC = ";
+			exchangeRateText += util::doubleToStringWithPrecision(exchangeRate, config::getFiatPrecision());
+			exchangeRateText += " " + config::get("fiatCurrency");
+			int16_t exchangeRateText_y = prevText_box.y + prevText_box.h + 24;
+			renderText(exchangeRateText, &OpenSans_Light9pt7b, center_x, exchangeRateText_y, &prevText_box);
+		}
+
 		// Instructional text #1:
 		const std::string text1 = "insert bills and/or coins";
 		int16_t text1_y = prevText_box.y + prevText_box.h + 48;
