@@ -22,8 +22,10 @@ namespace {
 		"coinValues",
 		"billValues",
 		"webUrl",
-		"webSocketUri",
-		"webCACert",
+		"platformSockUri",
+		"platformCACert",
+		"pingSockUri",
+		"pingCACert",
 		"referencePhrase",
 		"enabled",
 		"wifi.ssid",
@@ -78,10 +80,14 @@ namespace {
 			t_values.fiatPrecision = (char)( *value.c_str() - '0' );
 		} else if (key == "webUrl") {
 			t_values.webUrl = value;
-		} else if (key == "webSocketUri") {
-			t_values.webSocketUri = value;
-		} else if (key == "webCACert") {
-			t_values.webCACert = value;
+		} else if (key == "platformSockUri") {
+			t_values.platformSockUri = value;
+		} else if (key == "platformCACert") {
+			t_values.platformCACert = value;
+		} else if (key == "pingSockUri") {
+			t_values.pingSockUri = value;
+		} else if (key == "pingCACert") {
+			t_values.pingCACert = value;
 		} else if (key == "referencePhrase") {
 			t_values.referencePhrase = value;
 		} else if (key == "enabled") {
@@ -123,10 +129,14 @@ namespace {
 			return std::to_string(t_values.fiatPrecision);
 		} else if (key == "webUrl") {
 			return t_values.webUrl;
-		} else if (key == "webSocketUri") {
-			return t_values.webSocketUri;
-		} else if (key == "webCACert") {
-			return t_values.webCACert;
+		} else if (key == "platformSockUri") {
+			return t_values.platformSockUri;
+		} else if (key == "platformCACert") {
+			return t_values.platformCACert;
+		} else if (key == "pingSockUri") {
+			return t_values.pingSockUri;
+		} else if (key == "pingCACert") {
+			return t_values.pingCACert;
 		} else if (key == "referencePhrase") {
 			return t_values.referencePhrase;
 		} else if (key == "enabled") {
@@ -299,10 +309,12 @@ namespace config {
 		// values.coinValues = { 0.05, 0.10, 0.20, 0.50, 1.00, 2.00 };
 		// values.billValues = { 5, 10, 20, 50, 100, 200 };
 		// values.webUrl = "https://www.bleskomat.com";
-		// values.webSocketUri = "ws://www.bleskomat.com/device";
-		// values.webCACert = "";
+		// values.platformSockUri = "wss://www.bleskomat.com/device";
+		// values.platformCACert = "";
+		// values.pingSockUri = "wss://ping.bleskomat.com";
+		// values.pingCACert = "";
 		// values.referencePhrase = "absurd cake";
-		// values.enabled = false;
+		// values.enabled = true;
 		// values.wifi.ssid = "";
 		// values.wifi.password = "";
 		printConfig(values);

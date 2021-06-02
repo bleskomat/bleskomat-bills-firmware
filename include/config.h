@@ -30,8 +30,10 @@ struct BleskomatConfig {
 	std::vector<float> coinValues;
 	std::vector<float> billValues;
 	std::string webUrl = "https://www.bleskomat.com";
-	std::string webSocketUri = "wss://www.bleskomat.com/device";
-	std::string webCACert = "";
+	std::string platformSockUri = "wss://www.bleskomat.com/device";
+	std::string platformCACert = "";
+	std::string pingSockUri = "wss://ping.bleskomat.com/";
+	std::string pingCACert = "";
 	std::string referencePhrase = "";
 	bool enabled = true;
 	struct BleskomatWifiConfig wifi;

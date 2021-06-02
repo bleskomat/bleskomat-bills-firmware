@@ -5,6 +5,8 @@
 #include "logger.h"
 #include "modules.h"
 #include "network.h"
+#include "platform.h"
+#include "ping-server.h"
 #include "util.h"
 
 #include <lnurl.h>

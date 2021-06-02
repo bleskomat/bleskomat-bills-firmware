@@ -52,7 +52,4 @@ monitor:
 	platformio device monitor --baud ${BAUDRATE} --port ${DEVICE}
 
 fetchCACert:
-	echo "" | \
-		openssl s_client -showcerts -connect ${HOST}:${PORT} | \
-		sed -n "1,/Root/d; /BEGIN/,/END/p" | \
-		openssl x509 -outform PEM
+	openssl s_client -showcerts -connect ${HOST}:${PORT} < /dev/null 2> /dev/null | openssl x509 -outform PEM

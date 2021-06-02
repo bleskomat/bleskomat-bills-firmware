@@ -22,16 +22,31 @@ float amountShown = 0;
 
 void loop() {
 	network::loop();
+	platform::loop();
+	pingServer::loop();
 	modules::loop();
 	const std::string currentScreen = screen::getCurrentScreen();
-	if (!config::isEnabled()) {
-		// Device is disabled.
+	if (
+		// Device is disabled via configuration option.
+		!config::isEnabled() ||
+		// Or, if all of the following, then disable the device.
+		(
+			// Device has network connection.
+			network::isConnected() &&
+			// Both platform and ping-server are configured.
+			platform::isConfigured() && pingServer::isConfigured() &&
+			// Platform is NOT connected, but ping-server is connected.
+			!platform::isConnected() && pingServer::isConnected()
+		)
+	) {
+		// Show device disabled screen and do not allow normal operation.
 		if (currentScreen != "disabled") {
 			screen::showDisabledScreen();
 		}
 	} else {
-		// Enabled.
+		// Device is enabled, allow normal operation.
 		if (currentScreen == "disabled") {
+			// If disabled screen is currently shown, then show the splash screen instead.
 			screen::showSplashScreen();
 		}
 		const double buyLimit = config::getBuyLimit();
@@ -72,7 +87,7 @@ void loop() {
 					const std::string referencePhrase = util::generateRandomPhrase(5);
 					Lnurl::Query customParams;
 					customParams["r"] = referencePhrase;
-					const double exchangeRate = network::getExchangeRate();
+					const double exchangeRate = platform::getExchangeRate();
 					if (exchangeRate > 0) {
 						customParams["er"] = std::to_string(exchangeRate);
 					}

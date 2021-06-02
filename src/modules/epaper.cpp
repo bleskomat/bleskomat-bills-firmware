@@ -229,7 +229,7 @@ namespace epaper {
 			// const std::string referencePhrase = util::generateRandomPhrase(5);
 			// Lnurl::Query customParams;
 			// customParams["r"] = referencePhrase;
-			// const double exchangeRate = network::getExchangeRate();
+			// const double exchangeRate = platform::getExchangeRate();
 			// if (exchangeRate > 0) {
 			// 	customParams["er"] = std::to_string(exchangeRate);
 			// }
@@ -308,7 +308,7 @@ namespace epaper {
 			renderText(limitText, &OpenSans_Light9pt7b, center_x, limitText_y, &prevText_box);
 		}
 
-		const double exchangeRate = network::getExchangeRate();
+		const double exchangeRate = platform::getExchangeRate();
 		if (buyLimit > 0) {
 			std::string exchangeRateText = "1 BTC = ";
 			exchangeRateText += util::doubleToStringWithPrecision(exchangeRate, config::getFiatPrecision());
