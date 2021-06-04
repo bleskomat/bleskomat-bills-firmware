@@ -29,7 +29,8 @@ namespace {
 		"referencePhrase",
 		"enabled",
 		"wifi.ssid",
-		"wifi.password"
+		"wifi.password",
+		"locale"
 	};
 
 	// Subset of configuration keys that we allow to be saved.
@@ -96,6 +97,8 @@ namespace {
 			t_values.wifi.ssid = value;
 		} else if (key == "wifi.password") {
 			t_values.wifi.password = value;
+		} else if (key == "locale") {
+			t_values.locale = value;
 		} else {
 			return false;
 		}
@@ -145,6 +148,8 @@ namespace {
 			return t_values.wifi.ssid;
 		} else if (key == "wifi.password") {
 			return t_values.wifi.password;
+		} else if (key == "locale") {
+			return t_values.locale;
 		}
 		return "";
 	}
@@ -317,6 +322,7 @@ namespace config {
 		// values.enabled = true;
 		// values.wifi.ssid = "";
 		// values.wifi.password = "";
+		// values.locale = "en";
 		printConfig(values);
 	}
 

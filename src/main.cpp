@@ -120,7 +120,7 @@ void loop() {
 				// Button not pressed.
 				// Ensure that the amount shown is correct.
 				if (amountShown != accumulatedValue) {
-					screen::updateInsertFiatScreenAmount(accumulatedValue);
+					screen::showInsertFiatScreen(accumulatedValue);
 					amountShown = accumulatedValue;
 				}
 				#ifdef COIN_ACCEPTOR

@@ -12,7 +12,6 @@ namespace screen {
 	void showDisabledScreen();
 	void showInstructionsScreen();
 	void showInsertFiatScreen(const float &amount);
-	void updateInsertFiatScreenAmount(const float &amount);
 	void showTransactionCompleteScreen(
 		const float &amount,
 		const std::string &qrcodeData,

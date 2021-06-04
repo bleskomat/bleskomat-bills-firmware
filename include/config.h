@@ -37,6 +37,7 @@ struct BleskomatConfig {
 	std::string referencePhrase = "";
 	bool enabled = true;
 	struct BleskomatWifiConfig wifi;
+	std::string locale = "en";
 };
 
 namespace config {

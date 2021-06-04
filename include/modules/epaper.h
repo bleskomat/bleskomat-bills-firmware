@@ -1,24 +1,38 @@
 #ifndef BLESKOMAT_MODULES_EPAPER_H
 #define BLESKOMAT_MODULES_EPAPER_H
 
-#include "fonts/OpenSans_Light9pt7b.h"
-#include "fonts/OpenSans_Light12pt7b.h"
-#include "fonts/Courier_Prime_Code8pt7b.h"
-#include "fonts/Courier_Prime_Code10pt7b.h"
-#include "fonts/Courier_Prime_Code12pt7b.h"
-#include "fonts/Courier_Prime_Code16pt7b.h"
-#include "fonts/Courier_Prime_Code20pt7b.h"
-#include "fonts/Courier_Prime_Code22pt7b.h"
-#include "fonts/Courier_Prime_Code24pt7b.h"
-#include "fonts/Courier_Prime_Code26pt7b.h"
-#include "fonts/Courier_Prime_Code28pt7b.h"
-#include "fonts/Courier_Prime_Code30pt7b.h"
-#include "fonts/Courier_Prime_Code32pt7b.h"
+#include "fonts/u8g2/courier_prime_code_48pt.h"
+#include "fonts/u8g2/courier_prime_code_44pt.h"
+#include "fonts/u8g2/courier_prime_code_40pt.h"
+#include "fonts/u8g2/courier_prime_code_36pt.h"
+#include "fonts/u8g2/courier_prime_code_32pt.h"
+#include "fonts/u8g2/courier_prime_code_28pt.h"
+#include "fonts/u8g2/courier_prime_code_24pt.h"
+#include "fonts/u8g2/courier_prime_code_20pt.h"
+#include "fonts/u8g2/courier_prime_code_16pt.h"
+#include "fonts/u8g2/courier_prime_code_12pt.h"
+#include "fonts/u8g2/courier_prime_code_10pt.h"
+#include "fonts/u8g2/courier_prime_code_8pt.h"
 
-#include "images/bleskomat_instructions_screen_400x300.h"
-#include "images/bleskomat_splash_screen_400x300.h"
+#include "fonts/u8g2/opensans_light_18pt.h"
+#include "fonts/u8g2/opensans_light_16pt.h"
+#include "fonts/u8g2/opensans_light_14pt.h"
+#include "fonts/u8g2/opensans_light_12pt.h"
+#include "fonts/u8g2/opensans_light_10pt.h"
+#include "fonts/u8g2/opensans_light_8pt.h"
+
+#include "fonts/u8g2/checkbook_48pt.h"
+#include "fonts/u8g2/checkbook_44pt.h"
+#include "fonts/u8g2/checkbook_40pt.h"
+#include "fonts/u8g2/checkbook_36pt.h"
+#include "fonts/u8g2/checkbook_32pt.h"
+#include "fonts/u8g2/checkbook_28pt.h"
+#include "fonts/u8g2/checkbook_24pt.h"
+#include "fonts/u8g2/checkbook_20pt.h"
+#include "fonts/u8g2/checkbook_16pt.h"
 
 #include "config.h"
+#include "i18n.h"
 #include "logger.h"
 #include "network.h"
 #include "platform.h"
@@ -59,6 +73,7 @@
 #include <Wire.h>
 #include <GxEPD2_GFX.h>
 #include <GxEPD2_BW.h>
+#include <U8g2_for_Adafruit_GFX.h>
 
 #include <cmath>
 #include <sstream>
@@ -71,7 +86,6 @@ namespace epaper {
 	void showDisabledScreen();
 	void showInstructionsScreen();
 	void showInsertFiatScreen(const float &amount);
-	void updateInsertFiatScreenAmount(const float &amount);
 	void showTransactionCompleteScreen(
 		const float &amount,
 		const std::string &qrcodeData,
