@@ -58,8 +58,10 @@ The following list includes all the parts needed to build the commercial Bleskom
 
 ### Software Requirements
 
-* [make](https://www.gnu.org/software/make/) - used as a meta task runner
+* [make](https://www.gnu.org/software/make/)
 * [PlatformIO Core (CLI)](https://docs.platformio.org/en/latest/core/)
+	* Version 5 or newer
+	* Only the CLI ("Core") is required
 
 
 ## Setup
