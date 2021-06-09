@@ -13,6 +13,7 @@ namespace i18n {
 }
 
 #include "locale/cs.h"
+#include "locale/de.h"
 #include "locale/en.h"
 #include "locale/es.h"
 
