@@ -11,7 +11,7 @@ const i18n::Locale locale_en = {
 	{ "instructions_step1_textA", "Install supported mobile wallet app" },
 	{ "instructions_step1_textB", "and follow its setup instructions" },
 	{ "instructions_step2_text", "Insert bank notes and coins" },
-	{ "instructions_step3_text", "Push the button when done" },
+	{ "instructions_step3_text", "Press the button when done" },
 	{ "instructions_step4_text", "Scan QR code with mobile wallet app" },
 	{ "insert_fiat_limit", "Limit" },
 	{ "insert_fiat_instructions_line1", "insert bills and coins" },
