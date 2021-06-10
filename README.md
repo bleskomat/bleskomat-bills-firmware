@@ -143,9 +143,9 @@ Physical switches on the DG600F should set as follows:
 | 3 (Transmitting) | Up (RS232)    |
 | 4 (Inhibiting)   | Down (> +3V)  |
 
-![](docs/coin-acceptor-DG600F-dip-setting-switch.png)
+![](docs/DG600F-DIP-switch-configuration.png)
 
-Open the [DG600F manual](docs/DG600F-coin-acceptor-manual.pdf) to "Coin Acceptor Parameters Setting" on page 18. Set the parameters as follows:
+Open the [DG600F manual](docs/DG600F-Coin-Acceptor-Technical-Manual.pdf) to "Coin Acceptor Parameters Setting" on page 18. Set the parameters as follows:
 
 | Parameter | Description                      | Value | Meaning                                          |
 |-----------|----------------------------------|-------|--------------------------------------------------|
@@ -156,7 +156,7 @@ Open the [DG600F manual](docs/DG600F-coin-acceptor-manual.pdf) to "Coin Acceptor
 | A5        | serial port output               | 01    | output to serial pin                             |
 
 
-To train the coin acceptor, have a look at "Coin Parameters Setting" on page 16 of the [DG600F manual](docs/DG600F-coin-acceptor-manual.pdf). Be sure to set the "coin value" for each coin in series, incremented by 1. For example:
+To train the coin acceptor, have a look at "Coin Parameters Setting" on page 16 of the [DG600F manual](docs/DG600F-Coin-Acceptor-Technical-Manual.pdf). Be sure to set the "coin value" for each coin in series, incremented by 1. For example:
 * 1 CZK = 1 coin value
 * 2 CZK = 2 coin value
 * 5 CZK = 3 coin value
@@ -212,9 +212,7 @@ Again the device path here could be different for your operating system.
 
 ## Prepare SD Card
 
-Before continuing here, see [Wiring the SD card](#wiring-the-sd-card).
-
-Format the SD card with FAT32.
+Format the SD card with the FAT32 filesystem.
 
 The following is an example `bleskomat.conf` file that you could use to configure a bleskomat device. Create the file and copy it to the root directory of the SD card.
 ```
