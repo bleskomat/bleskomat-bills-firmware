@@ -9,6 +9,7 @@ This repository contains the source code and basic documentation about how to co
 	* [Building the Hardware Device](#building-the-hardware-device)
 		* [Wiring the E-Paper Module](#wiring-the-e-paper-module)
 		* [Wiring the SD Card SPI Module](#wiring-the-sd-card-spi-module)
+		* [Wiring the button](#wiring-the-button)
 		* [Wiring the Bill Acceptor](#wiring-the-bill-acceptor)
 		* [Wiring the Coin Acceptor](#wiring-the-coin-acceptor)
 	* [Configure and Train Coin Acceptor](#configure-and-train-coin-acceptor)
@@ -106,6 +107,19 @@ Connect the SD card SPI module to the ESP32 using the following table as a guide
 | D18   | SCK                |
 | D19   | MISO               |
 | GND   | GND                |
+
+
+#### Wiring the button
+
+Wire the button using the following table as a guide:
+
+| ESP32    | Button    |
+|----------|-----------|
+| VIN (V5) | left pin  |
+| GPIO33   | right pin |
+
+Connect the right pin of the button to GND with a 10k ohm resistor.
+
 
 
 #### Wiring the Bill Acceptor
