@@ -10,6 +10,7 @@ namespace {
 	std::string logsDirPath = "/logs";
 	std::string debugFileName = "debug.log";
 	FRESULT lastFileOpResult;
+	bool logsDirExists = false;
 
 	// For full list of result codes (and their detailed meanings):
 	// http://elm-chan.org/fsw/ff/doc/rc.html
@@ -78,7 +79,7 @@ namespace {
 	}
 
 	bool writeToDebugFile(const std::string &msg) {
-		if (!logsDirectoryExists()) return false;
+		if (!logsDirExists) return false;
 		const std::string filePath = getDebugFilePath();
 		std::ofstream file;
 		// Open file for writing (append mode).
@@ -96,9 +97,12 @@ namespace logger {
 		if (!logsDirectoryExists()) {
 			if (createLogsDirectory()) {
 				write("Logs directory created " + logsDirPath);
+				logsDirExists = true;
 			} else {
 				write("Failed to create logs directory " + logsDirPath + " " + getFileOpResultDebugMessage(lastFileOpResult));
 			}
+		} else {
+			logsDirExists = true;
 		}
 		write("Logger initialized");
 	}
