@@ -262,7 +262,7 @@ The following is a list of all possible configuration options that can be set vi
 * `locale` - The locale used when rendering text to the screen. Localization strings are defined in `./include/locale`. Each supported locale has its own file.
 * `fiatCurrency` - The fiat currency symbol for which the device is configured; see [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 * `fiatPrecision` - The number of digits to the right of the decimal point when rendering fiat currency amounts.
-* `buyLimit` - The per transaction limit (in fiat value) that will be accepted by the device. When an inserted bill would cause the accumulated value to exceed the transaction limit, the bill will be rejected. All coins will be rejected once the largest coin value would cause the limit to be exceeded.
+* `buyLimit` - The per trade (buy) limit that will be accepted by the device. When an inserted bill would cause the accumulated value to exceed the limit, the bill will be rejected. All coins will be rejected once the largest coin value would cause the limit to be exceeded.
 * `coinValues` - The value of coins for which the coin acceptor has been configured. Each value separated by a comma. Integers and floating point (decimal) values are accepted. Examples:
 	* CZK: `1,2,5,10,20,50`
 	* EUR: `0.05,0.10,0.20,0.50,1,2`

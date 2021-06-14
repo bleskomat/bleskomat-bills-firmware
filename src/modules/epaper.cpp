@@ -242,7 +242,7 @@ namespace {
 
 	bool prepareForNewScreen(const uint16_t maxWrites = 3) {
 		bool scrubbed = false;
-		if (currentScreen == "transactionComplete" || isDirty(maxWrites)) {
+		if (currentScreen == "tradeComplete" || isDirty(maxWrites)) {
 			scrub();
 			scrubbed = true;
 			numWrites = 1;
@@ -300,7 +300,7 @@ namespace epaper {
 			// 	customParams["er"] = std::to_string(exchangeRate);
 			// }
 			// const std::string qrcodeData = util::toUpperCase(util::lnurlEncode(util::createSignedLnurlWithdraw(amount, customParams)));
-			// epaper::showTransactionCompleteScreen(amount, qrcodeData, referencePhrase);
+			// epaper::showTradeCompleteScreen(amount, qrcodeData, referencePhrase);
 		} else {
 			logger::write("Unknown display connected. This device supports WaveShare 4.2 inch e-paper b/w");
 		}
@@ -489,7 +489,7 @@ namespace epaper {
 		display.displayWindow(0, 0, display.epd2.WIDTH, display.epd2.HEIGHT);
 	}
 
-	void showTransactionCompleteScreen(
+	void showTradeCompleteScreen(
 		const float &amount,
 		const std::string &qrcodeData,
 		const std::string &t_referencePhrase
@@ -502,8 +502,8 @@ namespace epaper {
 		BoundingBox instr_text1_bbox;
 		{
 			// Render instructional text (bottom-left).
-			const std::string instr_text1 = i18n::t("transaction_complete_instructions_line1");
-			const std::string instr_text2 = i18n::t("transaction_complete_instructions_line2");
+			const std::string instr_text1 = i18n::t("trade_complete_instructions_line1");
+			const std::string instr_text2 = i18n::t("trade_complete_instructions_line2");
 			const uint16_t instr_text_max_w = left_screen_w - (margin * 2);
 			const Font instr_font = getBestFitFont(instr_text1, proportionalFonts, instr_text_max_w);
 			instr_text1_bbox = calculateTextSize(instr_text1, instr_font);
@@ -557,7 +557,7 @@ namespace epaper {
 				renderText(word, word_font, word_x, word_y, &prev_word_bbox, false);
 			}
 		}
-		currentScreen = "transactionComplete";
+		currentScreen = "tradeComplete";
 		display.displayWindow(0, 0, display.epd2.WIDTH, display.epd2.HEIGHT);
 	}
 }

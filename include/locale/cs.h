@@ -16,8 +16,8 @@ const i18n::Locale locale_cs = {
 	{ "insert_fiat_limit", "Limit" },
 	{ "insert_fiat_instructions_line1", "vložte bankovky a mince" },
 	{ "insert_fiat_instructions_line2", "(po dokončení stiskněte tlačítko)" },
-	{ "transaction_complete_instructions_line1", "naskenujte QR kód pomocí mobilní aplikace" },
-	{ "transaction_complete_instructions_line2", "a pořiďte si fotku pro své záznamy" }
+	{ "trade_complete_instructions_line1", "naskenujte QR kód pomocí mobilní aplikace" },
+	{ "trade_complete_instructions_line2", "a pořiďte si fotku pro své záznamy" }
 };
 
 #endif

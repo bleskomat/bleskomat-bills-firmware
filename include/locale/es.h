@@ -16,8 +16,8 @@ const i18n::Locale locale_es = {
 	{ "insert_fiat_limit", "Límite" },
 	{ "insert_fiat_instructions_line1", "insertar billetes y monedas" },
 	{ "insert_fiat_instructions_line2", "(presionar el botón cuando termine)" },
-	{ "transaction_complete_instructions_line1", "escanear con la aplicación móvil para canjear" },
-	{ "transaction_complete_instructions_line2", "y toma una foto para tus registros" }
+	{ "trade_complete_instructions_line1", "escanear con la aplicación móvil para canjear" },
+	{ "trade_complete_instructions_line2", "y toma una foto para tus registros" }
 };
 
 #endif

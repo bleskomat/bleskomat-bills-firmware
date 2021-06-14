@@ -116,10 +116,4 @@ namespace logger {
 	void write(const std::string &t_msg) {
 		return write(t_msg, "info");
 	}
-
-	void logTransaction(const std::string &signedUrl) {
-		std::string msg = "New signed LNURL generated -> ";
-		msg += signedUrl;
-		return write(msg, "transaction");
-	}
 }

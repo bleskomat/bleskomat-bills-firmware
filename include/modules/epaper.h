@@ -86,7 +86,7 @@ namespace epaper {
 	void showDisabledScreen();
 	void showInstructionsScreen();
 	void showInsertFiatScreen(const float &amount);
-	void showTransactionCompleteScreen(
+	void showTradeCompleteScreen(
 		const float &amount,
 		const std::string &qrcodeData,
 		const std::string &referencePhrase = ""

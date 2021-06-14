@@ -16,8 +16,8 @@ const i18n::Locale locale_en = {
 	{ "insert_fiat_limit", "Limit" },
 	{ "insert_fiat_instructions_line1", "insert bills and coins" },
 	{ "insert_fiat_instructions_line2", "(press button when done)" },
-	{ "transaction_complete_instructions_line1", "scan with mobile app to redeem" },
-	{ "transaction_complete_instructions_line2", "and take a picture for your records" }
+	{ "trade_complete_instructions_line1", "scan with mobile app to redeem" },
+	{ "trade_complete_instructions_line2", "and take a picture for your records" }
 };
 
 #endif

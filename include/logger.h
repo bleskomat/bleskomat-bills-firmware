@@ -11,7 +11,6 @@ namespace logger {
 	void init(const std::string &t_sdCardMountPath);
 	void write(const std::string &t_msg, const std::string &t_type);
 	void write(const std::string &t_msg);
-	void logTransaction(const std::string &signedUrl);
 }
 
 #endif

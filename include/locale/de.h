@@ -16,8 +16,8 @@ const i18n::Locale locale_de = {
 	{ "insert_fiat_limit", "Limit" },
 	{ "insert_fiat_instructions_line1", "Münzen und scheine einwerfen" },
 	{ "insert_fiat_instructions_line2", "(nach abschluss den knopf drücken)" },
-	{ "transaction_complete_instructions_line1", "Scanne den QR Code mit einer Bitcoin Wallet um die" },
-	{ "transaction_complete_instructions_line2", "Sats zu erhalten. Dann ein bild der wörter machen." }
+	{ "trade_complete_instructions_line1", "Scanne den QR Code mit einer Bitcoin Wallet um die" },
+	{ "trade_complete_instructions_line2", "Sats zu erhalten. Dann ein bild der wörter machen." }
 };
 
 #endif
