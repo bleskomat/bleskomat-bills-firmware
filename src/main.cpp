@@ -94,13 +94,10 @@ void loop() {
 					// Create a withdraw request and render it as a QR code.
 					const std::string signedUrl = util::createSignedLnurlWithdraw(accumulatedValue, customParams);
 					const std::string encoded = util::lnurlEncode(signedUrl);
-					const std::string uriSchemaPrefix = config::get("uriSchemaPrefix");
 					std::string qrcodeData = "";
-					if (uriSchemaPrefix != "") {
-						// Allows upper or lower case URI schema prefix via a configuration option.
-						// Some wallet apps might not support uppercase URI prefixes.
-						qrcodeData += uriSchemaPrefix + ":";
-					}
+					// Allows upper or lower case URI schema prefix via a configuration option.
+					// Some wallet apps might not support uppercase URI prefixes.
+					qrcodeData += config::get("uriSchemaPrefix");
 					// QR codes with only uppercase letters are less complex (easier to scan).
 					qrcodeData += util::toUpperCase(encoded);
 					screen::showTradeCompleteScreen(accumulatedValue, qrcodeData, referencePhrase);

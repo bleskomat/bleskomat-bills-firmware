@@ -120,18 +120,6 @@ namespace {
 		return font;
 	}
 
-	int getBestFitQRCodeVersion(const std::string &dataStr) {
-		int size = 12;
-		int sizes[17] = { 25, 47, 77, 114, 154, 195, 224, 279, 335, 395, 468, 535, 619, 667, 758, 854, 938 };
-		int len = dataStr.length();
-		for (int i = 0; i < 17; i++) {
-			if (sizes[i] > len) {
-				return i + 1;
-			}
-		}
-		return size;
-	}
-
 	std::string getAmountFiatCurrencyString(const float &amount) {
 		std::ostringstream stream;
 		const std::string fiatCurrency = config::get("fiatCurrency");
@@ -195,36 +183,57 @@ namespace {
 		BoundingBox *bbox,
 		const bool &centerJustify = true
 	) {
-		const char* data = t_data.c_str();
-		const int version = getBestFitQRCodeVersion(t_data);
-		QRCode qrcode;
-		uint8_t qrcodeData[qrcode_getBufferSize(version)];
-		qrcode_initText(&qrcode, qrcodeData, version, ECC_LOW, data);
-		int16_t w = 0;
-		int16_t h = 0;
-		int scale = std::min(std::floor(max_w / qrcode.size), std::floor(max_h / qrcode.size));
-		w = qrcode.size * scale;
-		h = qrcode.size * scale;
-		int16_t box_x = x;
-		int16_t box_y = y;
-		if (centerJustify) {
-			box_x -= (w / 2);
-			box_y -= (h / 2);
-		}
-		display.fillRect(box_x, box_y, w, h, backgroundColor);
-		// Uncomment the following line to draw the outer bounding box.
-		// display.drawRect(box_x, box_y, w, h, textColor);
-		for (uint8_t y = 0; y < qrcode.size; y++) {
-			for (uint8_t x = 0; x < qrcode.size; x++) {
-				int color = qrcode_getModule(&qrcode, x, y) ? textColor: backgroundColor;
-				display.fillRect(box_x + scale*x, box_y + scale*y, scale, scale, color);
+		try {
+			const char* data = t_data.c_str();
+			uint8_t version = 1;
+			while (version <= 40) {
+				const uint16_t bufferSize = qrcode_getBufferSize(version);
+				QRCode qrcode;
+				uint8_t qrcodeData[bufferSize];
+				const int8_t result = qrcode_initText(&qrcode, qrcodeData, version, ECC_LOW, data);
+				if (result == 0) {
+					// QR encoding successful.
+					uint8_t scale = std::min(std::floor(max_w / qrcode.size), std::floor(max_h / qrcode.size));
+					uint16_t w = qrcode.size * scale;
+					uint16_t h = w;
+					int16_t box_x = x;
+					int16_t box_y = y;
+					if (centerJustify) {
+						box_x -= (w / 2);
+						box_y -= (h / 2);
+					}
+					std::cout << "version = " << std::to_string(version) << std::endl;
+					std::cout << "bufferSize = " << std::to_string(bufferSize) << std::endl;
+					std::cout << "qrcode.size = " << std::to_string(qrcode.size) << std::endl;
+					std::cout << "scale = " << std::to_string(scale) << std::endl;
+					std::cout << "length = " << std::to_string(t_data.length()) << std::endl;
+					std::cout << "data = " << t_data << std::endl;
+					std::cout << "drawing QR code..." << std::endl;
+					display.fillRect(box_x, box_y, w, h, backgroundColor);
+					for (uint8_t y = 0; y < qrcode.size; y++) {
+						for (uint8_t x = 0; x < qrcode.size; x++) {
+							auto color = qrcode_getModule(&qrcode, x, y) ? textColor: backgroundColor;
+							display.fillRect(box_x + scale*x, box_y + scale*y, scale, scale, color);
+						}
+					}
+					if (bbox != NULL) {
+						bbox->x = box_x;
+						bbox->y = box_y;
+						bbox->w = w;
+						bbox->h = h;
+					}
+					break;
+				} else if (result == -2) {
+					// Data was too long for the QR code version.
+					version++;
+				} else if (result == -1) {
+					throw std::runtime_error("Render QR code failure: Unable to detect mode");
+				} else {
+					throw std::runtime_error("Render QR code failure: Unknown failure case");
+				}
 			}
-		}
-		if (bbox != NULL) {
-			bbox->x = box_x;
-			bbox->y = box_y;
-			bbox->w = w;
-			bbox->h = h;
+		} catch (const std::exception &e) {
+			std::cerr << e.what() << std::endl;
 		}
 	}
 
@@ -295,12 +304,44 @@ namespace epaper {
 			// const std::string referencePhrase = util::generateRandomPhrase(5);
 			// Lnurl::Query customParams;
 			// customParams["r"] = referencePhrase;
-			// const double exchangeRate = platform::getExchangeRate();
+			// const double exchangeRate = 38000.441;
 			// if (exchangeRate > 0) {
 			// 	customParams["er"] = std::to_string(exchangeRate);
 			// }
-			// const std::string qrcodeData = util::toUpperCase(util::lnurlEncode(util::createSignedLnurlWithdraw(amount, customParams)));
+			// const std::string qrcodeData = config::get("uriSchemaPrefix") + util::toUpperCase(util::lnurlEncode(util::createSignedLnurlWithdraw(amount, customParams)));
 			// epaper::showTradeCompleteScreen(amount, qrcodeData, referencePhrase);
+			// prepareForNewScreen();
+			// const uint16_t margin = 8;
+			// const uint16_t max_w = (display.width() / 3) - (margin * 2);
+			// const uint16_t max_h = (display.height() / 2) - (margin * 2);
+			// renderQRCode(
+			// 	"https://www.bleskomat.com/intro",
+			// 	margin,
+			// 	margin,
+			// 	max_w,
+			// 	max_h,
+			// 	NULL,
+			// 	false
+			// );
+			// renderQRCode(
+			// 	"https://www.bleskomat.com/intro?",
+			// 	(display.width() * 0.332) + margin,
+			// 	margin,
+			// 	max_w,
+			// 	max_h,
+			// 	NULL,
+			// 	false
+			// );
+			// renderQRCode(
+			// 	"https://www.bleskomat.com/intro?i",
+			// 	(display.width() * 0.667) + margin,
+			// 	margin,
+			// 	max_w,
+			// 	max_h,
+			// 	NULL,
+			// 	false
+			// );
+			// display.displayWindow(0, 0, display.epd2.WIDTH, display.epd2.HEIGHT);
 		} else {
 			logger::write("Unknown display connected. This device supports WaveShare 4.2 inch e-paper b/w");
 		}
@@ -521,7 +562,7 @@ namespace epaper {
 			int16_t qr_x = margin;// left
 			int16_t qr_y = margin;// top
 			uint16_t qr_max_w = left_screen_w - qr_x;
-			uint16_t qr_max_h = display.epd2.HEIGHT - (instr_text1_bbox.h + qr_y + margin);
+			uint16_t qr_max_h = display.epd2.HEIGHT - ((display.epd2.HEIGHT - instr_text1_bbox.y) + margin);
 			renderQRCode(qrcodeData, qr_x, qr_y, qr_max_w, qr_max_h, &qrcode_bbox, false);
 		}
 		BoundingBox amount_text_bbox;

@@ -77,6 +77,7 @@
 
 #include <cmath>
 #include <sstream>
+#include <stdexcept>
 #include <vector>
 
 namespace epaper {

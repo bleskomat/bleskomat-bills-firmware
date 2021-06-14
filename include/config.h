@@ -22,7 +22,7 @@ struct BleskomatWifiConfig {
 
 struct BleskomatConfig {
 	struct Lnurl::SignerConfig lnurl;
-	std::string uriSchemaPrefix = "LIGHTNING";
+	std::string uriSchemaPrefix = "";// "LIGHTNING:", "lightning:", or ""
 	std::string fiatCurrency = "EUR";
 	unsigned short fiatPrecision = 2;
 	std::string feePercent = "0.00";
