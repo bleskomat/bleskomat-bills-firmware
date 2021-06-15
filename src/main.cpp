@@ -21,6 +21,7 @@ void setup() {
 float amountShown = 0;
 
 void loop() {
+	sdcard::loop();
 	network::loop();
 	platform::loop();
 	pingServer::loop();

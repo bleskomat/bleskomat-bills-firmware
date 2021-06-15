@@ -1,67 +1,120 @@
 #include "sdcard.h"
 
+// See:
+// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/fatfs.html
+// http://elm-chan.org/fsw/ff/00index_e.html
+
 namespace {
 
 	const char* mountpoint = "/sdcard";
 	bool mounted = false;
+	typedef std::pair< std::string, std::string > AppendToFileBufferItem;
+	std::deque<AppendToFileBufferItem> appendToFileBuffer;
 
-	bool mount() {
-		// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/sdspi_host.html
-		sdmmc_host_t host = SDSPI_HOST_DEFAULT();
-		sdspi_slot_config_t slot_config = SDSPI_SLOT_CONFIG_DEFAULT();
-		slot_config.gpio_miso = (gpio_num_t) SD_MISO;
-		slot_config.gpio_mosi = (gpio_num_t) SD_MOSI;
-		slot_config.gpio_sck  = (gpio_num_t) SD_SCK;
-		slot_config.gpio_cs   = (gpio_num_t) SD_CS;
-		// Options for mounting the filesystem.
-		// If format_if_mount_failed is set to true, SD card will be partitioned and
-		// formatted in case when mounting fails.
-		esp_vfs_fat_sdmmc_mount_config_t mount_config =
-			{
-				.format_if_mount_failed = false,
-				.max_files = 5,
-				.allocation_unit_size = 16 * 1024
-			};
-		// Use settings defined above to initialize SD card and mount FAT filesystem.
-		// Note: esp_vfs_fat_sdmmc_mount is an all-in-one convenience function.
-		// Please check its source code and implement error recovery when developing
-		// production applications.
-		sdmmc_card_t* card;
-		esp_err_t result = esp_vfs_fat_sdmmc_mount(mountpoint, &host, &slot_config, &mount_config, &card);
-		if (result != ESP_OK) {
-			if (result == ESP_FAIL) {
-				logger::write("Failed to mount SD card: ESP_FAIL (Partition cannot be mounted)");
-			} else {
-				logger::write("Failed to mount SD card: " + std::string(esp_err_to_name(result)));
-			}
-			return false;
-		}
-		// Card has been initialized, print its properties.
-		sdmmc_card_print_info(stdout, card);
-		return true;
+	bool fileExists(const std::string &filePath) {
+		// http://elm-chan.org/fsw/ff/doc/stat.html
+		const bool exists = f_stat(filePath.c_str(), NULL) == FR_OK;
+		return exists;
 	}
 
-	// void unmount() {
-	// 	// All done, unmount partition and disable SDMMC or SPI peripheral
-	// 	esp_vfs_fat_sdmmc_unmount();
-	// }
+	void doAppendToFile(const std::string &t_filePath, const std::string &text) {
+		std::ofstream file;
+		// Open file for writing (append mode).
+		const std::string filePath = sdcard::getMountedPath(t_filePath);
+		file.open(filePath.c_str(), std::ios::app);
+		file << text << std::endl;
+		file.close();
+	}
+
+	void handleAppendToFileBuffer() {
+		while (appendToFileBuffer.size() > 0) {
+			const AppendToFileBufferItem item = appendToFileBuffer.front();
+			appendToFileBuffer.pop_front();
+			const std::string filePath = item.first;
+			const std::string text = item.second;
+			doAppendToFile(filePath, text);
+		}
+	}
+
+	void handleBuffers() {
+		handleAppendToFileBuffer();
+	}
 }
 
 namespace sdcard {
+
+	void init() {
+		mount();
+		if (mounted) {
+			std::cout << "SD card mounted" << std::endl;
+		}
+	}
+
+	void loop() {
+		if (mounted) {
+			handleBuffers();
+		}
+	}
 
 	bool isMounted() {
 		return mounted;
 	}
 
-	std::string getMountPoint() {
-		return std::string(mountpoint);
+	void mount() {
+		if (!mounted) {
+			// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/sdspi_host.html
+			sdmmc_host_t host = SDSPI_HOST_DEFAULT();
+			host.slot = VSPI_HOST;
+			sdspi_slot_config_t slot_config = SDSPI_SLOT_CONFIG_DEFAULT();
+			slot_config.gpio_miso = (gpio_num_t) SD_MISO;
+			slot_config.gpio_mosi = (gpio_num_t) SD_MOSI;
+			slot_config.gpio_sck  = (gpio_num_t) SD_SCK;
+			slot_config.gpio_cs   = (gpio_num_t) SD_CS;
+			// Options for mounting the filesystem.
+			// If format_if_mount_failed is set to true, SD card will be partitioned and
+			// formatted in case when mounting fails.
+			esp_vfs_fat_sdmmc_mount_config_t mount_config =
+				{
+					.format_if_mount_failed = false,
+					.max_files = 5,
+					.allocation_unit_size = 16 * 1024
+				};
+			// Use settings defined above to initialize SD card and mount FAT filesystem.
+			// Note: esp_vfs_fat_sdmmc_mount is an all-in-one convenience function.
+			// Please check its source code and implement error recovery when developing
+			// production applications.
+			sdmmc_card_t* card;
+			esp_err_t result = esp_vfs_fat_sdmmc_mount(mountpoint, &host, &slot_config, &mount_config, &card);
+			if (result != ESP_OK) {
+				if (result == ESP_FAIL) {
+					std::cout << "Failed to mount SD card: ESP_FAIL (Partition cannot be mounted)" << std::endl;
+				} else {
+					std::cout << "Failed to mount SD card: " + std::string(esp_err_to_name(result)) << std::endl;
+				}
+			} else {
+				// Card has been initialized, print its properties.
+				sdmmc_card_print_info(stdout, card);
+				mounted = true;
+			}
+		}
 	}
 
-	void init() {
-		if (mount()) {
-			logger::write("SD card mounted");
-			logger::init(sdcard::getMountPoint());
-			mounted = true;
+	void unmount() {
+		if (mounted) {
+			 // Unmount partition and disable SDMMC or SPI peripheral
+			 esp_vfs_fat_sdmmc_unmount();
+			 mounted = false;
 		}
+	}
+
+	std::string getMountedPath(const std::string &partialPath) {
+		return std::string(mountpoint) + "/" + partialPath;
+	}
+
+	void appendToFile(const std::string &filePath, const std::string &text) {
+		AppendToFileBufferItem item;
+		item.first = filePath;
+		item.second = text;
+		appendToFileBuffer.push_back(item);
 	}
 }

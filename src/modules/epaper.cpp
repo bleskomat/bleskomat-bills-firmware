@@ -1,8 +1,5 @@
 #include "modules/epaper.h"
 
-// use adobe fonts: (helvetica + courier) !!!
-// https://github.com/olikraus/u8g2/wiki/fntgrpadobex11
-//
 //
 //  Using GxEPD2 library:
 //  	https://github.com/ZinggJM/GxEPD2
@@ -202,13 +199,6 @@ namespace {
 						box_x -= (w / 2);
 						box_y -= (h / 2);
 					}
-					std::cout << "version = " << std::to_string(version) << std::endl;
-					std::cout << "bufferSize = " << std::to_string(bufferSize) << std::endl;
-					std::cout << "qrcode.size = " << std::to_string(qrcode.size) << std::endl;
-					std::cout << "scale = " << std::to_string(scale) << std::endl;
-					std::cout << "length = " << std::to_string(t_data.length()) << std::endl;
-					std::cout << "data = " << t_data << std::endl;
-					std::cout << "drawing QR code..." << std::endl;
 					display.fillRect(box_x, box_y, w, h, backgroundColor);
 					for (uint8_t y = 0; y < qrcode.size; y++) {
 						for (uint8_t x = 0; x < qrcode.size; x++) {
@@ -237,6 +227,19 @@ namespace {
 		}
 	}
 
+	void activate() {
+		// It is necessary to unmount the SD card before using another SPI device.
+		sdcard::unmount();
+		SPI.end();
+		SPI.begin(EPAPER_CLK, EPAPER_MISO, EPAPER_DIN, EPAPER_CS);
+	}
+
+	void deactivate() {
+		// Stop using SPI here and re-mount the SD card.
+		SPI.end();
+		sdcard::mount();
+	}
+
 	void scrub() {
 		// Repeatedly clear the screen w/ alternating colors.
 		// This ensures that no pixels are left over from a previous state.
@@ -249,7 +252,8 @@ namespace {
 		return ++numWrites > maxWrites;
 	}
 
-	bool prepareForNewScreen(const uint16_t maxWrites = 3) {
+	bool startNewScreen(const uint16_t maxWrites = 3) {
+		activate();
 		bool scrubbed = false;
 		if (currentScreen == "tradeComplete" || isDirty(maxWrites)) {
 			scrub();
@@ -261,94 +265,99 @@ namespace {
 		return scrubbed;
 	}
 
+	void finishNewScreen() {
+		display.displayWindow(0, 0, display.epd2.WIDTH, display.epd2.HEIGHT);
+		deactivate();
+	}
+
 	std::string getInstructionsUrl() {
 		const std::string apiKeyId = config::get("apiKey.id");
 		std::string instructionsUrl = config::get("webUrl");
 		instructionsUrl += "/intro?id=" + util::urlEncode(apiKeyId);
 		return instructionsUrl;
 	}
+
+	void debugCommands() {
+		// Uncomment the following lines to render each screen after a short delay between each.
+		// epaper::showSplashScreen();
+		// delay(2000);
+		// epaper::showDisabledScreen();
+		// delay(2000);
+		// epaper::showInstructionsScreen();
+		// delay(2000);
+		// epaper::showInsertFiatScreen(0);
+		// delay(1000);
+		// epaper::showInsertFiatScreen(0.2);
+		// delay(1000);
+		// epaper::showInsertFiatScreen(0.25);
+		// delay(1000);
+		// epaper::showInsertFiatScreen(2.25);
+		// delay(1000);
+		// epaper::showInsertFiatScreen(7.25);
+		// delay(1000);
+		// epaper::showInsertFiatScreen(27.25);
+		// delay(1000);
+		// epaper::showInsertFiatScreen(100.00);
+		// const double amount = 100.00;
+		// const std::string referencePhrase = util::generateRandomPhrase(5);
+		// Lnurl::Query customParams;
+		// customParams["r"] = referencePhrase;
+		// const double exchangeRate = 38000.441;
+		// if (exchangeRate > 0) {
+		// 	customParams["er"] = std::to_string(exchangeRate);
+		// }
+		// const std::string qrcodeData = config::get("uriSchemaPrefix") + util::toUpperCase(util::lnurlEncode(util::createSignedLnurlWithdraw(amount, customParams)));
+		// epaper::showTradeCompleteScreen(amount, qrcodeData, referencePhrase);
+		// startNewScreen();
+		// const uint16_t margin = 8;
+		// const uint16_t max_w = (display.width() / 3) - (margin * 2);
+		// const uint16_t max_h = (display.height() / 2) - (margin * 2);
+		// renderQRCode(
+		// 	"https://www.bleskomat.com/intro",
+		// 	margin,
+		// 	margin,
+		// 	max_w,
+		// 	max_h,
+		// 	NULL,
+		// 	false
+		// );
+		// renderQRCode(
+		// 	"https://www.bleskomat.com/intro?",
+		// 	(display.width() * 0.332) + margin,
+		// 	margin,
+		// 	max_w,
+		// 	max_h,
+		// 	NULL,
+		// 	false
+		// );
+		// renderQRCode(
+		// 	"https://www.bleskomat.com/intro?i",
+		// 	(display.width() * 0.667) + margin,
+		// 	margin,
+		// 	max_w,
+		// 	max_h,
+		// 	NULL,
+		// 	false
+		// );
+		// finishNewScreen();
+	}
 }
 
 namespace epaper {
 
 	void init() {
-		display.init(0);
-		u8g2Fonts.begin(display);// connect u8g2 procedures to Adafruit GFX
-		SPI.end();// Release standard SPI pins.
-		SPI.begin(EPAPER_CLK, EPAPER_MISO, EPAPER_DIN, EPAPER_CS);
 		if (display.epd2.panel == GxEPD2::GDEW042T2) {
-			logger::write("E-Paper display initialized and ready for use");
-			initialized = true;
+			display.init(0);
+			u8g2Fonts.begin(display);// connect u8g2 procedures to Adafruit GFX
+			activate();
 			display.setRotation(0);
-			// Uncomment the following lines to render each screen after a short delay between each.
-			// epaper::showSplashScreen();
-			// delay(2000);
-			// epaper::showDisabledScreen();
-			// delay(2000);
-			// epaper::showInstructionsScreen();
-			// delay(2000);
-			// epaper::showInsertFiatScreen(0);
-			// delay(1000);
-			// epaper::showInsertFiatScreen(0.2);
-			// delay(1000);
-			// epaper::showInsertFiatScreen(0.25);
-			// delay(1000);
-			// epaper::showInsertFiatScreen(2.25);
-			// delay(1000);
-			// epaper::showInsertFiatScreen(7.25);
-			// delay(1000);
-			// epaper::showInsertFiatScreen(27.25);
-			// delay(1000);
-			// epaper::showInsertFiatScreen(100.00);
-			// const double amount = 100.00;
-			// const std::string referencePhrase = util::generateRandomPhrase(5);
-			// Lnurl::Query customParams;
-			// customParams["r"] = referencePhrase;
-			// const double exchangeRate = 38000.441;
-			// if (exchangeRate > 0) {
-			// 	customParams["er"] = std::to_string(exchangeRate);
-			// }
-			// const std::string qrcodeData = config::get("uriSchemaPrefix") + util::toUpperCase(util::lnurlEncode(util::createSignedLnurlWithdraw(amount, customParams)));
-			// epaper::showTradeCompleteScreen(amount, qrcodeData, referencePhrase);
-			// prepareForNewScreen();
-			// const uint16_t margin = 8;
-			// const uint16_t max_w = (display.width() / 3) - (margin * 2);
-			// const uint16_t max_h = (display.height() / 2) - (margin * 2);
-			// renderQRCode(
-			// 	"https://www.bleskomat.com/intro",
-			// 	margin,
-			// 	margin,
-			// 	max_w,
-			// 	max_h,
-			// 	NULL,
-			// 	false
-			// );
-			// renderQRCode(
-			// 	"https://www.bleskomat.com/intro?",
-			// 	(display.width() * 0.332) + margin,
-			// 	margin,
-			// 	max_w,
-			// 	max_h,
-			// 	NULL,
-			// 	false
-			// );
-			// renderQRCode(
-			// 	"https://www.bleskomat.com/intro?i",
-			// 	(display.width() * 0.667) + margin,
-			// 	margin,
-			// 	max_w,
-			// 	max_h,
-			// 	NULL,
-			// 	false
-			// );
-			// display.displayWindow(0, 0, display.epd2.WIDTH, display.epd2.HEIGHT);
+			debugCommands();
+			deactivate();
+			initialized = true;
+			logger::write("E-Paper display initialized and ready for use");
 		} else {
 			logger::write("Unknown display connected. This device supports WaveShare 4.2 inch e-paper b/w");
 		}
-	}
-
-	bool isInitialized() {
-		return initialized;
 	}
 
 	std::string getCurrentScreen() {
@@ -356,8 +365,8 @@ namespace epaper {
 	}
 
 	void showSplashScreen() {
-		if (!isInitialized()) return;
-		prepareForNewScreen();
+		if (!initialized) return;
+		startNewScreen();
 		int16_t margin = 24;
 		BoundingBox prevText_bbox;
 		{
@@ -387,12 +396,12 @@ namespace epaper {
 		int16_t instructions_y = display.epd2.HEIGHT - (instructions_bbox.h + margin);// bottom
 		renderText(instructions, proportionalFontNormal, instructions_x, instructions_y, NULL);
 		currentScreen = "splash";
-		display.displayWindow(0, 0, display.epd2.WIDTH, display.epd2.HEIGHT);
+		finishNewScreen();
 	}
 
 	void showDisabledScreen() {
-		if (!isInitialized()) return;
-		prepareForNewScreen();
+		if (!initialized) return;
+		startNewScreen();
 		int16_t margin = 24;
 		const std::string text = i18n::t("disabled_heading");
 		int16_t text_x = (display.epd2.WIDTH / 2);// center
@@ -405,12 +414,12 @@ namespace epaper {
 		int16_t text2_y = text_bbox.h + text_bbox.y + margin;// bottom
 		renderText(text2, proportionalFontSmall, text2_x, text2_y, NULL);
 		currentScreen = "disabled";
-		display.displayWindow(0, 0, display.epd2.WIDTH, display.epd2.HEIGHT);
+		finishNewScreen();
 	}
 
 	void showInstructionsScreen() {
-		if (!isInitialized()) return;
-		prepareForNewScreen();
+		if (!initialized) return;
+		startNewScreen();
 		const std::string instructionsUrl = getInstructionsUrl();
 		const int16_t margin = 16;
 		const int16_t line_spacing = 8;
@@ -484,12 +493,12 @@ namespace epaper {
 			renderText(text8, text4_font, text4_x, text8_y, &text8_bbox, false);
 		}
 		currentScreen = "instructions";
-		display.displayWindow(0, 0, display.epd2.WIDTH, display.epd2.HEIGHT);
+		finishNewScreen();
 	}
 
 	void showInsertFiatScreen(const float &amount) {
-		if (!isInitialized()) return;
-		prepareForNewScreen();
+		if (!initialized) return;
+		startNewScreen();
 		int16_t margin = 24;
 		int16_t center_x = display.epd2.WIDTH / 2;// center
 		BoundingBox prevText_bbox;
@@ -527,7 +536,7 @@ namespace epaper {
 		int16_t text2_y = prevText_bbox.y + prevText_bbox.h + margin;
 		renderText(text2, proportionalFontSmall, center_x, text2_y, &prevText_bbox);
 		currentScreen = "insertFiat";
-		display.displayWindow(0, 0, display.epd2.WIDTH, display.epd2.HEIGHT);
+		finishNewScreen();
 	}
 
 	void showTradeCompleteScreen(
@@ -535,8 +544,8 @@ namespace epaper {
 		const std::string &qrcodeData,
 		const std::string &t_referencePhrase
 	) {
-		if (!isInitialized()) return;
-		prepareForNewScreen(0/* always scrub */);
+		if (!initialized) return;
+		startNewScreen(0/* always scrub */);
 		// Margin between rendered elements.
 		int16_t margin = 16;
 		const uint16_t left_screen_w = display.epd2.WIDTH * 0.8;
@@ -599,6 +608,6 @@ namespace epaper {
 			}
 		}
 		currentScreen = "tradeComplete";
-		display.displayWindow(0, 0, display.epd2.WIDTH, display.epd2.HEIGHT);
+		finishNewScreen();
 	}
 }

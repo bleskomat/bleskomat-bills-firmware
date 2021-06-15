@@ -8,6 +8,7 @@
 #include "network.h"
 #include "platform.h"
 #include "ping-server.h"
+#include "sdcard.h"
 #include "util.h"
 
 #include <lnurl.h>

@@ -171,15 +171,9 @@ namespace {
 		return false;
 	}
 
-	std::string getConfigFilePath() {
-		std::string configFilePath = sdcard::getMountPoint();
-		configFilePath += "/" + configFileName;
-		return configFilePath;
-	}
-
 	bool readFromConfigFile() {
 		try {
-			const std::string filePath = getConfigFilePath();
+			const std::string filePath = sdcard::getMountedPath(configFileName);
 			// Open the config file for reading.
 			std::ifstream file(filePath);
 			if (!file) {
@@ -199,7 +193,7 @@ namespace {
 	}
 
 	bool deleteConfigFile() {
-		const std::string filePath = getConfigFilePath();
+		const std::string filePath = sdcard::getMountedPath(configFileName);
 		return std::remove(filePath.c_str()) == 0;
 	}
 
