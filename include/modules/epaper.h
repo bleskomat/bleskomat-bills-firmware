@@ -77,7 +77,6 @@
 #include <U8g2_for_Adafruit_GFX.h>
 
 #include <cmath>
-#include <sstream>
 #include <stdexcept>
 #include <vector>
 

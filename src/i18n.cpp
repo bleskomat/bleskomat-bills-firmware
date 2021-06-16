@@ -2,13 +2,14 @@
 
 namespace i18n {
 
-	std::map<std::string, Locale> locales {
+	const std::map<std::string, Locale> locales {
 		{ "cs", locale_cs },
+		{ "de", locale_de },
 		{ "en", locale_en },
 		{ "es", locale_es }
 	};
 
-	std::string defaultLocale = "en";
+	const std::string defaultLocale = "en";
 
 	std::string t(const std::string &key) {
 		return i18n::t(key, config::get("locale"));

@@ -3,6 +3,8 @@
 
 #include "config.h"
 #include "logger.h"
+#include "ping-server.h"
+#include "platform.h"
 
 #include <WiFi.h>
 
@@ -13,6 +15,7 @@ namespace network {
 	void init();
 	void loop();
 	bool isConnected();
+	bool platformIsDown();
 	std::string getUserAgent();
 }
 

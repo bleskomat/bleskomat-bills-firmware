@@ -23,14 +23,13 @@ namespace {
 		"billValues",
 		"webUrl",
 		"platformSockUri",
-		"platformCACert",
 		"pingSockUri",
-		"pingCACert",
 		"referencePhrase",
 		"enabled",
 		"wifi.ssid",
 		"wifi.password",
-		"locale"
+		"locale",
+		"strictTls"
 	};
 
 	// Subset of configuration keys that we allow to be saved.
@@ -83,12 +82,8 @@ namespace {
 			t_values.webUrl = value;
 		} else if (key == "platformSockUri") {
 			t_values.platformSockUri = value;
-		} else if (key == "platformCACert") {
-			t_values.platformCACert = value;
 		} else if (key == "pingSockUri") {
 			t_values.pingSockUri = value;
-		} else if (key == "pingCACert") {
-			t_values.pingCACert = value;
 		} else if (key == "referencePhrase") {
 			t_values.referencePhrase = value;
 		} else if (key == "enabled") {
@@ -99,6 +94,8 @@ namespace {
 			t_values.wifi.password = value;
 		} else if (key == "locale") {
 			t_values.locale = value;
+		} else if (key == "strictTls") {
+			t_values.strictTls = (value == "true" || value == "1");
 		} else {
 			return false;
 		}
@@ -134,12 +131,8 @@ namespace {
 			return t_values.webUrl;
 		} else if (key == "platformSockUri") {
 			return t_values.platformSockUri;
-		} else if (key == "platformCACert") {
-			return t_values.platformCACert;
 		} else if (key == "pingSockUri") {
 			return t_values.pingSockUri;
-		} else if (key == "pingCACert") {
-			return t_values.pingCACert;
 		} else if (key == "referencePhrase") {
 			return t_values.referencePhrase;
 		} else if (key == "enabled") {
@@ -150,6 +143,8 @@ namespace {
 			return t_values.wifi.password;
 		} else if (key == "locale") {
 			return t_values.locale;
+		} else if (key == "strictTls") {
+			return t_values.strictTls ? "true" : "false";
 		}
 		return "";
 	}
@@ -309,14 +304,13 @@ namespace config {
 		// values.billValues = { 5, 10, 20, 50, 100, 200 };
 		// values.webUrl = "https://www.bleskomat.com";
 		// values.platformSockUri = "wss://www.bleskomat.com/device";
-		// values.platformCACert = "";
-		// values.pingSockUri = "wss://ping.bleskomat.com";
-		// values.pingCACert = "";
+		// values.pingSockUri = "ws://ping.bleskomat.com";
 		// values.referencePhrase = "absurd cake";
 		// values.enabled = true;
 		// values.wifi.ssid = "";
 		// values.wifi.password = "";
 		// values.locale = "en";
+		// values.strictTls = false;
 		printConfig(values);
 	}
 
@@ -326,6 +320,10 @@ namespace config {
 
 	BleskomatWifiConfig getWifiConfig() {
 		return values.wifi;
+	}
+
+	bool strictTls() {
+		return values.strictTls;
 	}
 
 	std::string get(const char* t_key) {

@@ -4,7 +4,7 @@ namespace {
 	bool pressed = false;
 	int lastState;
 	unsigned long lastStateChangeTime = 0;// Last time the button pin was toggled.
-	unsigned long debounceDelay = 50;// Debounce time; increase it if the output flickers
+	const unsigned int debounceDelay = 50;// Debounce time; increase it if the output flickers
 }
 
 namespace button {

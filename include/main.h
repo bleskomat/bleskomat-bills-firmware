@@ -2,6 +2,7 @@
 #define BLESKOMAT_MAIN_H
 
 #include "config.h"
+#include "debugger.h"
 #include "i18n.h"
 #include "logger.h"
 #include "modules.h"

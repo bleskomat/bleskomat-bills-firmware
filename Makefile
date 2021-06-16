@@ -11,7 +11,6 @@ HOST ?= www.bleskomat.com
 PORT ?= 443
 DEVICE ?= /dev/ttyUSB0
 BAUDRATE ?= 115200
-SCRIPTS=./scripts
 PLATFORM=espressif32
 
 ## Targets

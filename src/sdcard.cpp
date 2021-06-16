@@ -8,19 +8,17 @@ namespace {
 
 	const char* mountpoint = "/sdcard";
 	bool mounted = false;
+	int numMountFailures = 0;
+	const int maxMountAttempts = 3;
+	unsigned long mountTimeSinceLastFailure = 0;
+	const unsigned long mountAttemptWaitTime = 2000;
 	typedef std::pair< std::string, std::string > AppendToFileBufferItem;
 	std::deque<AppendToFileBufferItem> appendToFileBuffer;
 
-	bool fileExists(const std::string &filePath) {
-		// http://elm-chan.org/fsw/ff/doc/stat.html
-		const bool exists = f_stat(filePath.c_str(), NULL) == FR_OK;
-		return exists;
-	}
-
 	void doAppendToFile(const std::string &t_filePath, const std::string &text) {
 		std::ofstream file;
-		// Open file for writing (append mode).
 		const std::string filePath = sdcard::getMountedPath(t_filePath);
+		// Open file for writing (append mode):
 		file.open(filePath.c_str(), std::ios::app);
 		file << text << std::endl;
 		file.close();
@@ -53,6 +51,12 @@ namespace sdcard {
 	void loop() {
 		if (mounted) {
 			handleBuffers();
+		} else if (
+			mountTimeSinceLastFailure > 0 &&
+			numMountFailures < maxMountAttempts &&
+			millis() - mountTimeSinceLastFailure > mountAttemptWaitTime
+		) {
+			mount();
 		}
 	}
 
@@ -64,7 +68,6 @@ namespace sdcard {
 		if (!mounted) {
 			// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/sdspi_host.html
 			sdmmc_host_t host = SDSPI_HOST_DEFAULT();
-			host.slot = VSPI_HOST;
 			sdspi_slot_config_t slot_config = SDSPI_SLOT_CONFIG_DEFAULT();
 			slot_config.gpio_miso = (gpio_num_t) SD_MISO;
 			slot_config.gpio_mosi = (gpio_num_t) SD_MOSI;
@@ -91,10 +94,14 @@ namespace sdcard {
 				} else {
 					std::cout << "Failed to mount SD card: " + std::string(esp_err_to_name(result)) << std::endl;
 				}
+				numMountFailures++;
+				mountTimeSinceLastFailure = millis();
 			} else {
 				// Card has been initialized, print its properties.
 				sdmmc_card_print_info(stdout, card);
 				mounted = true;
+				numMountFailures = 0;
+				mountTimeSinceLastFailure = 0;
 			}
 		}
 	}
@@ -104,6 +111,8 @@ namespace sdcard {
 			 // Unmount partition and disable SDMMC or SPI peripheral
 			 esp_vfs_fat_sdmmc_unmount();
 			 mounted = false;
+			 numMountFailures = 0;
+			 mountTimeSinceLastFailure = 0;
 		}
 	}
 
@@ -116,5 +125,29 @@ namespace sdcard {
 		item.first = filePath;
 		item.second = text;
 		appendToFileBuffer.push_back(item);
+	}
+
+	std::string readFile(const std::string &t_filePath) {
+		std::ostringstream buffer;
+		std::ifstream file;
+		const std::string filePath = sdcard::getMountedPath(t_filePath);
+		// Open file for reading:
+		file.open(filePath.c_str(), std::ios::in);
+		std::string line;
+		while (std::getline(file, line)) {
+			buffer << line;
+			if (file.eof()) {
+				break;
+			} else {
+				buffer << "\n";
+			}
+		}
+		file.close();
+		return buffer.str();
+	}
+
+	bool fileExists(const std::string &filePath) {
+		// http://elm-chan.org/fsw/ff/doc/stat.html
+		return f_stat(filePath.c_str(), NULL) == FR_OK;
 	}
 }

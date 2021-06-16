@@ -9,7 +9,11 @@
 namespace {
 
 	unsigned long lastConnectionAttemptTime = 0;
-	unsigned long connectionAttemptDelay = 10000;// milliseconds
+	const unsigned int connectionAttemptDelay = 10000;// milliseconds
+
+	unsigned long platformDownLastChangeTime = 0;
+	const unsigned int platformDownDebounceTime = 10000;// milliseconds
+	bool platformDown = false;
 
 	void logWiFiEvent(WiFiEvent_t event) {
 		switch (event) {
@@ -99,9 +103,13 @@ namespace {
 
 	void connectToWiFi(const BleskomatWifiConfig &wifiConfig) {
 		lastConnectionAttemptTime = millis();
-		WiFi.begin(wifiConfig.ssid.c_str(), wifiConfig.password.c_str());
-		// Set "Station" mode.
-		WiFi.mode(WIFI_MODE_STA);
+		try {
+			WiFi.begin(wifiConfig.ssid.c_str(), wifiConfig.password.c_str());
+			// Set "Station" mode.
+			WiFi.mode(WIFI_MODE_STA);
+		} catch (const std::exception &e) {
+			logger::write("[Network] " + std::string(e.what()), "error");
+		}
 	}
 }
 
@@ -122,14 +130,10 @@ namespace network {
 		) {
 			const BleskomatWifiConfig wifiConfig = config::getWifiConfig();
 			if (wifiConfig.ssid != "") {
-				try {
-					logger::write("[Network] Connecting to WiFi network...");
-					logger::write("[Network] SSID: " + wifiConfig.ssid);
-					logger::write("[Network] Password: " + wifiConfig.password);
-					connectToWiFi(wifiConfig);
-				} catch (const std::exception &e) {
-					logger::write(e.what());
-				}
+				logger::write("[Network] Connecting to WiFi network...");
+				logger::write("[Network] SSID: " + wifiConfig.ssid);
+				logger::write("[Network] Password: " + wifiConfig.password);
+				connectToWiFi(wifiConfig);
 			}
 		} else if (status == WL_CONNECTED) {
 			if (lastConnectionAttemptTime > 0) {
@@ -143,6 +147,30 @@ namespace network {
 
 	bool isConnected() {
 		return WiFi.status() == WL_CONNECTED;
+	}
+
+	bool platformIsDown() {
+		bool down = (
+			// Device has network connection.
+			network::isConnected() &&
+			// Both platform and ping-server are configured.
+			platform::isConfigured() && pingServer::isConfigured() &&
+			// Platform is NOT connected, but ping-server is connected.
+			!platform::isConnected() && pingServer::isConnected()
+		);
+		if (
+			down != platformDown &&
+			(
+				platformDownLastChangeTime == 0 ||
+				millis() - platformDownLastChangeTime > platformDownDebounceTime
+			)
+		) {
+			if (platformDownLastChangeTime > 0) {
+				platformDown = down;
+			}
+			platformDownLastChangeTime = millis();
+		}
+		return platformDown;
 	}
 
 	std::string getUserAgent() {

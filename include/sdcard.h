@@ -4,6 +4,7 @@
 #include <deque>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <stdio.h>
 #include <string.h>
 #include <sys/unistd.h>
@@ -26,6 +27,8 @@ namespace sdcard {
 	void unmount();
 	std::string getMountedPath(const std::string &partialPath);
 	void appendToFile(const std::string &filePath, const std::string &text);
+	std::string readFile(const std::string &filePath);
+	bool fileExists(const std::string &filePath);
 }
 
 #endif

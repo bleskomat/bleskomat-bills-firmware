@@ -2,7 +2,7 @@
 
 namespace {
 
-	std::string debugLogFileName = "debug.log";
+	const std::string debugLogFileName = "debug.log";
 
 	void writeToSerialMonitor(const std::string &msg) {
 		std::cout << msg << std::endl;

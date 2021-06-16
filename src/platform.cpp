@@ -11,14 +11,23 @@
 
 namespace {
 
+	const std::string certFileName = "platformCACert.pem";
+
 	double exchangeRate = 0.00;
 	unsigned long lastExchangeRateRefreshTime = 0;
-	unsigned long exchangeRateMaxAge = 300000;// milliseconds
+	const unsigned int exchangeRateMaxAge = 300000;// milliseconds
+
+	unsigned long lastReconnectAttemptTime = 0;
+	const unsigned int reconnectDelay = 30000;// milliseconds
 
 	enum class State {
 		UNINITIALIZED,
 		INITIALIZED,
 		FAILED,
+		DISCONNECTED,
+		CONNECTED,
+		CLOSING,
+		UNAUTHORIZED,
 		AUTHORIZED
 	};
 	State state = State::UNINITIALIZED;
@@ -30,7 +39,7 @@ namespace {
 			logger::write("[Platform] Sending message: " + message);
 			esp_websocket_client_send_text(client, data, strlen(data), portMAX_DELAY);
 		} catch (const std::exception &e) {
-			std::cerr << e.what() << std::endl;
+			logger::write("[Platform] " + std::string(e.what()), "error");
 		}
 	}
 
@@ -78,12 +87,15 @@ namespace {
 					}
 				} else if (type == "error") {
 					const std::string message = json["message"];
+					if (state == State::CONNECTED) {
+						state = State::UNAUTHORIZED;
+					}
 				} else {
 					logger::write("[Platform] Unknown message type: " + type);
 				}
 			}
 		} catch (const std::exception &e) {
-			std::cerr << e.what() << std::endl;
+			logger::write("[Platform] " + std::string(e.what()), "error");
 		}
 	}
 
@@ -92,51 +104,61 @@ namespace {
 			esp_websocket_event_data_t *data = (esp_websocket_event_data_t *)event_data;
 			if (event_id == WEBSOCKET_EVENT_CONNECTED) {
 				logger::write("[Platform] WebSocket connected");
+				state = State::CONNECTED;
 			} else if (event_id == WEBSOCKET_EVENT_DISCONNECTED) {
 				logger::write("[Platform] WebSocket disconnected");
-				state = State::INITIALIZED;
+				state = State::DISCONNECTED;
 			} else if (event_id == WEBSOCKET_EVENT_DATA) {
 				onMessage(std::string(data->data_ptr, data->payload_offset, data->payload_len));
-			} else if (event_id == WEBSOCKET_EVENT_ERROR) {
-				logger::write("[Platform] WebSocket error");
 			}
 		} catch (const std::exception &e) {
-			std::cerr << e.what() << std::endl;
+			logger::write("[Platform] " + std::string(e.what()), "error");
 		}
 	}
 
 	void initialize() {
 		try {
 			esp_websocket_client_config_t websocket_cfg = {};
+			// We implement our own reconnection logic.
+			websocket_cfg.disable_auto_reconnect = true;
 			const std::string uri = config::get("platformSockUri");
-			const std::string cert = config::get("platformCACert");
-			logger::write("[Platform] Initializing WebSocket connection to " + uri);
+			if (config::strictTls() && uri.substr(0, 6) == "wss://") {
+				if (sdcard::fileExists(certFileName)) {
+					const char* cert = sdcard::readFile(certFileName).c_str();
+					if (strlen(cert) > 0) {
+						websocket_cfg.cert_pem = cert;
+					}
+				} else {
+					throw std::runtime_error("Initialization failed: Missing " + certFileName);
+				}
+			}
 			websocket_cfg.uri = uri.c_str();
 			websocket_cfg.user_agent = (char *)network::getUserAgent().c_str();
-			if (cert != "") {
-				websocket_cfg.cert_pem = cert.c_str();
-			}
+			logger::write("[Platform] Initializing WebSocket connection to " + uri);
 			client = esp_websocket_client_init(&websocket_cfg);
 			esp_websocket_register_events(client, WEBSOCKET_EVENT_ANY, websocket_event_handler, (void *)client);
-			esp_err_t result = esp_websocket_client_start(client);
+			const esp_err_t result = esp_websocket_client_start(client);
 			if (result == ESP_OK) {
 				state = State::INITIALIZED;
 			} else {
 				state = State::FAILED;
 			}
 		} catch (const std::exception &e) {
-			std::cerr << e.what() << std::endl;
+			state = State::FAILED;
+			logger::write("[Platform] " + std::string(e.what()), "error");
 		}
 	}
 
 	void close() {
-		try {
-			logger::write("[Platform] Closing WebSocket connection...");
-			esp_websocket_client_stop(client);
-			esp_websocket_client_destroy(client);
-			state = State::UNINITIALIZED;
-		} catch (const std::exception &e) {
-			std::cerr << e.what() << std::endl;
+		if (state != State::CLOSING) {
+			try {
+				logger::write("[Platform] Closing WebSocket connection...");
+				state = State::CLOSING;
+				esp_websocket_client_stop(client);
+				esp_websocket_client_destroy(client);
+			} catch (const std::exception &e) {
+				logger::write("[Platform] " + std::string(e.what()), "error");
+			}
 		}
 	}
 }
@@ -146,13 +168,28 @@ namespace platform {
 	void loop() {
 		if (platform::isConfigured()) {
 			if (network::isConnected()) {
-				if (state == State::UNINITIALIZED) {
+				if (
+					state == State::UNINITIALIZED &&
+					(
+						lastReconnectAttemptTime == 0 ||
+						millis() - lastReconnectAttemptTime > reconnectDelay
+					)
+				) {
 					initialize();
+					lastReconnectAttemptTime = millis();
+				} else if (state == State::UNAUTHORIZED) {
+					close();
+					// Do not reset the state to prevent a reconnection attempt.
+				} else if (state == State::DISCONNECTED) {
+					close();
+					// Set state back to uninitialized so that we can reconnect later.
+					state = State::UNINITIALIZED;
 				}
 			} else {
 				// No network connection.
-				if (isConnected()) {
+				if (state != State::UNINITIALIZED) {
 					close();
+					state = State::UNINITIALIZED;
 				}
 			}
 		}
@@ -163,7 +200,12 @@ namespace platform {
 	}
 
 	bool isConnected() {
-		return esp_websocket_client_is_connected(client);
+		try {
+			return esp_websocket_client_is_connected(client);
+		} catch (const std::exception &e) {
+			logger::write("[Platform] " + std::string(e.what()), "error");
+			return false;
+		}
 	}
 
 	double getExchangeRate() {

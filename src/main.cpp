@@ -18,26 +18,54 @@ void setup() {
 	}
 }
 
+float getAccumulatedValue() {
+	float accumulatedValue = 0;
+	#ifdef COIN_ACCEPTOR
+		accumulatedValue += coinAcceptor::getAccumulatedValue();
+	#endif
+	#ifdef BILL_ACCEPTOR
+		accumulatedValue += billAcceptor::getAccumulatedValue();
+		const float billAcceptorEscrowValue = billAcceptor::getEscrowValue();
+		if (billAcceptorEscrowValue > 0) {
+			const double buyLimit = config::getBuyLimit();
+			if (billAcceptorEscrowValue + accumulatedValue > buyLimit) {
+				billAcceptor::rejectEscrow();
+			} else {
+				billAcceptor::acceptEscrow();
+				accumulatedValue += billAcceptorEscrowValue;
+			}
+		}
+	#endif
+	return accumulatedValue;
+}
+
 float amountShown = 0;
 
 void loop() {
+	// Un-comment the following to enable extra debugging information:
+	// debugger::loop();
 	sdcard::loop();
 	network::loop();
-	platform::loop();
 	pingServer::loop();
+	platform::loop();
 	modules::loop();
 	const std::string currentScreen = screen::getCurrentScreen();
-	if (
-		// Device is disabled via configuration option.
-		!config::isEnabled() ||
-		// Or, if all of the following, then disable the device.
+	const float accumulatedValue = getAccumulatedValue();
+	const bool tradeInProgress = (
+		accumulatedValue > 0 &&
 		(
-			// Device has network connection.
-			network::isConnected() &&
-			// Both platform and ping-server are configured.
-			platform::isConfigured() && pingServer::isConfigured() &&
-			// Platform is NOT connected, but ping-server is connected.
-			!platform::isConnected() && pingServer::isConnected()
+			currentScreen == "insertFiat" ||
+			currentScreen == "tradeComplete"
+		)
+	);
+	if (
+		// Do not disable device when a trade is in progress.
+		!tradeInProgress &&
+		(
+			// Device is disabled via configuration option.
+			!config::isEnabled() ||
+			// Or, platform is down.
+			network::platformIsDown()
 		)
 	) {
 		// Show device disabled screen and do not allow normal operation.
@@ -50,20 +78,6 @@ void loop() {
 			// If disabled screen is currently shown, then show the splash screen instead.
 			screen::showSplashScreen();
 		}
-		const double buyLimit = config::getBuyLimit();
-		float accumulatedValue = 0;
-		#ifdef COIN_ACCEPTOR
-			accumulatedValue += coinAcceptor::getAccumulatedValue();
-		#endif
-		#ifdef BILL_ACCEPTOR
-			accumulatedValue += billAcceptor::getAccumulatedValue();
-			float billAcceptorEscrowValue = billAcceptor::getEscrowValue();
-			if (billAcceptorEscrowValue > 0 && billAcceptorEscrowValue + accumulatedValue > buyLimit) {
-				billAcceptor::rejectEscrow();
-			} else if (billAcceptorEscrowValue > 0) {
-				billAcceptor::acceptEscrow();
-			}
-		#endif
 		if (
 			accumulatedValue > 0 &&
 			currentScreen != "insertFiat" &&
@@ -122,7 +136,8 @@ void loop() {
 					amountShown = accumulatedValue;
 				}
 				#ifdef COIN_ACCEPTOR
-					float maxCoinValue = coinAcceptor::getMaxCoinValue();
+					const float maxCoinValue = coinAcceptor::getMaxCoinValue();
+					const double buyLimit = config::getBuyLimit();
 					if (buyLimit > 0 && coinAcceptor::isOn() && (accumulatedValue + maxCoinValue) > buyLimit) {
 						// Possible to exceed tx limit, so disallow entering more coins.
 						coinAcceptor::off();

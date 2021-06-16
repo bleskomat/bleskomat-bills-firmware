@@ -31,19 +31,19 @@ struct BleskomatConfig {
 	std::vector<float> billValues;
 	std::string webUrl = "https://www.bleskomat.com";
 	std::string platformSockUri = "wss://www.bleskomat.com/device";
-	std::string platformCACert = "";
 	std::string pingSockUri = "wss://ping.bleskomat.com/";
-	std::string pingCACert = "";
 	std::string referencePhrase = "";
 	bool enabled = true;
 	struct BleskomatWifiConfig wifi;
 	std::string locale = "en";
+	bool strictTls = false;
 };
 
 namespace config {
 	void init();
 	Lnurl::SignerConfig getLnurlSignerConfig();
 	BleskomatWifiConfig getWifiConfig();
+	bool strictTls();
 	std::string get(const char* &t_key);
 	std::string get(const std::string &key);
 	unsigned short getFiatPrecision();
