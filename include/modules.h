@@ -26,6 +26,8 @@
 namespace modules {
 	void init();
 	void loop();
+	void enableAcceptors();
+	void disableAcceptors();
 }
 
 #endif

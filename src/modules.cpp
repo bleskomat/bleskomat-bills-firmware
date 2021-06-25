@@ -30,4 +30,22 @@ namespace modules {
 			button::loop();
 		#endif
 	}
+
+	void enableAcceptors() {
+		#ifdef COIN_ACCEPTOR
+			coinAcceptor::on();
+		#endif
+		#ifdef BILL_ACCEPTOR
+			billAcceptor::on();
+		#endif
+	}
+
+	void disableAcceptors() {
+		#ifdef COIN_ACCEPTOR
+			coinAcceptor::off();
+		#endif
+		#ifdef BILL_ACCEPTOR
+			billAcceptor::off();
+		#endif
+	}
 }

@@ -13,8 +13,10 @@ void setup() {
 	logger::write("Setup OK");
 	if (config::isEnabled()) {
 		screen::showSplashScreen();
+		modules::enableAcceptors();
 	} else {
 		screen::showDisabledScreen();
+		modules::disableAcceptors();
 	}
 }
 
@@ -38,6 +40,7 @@ float getAccumulatedValue() {
 	#endif
 	return accumulatedValue;
 }
+
 
 float amountShown = 0;
 
@@ -70,13 +73,15 @@ void loop() {
 	) {
 		// Show device disabled screen and do not allow normal operation.
 		if (currentScreen != "disabled") {
+			modules::disableAcceptors();
 			screen::showDisabledScreen();
 		}
 	} else {
-		// Device is enabled, allow normal operation.
+		// Device is enabled.
 		if (currentScreen == "disabled") {
-			// If disabled screen is currently shown, then show the splash screen instead.
+			// Previously disabled, return to normal operation.
 			screen::showSplashScreen();
+			modules::enableAcceptors();
 		}
 		if (
 			accumulatedValue > 0 &&
@@ -118,12 +123,7 @@ void loop() {
 					screen::showTradeCompleteScreen(accumulatedValue, qrcodeData, referencePhrase);
 					// Save the transaction for debugging and auditing purposes.
 					logger::write(signedUrl, "trade");
-					#ifdef COIN_ACCEPTOR
-						coinAcceptor::off();
-					#endif
-					#ifdef BILL_ACCEPTOR
-						billAcceptor::off();
-					#endif
+					modules::disableAcceptors();
 				} else {
 					// Button pressed with zero amount.
 					screen::showInstructionsScreen();
