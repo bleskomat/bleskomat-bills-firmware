@@ -1,23 +1,5 @@
 #include "main.h"
 
-void disableAcceptors() {
-	#ifdef COIN_ACCEPTOR
-		coinAcceptor::off();
-	#endif
-	#ifdef BILL_ACCEPTOR
-		billAcceptor::off();
-	#endif
-}
-
-void enableAcceptors() {
-	#ifdef COIN_ACCEPTOR
-		coinAcceptor::on();
-	#endif
-	#ifdef BILL_ACCEPTOR
-		billAcceptor::on();
-	#endif
-}
-
 void setup() {
 	Serial.begin(MONITOR_SPEED);
 	sdcard::init();
@@ -31,10 +13,10 @@ void setup() {
 	logger::write("Setup OK");
 	if (config::isEnabled()) {
 		screen::showSplashScreen();
-		enableAcceptors();
+		modules::enableAcceptors();
 	} else {
 		screen::showDisabledScreen();
-		disableAcceptors();
+		modules::disableAcceptors();
 	}
 }
 
@@ -91,16 +73,15 @@ void loop() {
 	) {
 		// Show device disabled screen and do not allow normal operation.
 		if (currentScreen != "disabled") {
-			disableAcceptors();
+			modules::disableAcceptors();
 			screen::showDisabledScreen();
 		}
 	} else {
-		// Device is enabled, allow normal operation.
+		// Device is enabled.
 		if (currentScreen == "disabled") {
-			// If disabled screen is currently shown, then show the splash screen instead.
+			// Previously disabled, return to normal operation.
 			screen::showSplashScreen();
-			// If comming from disable, then enable acceptors.
-			enableAcceptors();
+			modules::enableAcceptors();
 		}
 		if (
 			accumulatedValue > 0 &&
@@ -142,7 +123,7 @@ void loop() {
 					screen::showTradeCompleteScreen(accumulatedValue, qrcodeData, referencePhrase);
 					// Save the transaction for debugging and auditing purposes.
 					logger::write(signedUrl, "trade");
-					disableAcceptors();
+					modules::disableAcceptors();
 				} else {
 					// Button pressed with zero amount.
 					screen::showInstructionsScreen();
