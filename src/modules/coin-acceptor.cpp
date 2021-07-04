@@ -57,8 +57,8 @@ namespace coinAcceptor {
 	void init() {
 		coinValues = config::getCoinValues();
 		maxCoinValue = findMaxValueInFloatVector(coinValues);
-		Serial2.begin(COIN_ACCEPTOR_DATA_RATE, SERIAL_8N1, COIN_ACCEPTOR_RX_PIN, 0);
-		pinMode(COIN_ACCEPTOR_INHIBITING_PIN, OUTPUT);
+		Serial2.begin(COIN_ACCEPTOR_BAUDRATE, SERIAL_8N1, COIN_ACCEPTOR_SIGNAL, 0);
+		pinMode(COIN_ACCEPTOR_INHIBIT, OUTPUT);
 		coinAcceptor::on();
 	}
 
@@ -95,13 +95,13 @@ namespace coinAcceptor {
 
 	void on() {
 		logger::write("Switching coin acceptor ON");
-		digitalWrite(COIN_ACCEPTOR_INHIBITING_PIN, HIGH);
+		digitalWrite(COIN_ACCEPTOR_INHIBIT, HIGH);
 		inhibited = false;
 	}
 
 	void off() {
 		logger::write("Switching coin acceptor OFF");
-		digitalWrite(COIN_ACCEPTOR_INHIBITING_PIN, LOW);
+		digitalWrite(COIN_ACCEPTOR_INHIBIT, LOW);
 		inhibited = true;
 	}
 }

@@ -41,7 +41,7 @@ namespace billAcceptor {
 
 	void init() {
 		billValues = config::getBillValues();
-		Serial1.begin(BILL_ACCEPTOR_DATA_RATE, SERIAL_8N1, BILL_ACCEPTOR_RX_PIN, BILL_ACCEPTOR_TX_PIN);
+		Serial1.begin(BILL_ACCEPTOR_BAUDRATE, SERIAL_8N1, BILL_ACCEPTOR_TX, BILL_ACCEPTOR_RX);
 		billAcceptor::on();
 		billAcceptor::enableEscrowMode();
 	}

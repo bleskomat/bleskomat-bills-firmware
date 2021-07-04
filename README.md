@@ -128,8 +128,8 @@ Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable
 
 |  ESP32       | NV10/NV9 | Power Supply  |
 |--------------|----------|---------------|
-| GPIO3  (RX0) | 1        |               |
-| GPIO17 (TX2) | 5        |               |
+| GPIO3 (RX0)  | 1 (Tx)   |               |
+| GPIO17       | 5 (Rx)   |               |
 |              | 16       | - Ground      |
 |              | 15       | + 12V DC      |
 
