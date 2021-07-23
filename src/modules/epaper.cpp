@@ -231,7 +231,6 @@ namespace {
 	void deactivate() {
 		// Stop using SPI here and re-mount the SD card.
 		SPI.end();
-		sdcard::mount();
 	}
 
 	void scrub() {
@@ -270,68 +269,6 @@ namespace {
 		instructionsUrl += "/intro?id=" + util::urlEncode(apiKeyId);
 		return instructionsUrl;
 	}
-
-	void debugCommands() {
-		// Uncomment the following lines to render each screen after a short delay between each.
-		// epaper::showSplashScreen();
-		// delay(2000);
-		// epaper::showDisabledScreen();
-		// delay(2000);
-		// epaper::showInstructionsScreen();
-		// delay(2000);
-		// epaper::showInsertFiatScreen(0);
-		// delay(1000);
-		// epaper::showInsertFiatScreen(0.2);
-		// delay(1000);
-		// epaper::showInsertFiatScreen(0.25);
-		// delay(1000);
-		// epaper::showInsertFiatScreen(2.25);
-		// delay(1000);
-		// epaper::showInsertFiatScreen(7.25);
-		// delay(1000);
-		// epaper::showInsertFiatScreen(27.25);
-		// delay(1000);
-		// epaper::showInsertFiatScreen(100.00);
-		// const double amount = 100.00;
-		// const std::string referencePhrase = util::generateRandomPhrase(5);
-		// Lnurl::Query customParams;
-		// customParams["r"] = referencePhrase;
-		// const double exchangeRate = 38000.441;
-		// if (exchangeRate > 0) {
-		// 	customParams["er"] = std::to_string(exchangeRate);
-		// }
-		// const std::string qrcodeData = config::get("uriSchemaPrefix") + util::toUpperCase(util::lnurlEncode(util::createSignedLnurlWithdraw(amount, customParams)));
-		// epaper::showTradeCompleteScreen(amount, qrcodeData, referencePhrase);
-		// startNewScreen();
-		// const uint16_t margin = 8;
-		// const uint16_t max_w = (display.width() / 3) - (margin * 2);
-		// const uint16_t max_h = (display.height() / 2) - (margin * 2);
-		// renderQRCode(
-		// 	"https://www.bleskomat.com/intro",
-		// 	margin,
-		// 	margin,
-		// 	max_w,
-		// 	max_h,
-		// 	false
-		// );
-		// renderQRCode(
-		// 	"https://www.bleskomat.com/intro?",
-		// 	(display.width() * 0.332) + margin,
-		// 	margin,
-		// 	max_w,
-		// 	max_h,
-		// 	false
-		// );
-		// renderQRCode(
-		// 	"https://www.bleskomat.com/intro?i",
-		// 	(display.width() * 0.667) + margin,
-		// 	margin,
-		// 	max_w,
-		// 	max_h,
-		// 	false
-		// );
-		// finishNewScreen();
-	}
 }
 
 namespace epaper {
@@ -342,7 +279,6 @@ namespace epaper {
 			u8g2Fonts.begin(display);// connect u8g2 procedures to Adafruit GFX
 			activate();
 			display.setRotation(0);
-			debugCommands();
 			deactivate();
 			initialized = true;
 			logger::write("E-Paper display initialized and ready for use");
@@ -353,6 +289,28 @@ namespace epaper {
 
 	std::string getCurrentScreen() {
 		return currentScreen;
+	}
+
+	void debugCommands() {
+		// Uncomment the following lines to render each screen after a short delay between each.
+		// epaper::showSplashScreen();
+		// delay(2000);
+		// epaper::showDisabledScreen();
+		// delay(2000);
+		// epaper::showInstructionsScreen();
+		// delay(2000);
+		// epaper::showInsertFiatScreen(100.00);
+		// delay(2000);
+		// const double amount = 100.00;
+		// const std::string referencePhrase = util::generateRandomPhrase(5);
+		// Lnurl::Query customParams;
+		// customParams["r"] = referencePhrase;
+		// const double exchangeRate = 38000.441;
+		// if (exchangeRate > 0) {
+		// 	customParams["er"] = std::to_string(exchangeRate);
+		// }
+		// const std::string qrcodeData = config::get("uriSchemaPrefix") + util::toUpperCase(util::lnurlEncode(util::createSignedLnurlWithdraw(amount, customParams)));
+		// epaper::showTradeCompleteScreen(amount, qrcodeData, referencePhrase);
 	}
 
 	void showSplashScreen() {
@@ -411,7 +369,7 @@ namespace epaper {
 		if (!initialized) return;
 		startNewScreen();
 		const std::string instructionsUrl = getInstructionsUrl();
-		const int16_t margin = 16;
+		const int16_t margin = 24;
 		const int16_t line_spacing = 8;
 		uint16_t qrcode_w = 100;
 		uint16_t qrcode_h = 100;
@@ -435,7 +393,7 @@ namespace epaper {
 			renderText(text3, text1_font, text1_x, text3_y, false);
 		}
 		{
-			const int16_t box_margin = margin / 2;
+			const int16_t box_margin = line_spacing / 2;
 			const int16_t box_x = margin;
 			const int16_t box_y = qrcode_bbox.y + qrcode_bbox.h + margin;
 			const uint16_t box_w = display.epd2.WIDTH - (margin * 2);
@@ -445,37 +403,31 @@ namespace epaper {
 			const std::string numbering2 = "1";
 			const std::string numbering3 = "2";
 			const std::string numbering4 = "3";
-			const Font numbering_font = u8g2_courier_prime_code_20pt;
+			const Font numbering_font = u8g2_courier_prime_code_16pt;
 			BoundingBox numbering1_bbox = calculateTextSize(numbering1, numbering_font);
 			int16_t numbering1_x = box_x + box_margin + (numbering1_bbox.w / 2);// left, inside box
 			int16_t numbering1_y = box_y + box_margin;// top, inside box
 			numbering1_bbox = renderText(numbering1, numbering_font, numbering1_x, numbering1_y, false);
-			int16_t numbering2_y = numbering1_bbox.y + numbering1_bbox.h + box_margin;
+			int16_t numbering2_y = numbering1_bbox.y + numbering1_bbox.h + line_spacing;
 			BoundingBox numbering2_bbox = renderText(numbering2, numbering_font, numbering1_x, numbering2_y, false);
-			int16_t numbering3_y = numbering2_bbox.y + numbering2_bbox.h + box_margin;
+			int16_t numbering3_y = numbering2_bbox.y + numbering2_bbox.h + line_spacing;
 			BoundingBox numbering3_bbox = renderText(numbering3, numbering_font, numbering1_x, numbering3_y, false);
-			int16_t numbering4_y = numbering3_bbox.y + numbering3_bbox.h + box_margin;
+			int16_t numbering4_y = numbering3_bbox.y + numbering3_bbox.h + line_spacing;
 			BoundingBox numbering4_bbox = renderText(numbering4, numbering_font, numbering1_x, numbering4_y, false);
-			const std::string text4 = i18n::t("instructions_step1_textA");
-			const std::string text5 = i18n::t("instructions_step1_textB");
-			const std::string text6 = i18n::t("instructions_step2_text");
-			const std::string text7 = i18n::t("instructions_step3_text");
-			const std::string text8 = i18n::t("instructions_step4_text");
-			int16_t text4_x = numbering1_bbox.x + numbering1_bbox.w + box_margin;// left, next to the numbering
+			const std::string text4 = i18n::t("instructions_step1_text");
+			const std::string text5 = i18n::t("instructions_step2_text");
+			const std::string text6 = i18n::t("instructions_step3_text");
+			const std::string text7 = i18n::t("instructions_step4_text");
+			const Font text4_font = u8g2_opensans_light_12pt;
+			int16_t text4_x = numbering1_bbox.x + numbering1_bbox.w + line_spacing;// left, next to the numbering
 			int16_t text4_y = numbering1_bbox.y;// align w/ first number
-			const Font text4_font = u8g2_courier_prime_code_8pt;
-			BoundingBox text4_bbox = renderText(text4, text4_font, text4_x, text4_y, false);
-			int16_t text5_y = text4_bbox.y + text4_bbox.h;// relative to previous text
+			renderText(text4, text4_font, text4_x, text4_y, false);
+			int16_t text5_y = numbering2_bbox.y;// align w/ second number
 			renderText(text5, text4_font, text4_x, text5_y, false);
-			BoundingBox text6_bbox = calculateTextSize(text6, text4_font);
-			int16_t text6_y = (numbering2_bbox.y + (numbering1_bbox.h / 2)) - text6_bbox.h;// align w/ second number
+			int16_t text6_y = numbering3_bbox.y;// align w/ third number
 			renderText(text6, text4_font, text4_x, text6_y, false);
-			BoundingBox text7_bbox = calculateTextSize(text6, text4_font);
-			int16_t text7_y = (numbering3_bbox.y + (numbering1_bbox.h / 2)) - text7_bbox.h;// align w/ third number
+			int16_t text7_y = numbering4_bbox.y;// align w/ fourth number
 			renderText(text7, text4_font, text4_x, text7_y, false);
-			BoundingBox text8_bbox = calculateTextSize(text6, text4_font);
-			int16_t text8_y = (numbering4_bbox.y + (numbering1_bbox.h / 2)) - text8_bbox.h;// align w/ fourth number
-			renderText(text8, text4_font, text4_x, text8_y, false);
 		}
 		currentScreen = "instructions";
 		finishNewScreen();
@@ -532,15 +484,15 @@ namespace epaper {
 		if (!initialized) return;
 		startNewScreen(0/* always scrub */);
 		// Margin between rendered elements.
-		const int16_t margin = 16;
+		const int16_t margin = 24;
+		const int16_t line_spacing = 8;
 		const uint16_t left_screen_w = display.epd2.WIDTH * 0.8;
 		BoundingBox instr_text1_bbox;
 		{
 			// Render instructional text (bottom-left).
 			const std::string instr_text1 = i18n::t("trade_complete_instructions_line1");
 			const std::string instr_text2 = i18n::t("trade_complete_instructions_line2");
-			const uint16_t instr_text_max_w = left_screen_w - (margin * 2);
-			const Font instr_font = getBestFitFont(instr_text1, proportionalFonts, instr_text_max_w);
+			const Font instr_font = proportionalFontSmall;
 			instr_text1_bbox = calculateTextSize(instr_text1, instr_font);
 			BoundingBox instr_text2_bbox = calculateTextSize(instr_text2, instr_font);
 			const int16_t instr_text2_x = margin;// left
@@ -567,7 +519,7 @@ namespace epaper {
 			const Font amount_font = getBestFitFont(amount_text, monospaceFonts, amount_max_w);
 			amount_text_bbox = calculateTextSize(amount_text, amount_font);
 			const int16_t amount_text_x = display.epd2.WIDTH - (amount_text_bbox.w + margin);// right
-			const int16_t amount_text_y = margin;// top
+			const int16_t amount_text_y = qrcode_bbox.y - line_spacing;// top
 			amount_text_bbox = renderText(amount_text, amount_font, amount_text_x, amount_text_y, false);
 		}
 		{
@@ -585,9 +537,9 @@ namespace epaper {
 				const std::string word = words.at(index);
 				const BoundingBox word_bbox = calculateTextSize(word, word_font);
 				const int16_t word_x = display.epd2.WIDTH - (word_bbox.w + margin);// right
-				int16_t word_y = prev_word_bbox.y + prev_word_bbox.h + (margin / 2);
+				int16_t word_y = prev_word_bbox.y + prev_word_bbox.h + line_spacing;
 				if (index == 0) {
-					word_y += amount_text_bbox.y + amount_text_bbox.h + (margin / 2);
+					word_y += amount_text_bbox.y + amount_text_bbox.h + line_spacing;
 				}
 				prev_word_bbox = renderText(word, word_font, word_x, word_y, false);
 			}

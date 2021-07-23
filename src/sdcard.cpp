@@ -108,11 +108,11 @@ namespace sdcard {
 
 	void unmount() {
 		if (mounted) {
-			 // Unmount partition and disable SDMMC or SPI peripheral
-			 esp_vfs_fat_sdmmc_unmount();
-			 mounted = false;
-			 numMountFailures = 0;
-			 mountTimeSinceLastFailure = 0;
+			// Unmount partition and disable SDMMC or SPI peripheral
+			esp_vfs_fat_sdmmc_unmount();
+			mounted = false;
+			numMountFailures = 0;
+			mountTimeSinceLastFailure = 0;
 		}
 	}
 

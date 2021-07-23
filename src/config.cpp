@@ -306,7 +306,7 @@ namespace config {
 		// values.platformSockUri = "wss://www.bleskomat.com/device";
 		// values.pingSockUri = "ws://ping.bleskomat.com";
 		// values.referencePhrase = "absurd cake";
-		// values.enabled = true;
+		values.enabled = true;
 		// values.wifi.ssid = "";
 		// values.wifi.password = "";
 		// values.locale = "en";
