@@ -254,6 +254,10 @@ namespace {
 		for (int index = 0; index < configKeys.size(); index++) {
 			const std::string key = configKeys[index];
 			const std::string value = getConfigValue(key, t_values);
+			if (key == "apiKey.key") {
+				// We do not add `apiKey.key` for security reasons.
+				continue;
+			}
 			msg += "  " + key + "=" + value + "\n";
 		}
 		msg.pop_back();// Remove the last line-break character.
