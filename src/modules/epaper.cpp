@@ -231,6 +231,7 @@ namespace {
 	void deactivate() {
 		// Stop using SPI here and re-mount the SD card.
 		SPI.end();
+		sdcard::mount();
 	}
 
 	void scrub() {
