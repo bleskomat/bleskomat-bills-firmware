@@ -10,7 +10,7 @@ namespace {
 	bool mounted = false;
 	int numMountFailures = 0;
 	const int maxMountAttempts = 3;
-	unsigned long mountTimeSinceLastFailure = 0;
+	unsigned long lastMountFailureTime = 0;
 	const unsigned long mountAttemptWaitTime = 2000;
 	typedef std::pair< std::string, std::string > AppendToFileBufferItem;
 	std::deque<AppendToFileBufferItem> appendToFileBuffer;
@@ -52,9 +52,10 @@ namespace sdcard {
 		if (mounted) {
 			handleBuffers();
 		} else if (
-			mountTimeSinceLastFailure > 0 &&
-			numMountFailures < maxMountAttempts &&
-			millis() - mountTimeSinceLastFailure > mountAttemptWaitTime
+			lastMountFailureTime == 0 || (
+				numMountFailures < maxMountAttempts &&
+				millis() - lastMountFailureTime > mountAttemptWaitTime
+			)
 		) {
 			mount();
 		}
@@ -95,13 +96,13 @@ namespace sdcard {
 					std::cout << "Failed to mount SD card: " + std::string(esp_err_to_name(result)) << std::endl;
 				}
 				numMountFailures++;
-				mountTimeSinceLastFailure = millis();
+				lastMountFailureTime = millis();
 			} else {
 				// Card has been initialized, print its properties.
 				sdmmc_card_print_info(stdout, card);
 				mounted = true;
 				numMountFailures = 0;
-				mountTimeSinceLastFailure = 0;
+				lastMountFailureTime = 0;
 			}
 		}
 	}
@@ -112,7 +113,7 @@ namespace sdcard {
 			esp_vfs_fat_sdmmc_unmount();
 			mounted = false;
 			numMountFailures = 0;
-			mountTimeSinceLastFailure = 0;
+			lastMountFailureTime = 0;
 		}
 	}
 
