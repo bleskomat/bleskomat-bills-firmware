@@ -308,4 +308,4 @@ Each font used to render text on the E-Paper display is loaded from a C-style he
 
 This project is "unlicensed" meaning all copyrights are withheld. This is the closed-source, extended version of the device for the commercial Bleskomat ATMs.
 
-There is an [open-source version](https://github.com/samotari/bleskomat) of this project that hackers and hobbyist are welcome to use as a guide to build their own Bleskomat ATMs.
+There is an [open-source version](https://github.com/bleskomat/bleskomat-diy) of this project that hackers and hobbyist are welcome to use as a guide to build their own Bleskomat ATMs.

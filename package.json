@@ -13,18 +13,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/samotari/bleskomat-firmware.git"
+    "url": "git+https://github.com/bleskomat/bleskomat-firmware.git"
   },
   "author": {
-    "name": "Samotari",
-    "email": "samotari@bleskomat.com",
-    "url": "https://github.com/samotari"
+    "name": "Charles Hill",
+    "email": "chill@degreesofzero.com"
   },
   "contributors": [
-    {
-      "name": "Charles Hill",
-      "email": "chill@degreesofzero.com"
-    },
     {
       "name": "Carlos Garcia Ortiz",
       "email": "yo@carlosgarciaortiz.com"
@@ -32,7 +27,7 @@
   ],
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/samotari/bleskomat-firmware/issues"
+    "url": "https://github.com/bleskomat/bleskomat-firmware/issues"
   },
-  "homepage": "https://github.com/samotari/bleskomat-firmware#readme"
+  "homepage": "https://github.com/bleskomat/bleskomat-firmware#readme"
 }
