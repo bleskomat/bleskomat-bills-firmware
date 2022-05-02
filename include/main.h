@@ -22,6 +22,10 @@
 	#error "Missing required build flag: FIRMWARE_COMMIT_HASH"
 #endif
 
+#ifndef FIRMWARE_VERSION
+	#error "Missing required build flag: FIRMWARE_VERSION"
+#endif
+
 namespace {
 	std::string trimQuotes(const std::string &str) {
 		return str.substr(1, str.length() - 2);
@@ -29,5 +33,6 @@ namespace {
 }
 
 const std::string firmwareCommitHash(trimQuotes(STRINGIFY(FIRMWARE_COMMIT_HASH)));
+const std::string firmwareVersion(trimQuotes(STRINGIFY(FIRMWARE_VERSION)));
 
 #endif

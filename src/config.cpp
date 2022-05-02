@@ -254,11 +254,16 @@ namespace {
 		for (int index = 0; index < configKeys.size(); index++) {
 			const std::string key = configKeys[index];
 			const std::string value = getConfigValue(key, t_values);
-			if (key == "apiKey.key") {
-				// We do not add `apiKey.key` for security reasons.
-				continue;
+			msg += "  " + key + "=";
+			if (value != "") {
+				if (key == "apiKey.key") {
+					// Don't print some configuration value(s).
+					msg += "XXX";
+				} else {
+					msg += value;
+				}
 			}
-			msg += "  " + key + "=" + value + "\n";
+			msg += "\n";
 		}
 		msg.pop_back();// Remove the last line-break character.
 		logger::write(msg);

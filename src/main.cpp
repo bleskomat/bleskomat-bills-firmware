@@ -3,7 +3,8 @@
 void setup() {
 	Serial.begin(MONITOR_SPEED);
 	sdcard::init();
-	logger::write("Bleskomat firmware commit=" + firmwareCommitHash);
+	logger::write("Bleskomat ATM");
+	logger::write("Firmware version = " + firmwareVersion + ", commit hash = " + firmwareCommitHash);
 	config::init();
 	logger::write("Config OK");
 	network::init();
