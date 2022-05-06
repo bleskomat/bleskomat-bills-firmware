@@ -32,16 +32,6 @@ namespace {
 		"strictTls"
 	};
 
-	// Subset of configuration keys that we allow to be saved.
-	const std::vector<std::string> allowSaveConfigKeys = {
-		"fiatCurrency",
-		"fiatPrecision",
-		"feePercent",
-		"buyLimit",
-		"referencePhrase",
-		"enabled"
-	};
-
 	// Using Preferences library as a wrapper to Non-Volatile Storage (flash memory):
 	// https://github.com/espressif/arduino-esp32/tree/master/libraries/Preferences
 	// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/nvs_flash.html
@@ -120,7 +110,7 @@ namespace {
 		} else if (key == "feePercent") {
 			return t_values.feePercent;
 		} else if (key == "buyLimit") {
-			return std::to_string(t_values.buyLimit);
+			return util::doubleToStringWithPrecision(t_values.buyLimit, t_values.fiatPrecision);
 		} else if (key == "coinValues") {
 			return util::floatVectorToStringList(t_values.coinValues);
 		} else if (key == "billValues") {
@@ -202,8 +192,8 @@ namespace {
 	}
 
 	bool readKeyValueFromNVS(const std::string &key) {
-		const std::string value = nvs_prefs.getString(key.c_str(), "").c_str();
-		if (value == "") return false;
+		// Maximum NVS key length is 15 characters.
+		const std::string value = nvs_prefs.getString(key.substr(0, 15).c_str(), "").c_str();
 		return setConfigValue(key, value, nvs_values) && setConfigValue(key, value, values);
 	}
 
@@ -221,7 +211,8 @@ namespace {
 	}
 
 	bool saveKeyValueToNVS(const std::string &key, const std::string &value) {
-		return nvs_prefs.putString(key.c_str(), value.c_str()) != 0;
+		// Maximum NVS key length is 15 characters.
+		return nvs_prefs.putString(key.substr(0, 15).c_str(), value.c_str()) != 0;
 	}
 
 	bool saveConfigurationsToNVS(const BleskomatConfig &t_values) {
@@ -364,23 +355,30 @@ namespace config {
 		return values.enabled;
 	}
 
-	// Save (allowed) configurations to NVS.
-	bool saveConfigurations(const JsonObject &json) {
-		if (!nvs_available) {
-			if (!initNVS()) {
-				return false;
+	JsonObject getConfigurations() {
+		DynamicJsonDocument doc(4096);
+		for (int index = 0; index < configKeys.size(); index++) {
+			const std::string key = configKeys[index];
+			const std::string value = getConfigValue(key, values);
+			if (value != "" && key == "apiKey.key") {
+				doc[key] = "XXX";
+			} else {
+				doc[key] = value;
 			}
 		}
-		for (int index = 0; index < allowSaveConfigKeys.size(); index++) {
-			const std::string key = allowSaveConfigKeys[index];
-			if (json.containsKey(key)) {
-				const std::string value = json[key];
+		return doc.to<JsonObject>();
+	}
+
+	bool saveConfigurations(const JsonObject &configurations) {
+		if (!nvs_available && !initNVS()) {
+			return false;
+		}
+		for (int index = 0; index < configKeys.size(); index++) {
+			const std::string key = configKeys[index];
+			if (configurations.containsKey(key)) {
+				const std::string value = configurations[key];
 				if (value != getConfigValue(key, nvs_values)) {
-					// Configuration has been changed.
-					// Save the new value to non-volatile storage.
-					if (!saveKeyValueToNVS(key, value)) {
-						logger::write("Failed to save configuration to non-volatile storage ( " + key + "=" + value + " )");
-					}
+					saveKeyValueToNVS(key, value);
 				}
 				setConfigValue(key, value, values);
 			}

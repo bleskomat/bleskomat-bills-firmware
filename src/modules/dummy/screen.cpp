@@ -13,6 +13,12 @@ namespace screen {
 		logger::write("Dummy screen module initialized");
 	}
 
+	void loop() {}
+
+	bool isReady() {
+		return true;
+	}
+
 	std::string getCurrentScreen() {
 		return currentScreen;
 	}

@@ -16,10 +16,10 @@ namespace modules {
 			logger::write("Button OK");
 		#endif
 		screen::init();
-		logger::write("Screen OK");
 	}
 
 	void loop() {
+		screen::loop();
 		#ifdef COIN_ACCEPTOR
 			coinAcceptor::loop();
 		#endif

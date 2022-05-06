@@ -3,7 +3,7 @@
 void setup() {
 	Serial.begin(MONITOR_SPEED);
 	sdcard::init();
-	logger::write("Bleskomat ATM");
+	logger::write(firmwareName);
 	logger::write("Firmware version = " + firmwareVersion + ", commit hash = " + firmwareCommitHash);
 	config::init();
 	logger::write("Config OK");
@@ -12,13 +12,6 @@ void setup() {
 	modules::init();
 	logger::write("Modules OK");
 	logger::write("Setup OK");
-	if (config::isEnabled()) {
-		screen::showSplashScreen();
-		modules::enableAcceptors();
-	} else {
-		screen::showDisabledScreen();
-		modules::disableAcceptors();
-	}
 }
 
 float getAccumulatedValue() {
@@ -42,10 +35,9 @@ float getAccumulatedValue() {
 	return accumulatedValue;
 }
 
-
 float amountShown = 0;
 
-void loop() {
+void runAppLoop() {
 	// Un-comment the following to enable extra debugging information:
 	// debugger::loop();
 	sdcard::loop();
@@ -54,6 +46,15 @@ void loop() {
 	platform::loop();
 	modules::loop();
 	const std::string currentScreen = screen::getCurrentScreen();
+	if (currentScreen == "" && screen::isReady()) {
+		if (config::isEnabled()) {
+			screen::showSplashScreen();
+			modules::enableAcceptors();
+		} else {
+			screen::showDisabledScreen();
+			modules::disableAcceptors();
+		}
+	}
 	const float accumulatedValue = getAccumulatedValue();
 	const bool tradeInProgress = (
 		accumulatedValue > 0 &&
@@ -161,5 +162,12 @@ void loop() {
 				screen::showSplashScreen();
 			}
 		}
+	}
+}
+
+void loop() {
+	jsonRpc::loop();
+	if (!jsonRpc::inUse()) {
+		runAppLoop();
 	}
 }

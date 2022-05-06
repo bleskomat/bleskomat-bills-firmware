@@ -51,7 +51,8 @@ namespace config {
 	std::vector<float> getCoinValues();
 	std::vector<float> getBillValues();
 	bool isEnabled();
-	bool saveConfigurations(const JsonObject &json);
+	JsonObject getConfigurations();
+	bool saveConfigurations(const JsonObject &configurations);
 }
 
 #endif
