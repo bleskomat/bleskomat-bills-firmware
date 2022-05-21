@@ -7,8 +7,11 @@
 #include <string>
 
 namespace logger {
-	void write(const std::string &t_msg, const std::string &t_type);
-	void write(const std::string &t_msg);
+	void write(const std::string &msg, const std::string &type);
+	void write(const std::string &msg, const char* type);
+	void write(const std::string &msg);
+	void write(const char* msg);
+	void write(const char* t_msg, const char* type);
 }
 
 #endif

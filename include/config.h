@@ -15,42 +15,15 @@
 #include <sstream>
 #include <vector>
 
-struct BleskomatWifiConfig {
-	std::string ssid = "";
-	std::string password = "";
-};
-
-struct BleskomatConfig {
-	struct Lnurl::SignerConfig lnurl;
-	std::string uriSchemaPrefix = "";// "LIGHTNING:", "lightning:", or ""
-	std::string fiatCurrency = "EUR";
-	unsigned short fiatPrecision = 2;
-	std::string feePercent = "0.00";
-	double buyLimit = 0.00;
-	std::vector<float> coinValues;
-	std::vector<float> billValues;
-	std::string webUrl = "https://www.bleskomat.com";
-	std::string platformSockUri = "wss://www.bleskomat.com/device";
-	std::string pingSockUri = "wss://ping.bleskomat.com/";
-	std::string referencePhrase = "";
-	bool enabled = true;
-	struct BleskomatWifiConfig wifi;
-	std::string locale = "en";
-	bool strictTls = false;
-};
-
 namespace config {
 	void init();
 	Lnurl::SignerConfig getLnurlSignerConfig();
-	BleskomatWifiConfig getWifiConfig();
-	bool strictTls();
-	std::string get(const char* &t_key);
-	std::string get(const std::string &key);
-	unsigned short getFiatPrecision();
-	double getBuyLimit();
-	std::vector<float> getCoinValues();
-	std::vector<float> getBillValues();
-	bool isEnabled();
+	std::string getString(const char* key);
+	unsigned int getUnsignedInt(const char* key);
+	unsigned short getUnsignedShort(const char* key);
+	float getFloat(const char* key);
+	std::vector<float> getFloatVector(const char* key);
+	bool getBool(const char* key);
 	JsonObject getConfigurations();
 	bool saveConfigurations(const JsonObject &configurations);
 }

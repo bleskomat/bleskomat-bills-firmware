@@ -1,35 +1,41 @@
 #include "i18n.h"
 
-namespace i18n {
+namespace {
 
-	const std::map<std::string, Locale> locales {
-		{ "cs", locale_cs },
-		{ "de", locale_de },
-		{ "en", locale_en },
-		{ "es", locale_es }
+	// This is needed to use char* as key in std::map.
+	struct cmp_str {
+		bool operator()(char const *a, char const *b) const {
+			return std::strcmp(a, b) < 0;
+		}
 	};
 
-	const std::string defaultLocale = "en";
+	const std::map<const char*, const i18n::Locale*, cmp_str> locales {
+		{ "cs", &locale_cs },
+		{ "de", &locale_de },
+		{ "en", &locale_en },
+		{ "es", &locale_es }
+	};
 
-	std::string t(const std::string &key) {
-		return i18n::t(key, config::get("locale"));
+	const char* defaultLocale = "en";
+}
+
+namespace i18n {
+
+	std::string t(const char* key) {
+		return t(key, config::getString("locale").c_str());
 	}
 
-	std::string t(const std::string &key, const std::string &locale) {
-		std::string text = key;
-		if (locales.find(locale) != locales.end()) {
-			const Locale strings = locales.at(locale);
-			if (strings.find(key) == strings.end()) {
-				// Locale does not have the key defined.
-				if (locale != defaultLocale) {
-					// Try the default locale.
-					text = i18n::t(key, defaultLocale);
-				}
-			} else {
+	std::string t(const char* key, const char* locale) {
+		if (locales.count(locale) > 0) {
+			const i18n::Locale* strings = locales.at(locale);
+			if (strings->count(key) > 0) {
 				// Locale has key defined.
-				text = strings.at(key);
+				return std::string(strings->at(key));
+			} else if (locale != defaultLocale) {
+				// Try the default locale.
+				return t(key, defaultLocale);
 			}
 		}
-		return text;
+		return std::string(key);
 	}
 }

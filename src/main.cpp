@@ -1,58 +1,61 @@
 #include "main.h"
 
+float maxCoinValue;
+
 void setup() {
 	Serial.begin(MONITOR_SPEED);
-	sdcard::init();
 	logger::write(firmwareName);
 	logger::write("Firmware version = " + firmwareVersion + ", commit hash = " + firmwareCommitHash);
+	sdcard::init();
 	config::init();
-	logger::write("Config OK");
+	jsonRpc::init();
+	screen::init();
 	network::init();
-	logger::write("Network OK");
-	modules::init();
-	logger::write("Modules OK");
+	coinAcceptor::init();
+	maxCoinValue = util::findMaxValueInFloatVector(config::getFloatVector("coinValues"));
+	billAcceptor::init();
+	button::init();
 	logger::write("Setup OK");
 }
 
 float getAccumulatedValue() {
 	float accumulatedValue = 0;
-	#ifdef COIN_ACCEPTOR
-		accumulatedValue += coinAcceptor::getAccumulatedValue();
-	#endif
-	#ifdef BILL_ACCEPTOR
-		accumulatedValue += billAcceptor::getAccumulatedValue();
-		const float billAcceptorEscrowValue = billAcceptor::getEscrowValue();
-		if (billAcceptorEscrowValue > 0) {
-			const double buyLimit = config::getBuyLimit();
-			if (billAcceptorEscrowValue + accumulatedValue > buyLimit) {
-				billAcceptor::rejectEscrow();
-			} else {
-				billAcceptor::acceptEscrow();
-				accumulatedValue += billAcceptorEscrowValue;
-			}
+	accumulatedValue += coinAcceptor::getAccumulatedValue();
+	accumulatedValue += billAcceptor::getAccumulatedValue();
+	const float billAcceptorEscrowValue = billAcceptor::getEscrowValue();
+	if (billAcceptorEscrowValue > 0) {
+		const float buyLimit = config::getFloat("buyLimit");
+		if (billAcceptorEscrowValue + accumulatedValue > buyLimit) {
+			billAcceptor::rejectEscrow();
+		} else {
+			billAcceptor::acceptEscrow();
+			accumulatedValue += billAcceptorEscrowValue;
 		}
-	#endif
+	}
 	return accumulatedValue;
 }
 
 float amountShown = 0;
 
 void runAppLoop() {
-	// Un-comment the following to enable extra debugging information:
-	// debugger::loop();
 	sdcard::loop();
+	screen::loop();
 	network::loop();
 	pingServer::loop();
 	platform::loop();
-	modules::loop();
+	coinAcceptor::loop();
+	billAcceptor::loop();
+	button::loop();
 	const std::string currentScreen = screen::getCurrentScreen();
 	if (currentScreen == "" && screen::isReady()) {
-		if (config::isEnabled()) {
+		if (config::getBool("enabled")) {
 			screen::showSplashScreen();
-			modules::enableAcceptors();
+			coinAcceptor::disinhibit();
+			billAcceptor::disinhibit();
 		} else {
 			screen::showDisabledScreen();
-			modules::disableAcceptors();
+			coinAcceptor::inhibit();
+			billAcceptor::inhibit();
 		}
 	}
 	const float accumulatedValue = getAccumulatedValue();
@@ -68,14 +71,15 @@ void runAppLoop() {
 		!tradeInProgress &&
 		(
 			// Device is disabled via configuration option.
-			!config::isEnabled() ||
+			!config::getBool("enabled") ||
 			// Or, platform is down.
 			network::platformIsDown()
 		)
 	) {
 		// Show device disabled screen and do not allow normal operation.
 		if (currentScreen != "disabled") {
-			modules::disableAcceptors();
+			coinAcceptor::inhibit();
+			billAcceptor::inhibit();
 			screen::showDisabledScreen();
 		}
 	} else {
@@ -83,7 +87,8 @@ void runAppLoop() {
 		if (currentScreen == "disabled") {
 			// Previously disabled, return to normal operation.
 			screen::showSplashScreen();
-			modules::enableAcceptors();
+			coinAcceptor::disinhibit();
+			billAcceptor::disinhibit();
 		}
 		if (
 			accumulatedValue > 0 &&
@@ -109,7 +114,7 @@ void runAppLoop() {
 					const std::string referencePhrase = util::generateRandomPhrase(5);
 					Lnurl::Query customParams;
 					customParams["r"] = referencePhrase;
-					const double exchangeRate = platform::getExchangeRate();
+					const float exchangeRate = platform::getExchangeRate();
 					if (exchangeRate > 0) {
 						customParams["er"] = std::to_string(exchangeRate);
 					}
@@ -119,13 +124,15 @@ void runAppLoop() {
 					std::string qrcodeData = "";
 					// Allows upper or lower case URI schema prefix via a configuration option.
 					// Some wallet apps might not support uppercase URI prefixes.
-					qrcodeData += config::get("uriSchemaPrefix");
+					qrcodeData += config::getString("uriSchemaPrefix");
 					// QR codes with only uppercase letters are less complex (easier to scan).
 					qrcodeData += util::toUpperCase(encoded);
 					screen::showTradeCompleteScreen(accumulatedValue, qrcodeData, referencePhrase);
 					// Save the transaction for debugging and auditing purposes.
 					logger::write(signedUrl, "trade");
-					modules::disableAcceptors();
+					coinAcceptor::inhibit();
+					billAcceptor::inhibit();
+					delay(config::getUnsignedInt("buttonDelay"));
 				} else {
 					// Button pressed with zero amount.
 					screen::showInstructionsScreen();
@@ -137,27 +144,20 @@ void runAppLoop() {
 					screen::showInsertFiatScreen(accumulatedValue);
 					amountShown = accumulatedValue;
 				}
-				#ifdef COIN_ACCEPTOR
-					const float maxCoinValue = coinAcceptor::getMaxCoinValue();
-					const double buyLimit = config::getBuyLimit();
-					if (buyLimit > 0 && coinAcceptor::isOn() && (accumulatedValue + maxCoinValue) > buyLimit) {
-						// Possible to exceed tx limit, so disallow entering more coins.
-						coinAcceptor::off();
-					}
-				#endif
+				const float buyLimit = config::getFloat("buyLimit");
+				if (buyLimit > 0 && !coinAcceptor::isInhibited() && (accumulatedValue + maxCoinValue) > buyLimit) {
+					// Possible to exceed tx limit, so disallow entering more coins.
+					coinAcceptor::inhibit();
+				}
 			}
 		} else if (currentScreen == "tradeComplete") {
 			if (button::isPressed()) {
 				// Button pushed while showing the transaction complete screen.
 				// Reset accumulated values.
-				#ifdef COIN_ACCEPTOR
-					coinAcceptor::reset();
-					coinAcceptor::on();
-				#endif
-				#ifdef BILL_ACCEPTOR
-					billAcceptor::reset();
-					billAcceptor::on();
-				#endif
+				coinAcceptor::resetAccumulatedValue();
+				coinAcceptor::disinhibit();
+				billAcceptor::resetAccumulatedValue();
+				billAcceptor::disinhibit();
 				amountShown = 0;
 				screen::showSplashScreen();
 			}
@@ -166,8 +166,10 @@ void runAppLoop() {
 }
 
 void loop() {
+	// Un-comment the following to enable extra debugging information:
+	// debugger::loop();
 	jsonRpc::loop();
-	if (!jsonRpc::inUse()) {
+	if (!jsonRpc::hasPinConflict() || !jsonRpc::inUse()) {
 		runAppLoop();
 	}
 }

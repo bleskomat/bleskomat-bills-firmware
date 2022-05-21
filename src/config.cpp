@@ -2,158 +2,152 @@
 
 namespace {
 
-	// The configuration object:
-	BleskomatConfig values;
+	const char* configFileName = "bleskomat.conf";
 
-	const std::string configFileName = "bleskomat.conf";
+	typedef std::pair<const char*, const std::string> KeyValuePair;
 
-	// List of configuration keys:
-	const std::vector<std::string> configKeys = {
-		"apiKey.id",
-		"apiKey.key",
-		"apiKey.encoding",
-		"callbackUrl",
-		"shorten",
-		"uriSchemaPrefix",
-		"fiatCurrency",
-		"fiatPrecision",
-		"feePercent",
-		"buyLimit",
-		"coinValues",
-		"billValues",
-		"webUrl",
-		"platformSockUri",
-		"pingSockUri",
-		"referencePhrase",
-		"enabled",
-		"wifi.ssid",
-		"wifi.password",
-		"locale",
-		"strictTls"
+	const std::map<const char*, const char*> defaultValues = {
+		{ "apiKey.id", "" },
+		{ "apiKey.key", "" },
+		{ "apiKey.encoding", "" },
+		{ "callbackUrl", "https://p.bleskomat.com/u" },
+		{ "shorten", "true" },
+		{ "uriSchemaPrefix", "" },
+		{ "fiatCurrency", "EUR" },
+		{ "fiatPrecision", "2" },
+		{ "feePercent", "0.00" },
+		{ "buyLimit", "100.00" },
+		{ "billValues", "5,10,20,50,100,200" },
+		{ "billTxPin", "3" },
+		{ "billRxPin", "17" },
+		{ "billBaudRate", "300" },
+		{ "coinValues", "0.05,0.10,0.20,0.50,1.00,2.00" },// DG600F
+		{ "coinValueIncrement", "0.05" },// HX616
+		{ "coinSignalPin", "16" },
+		{ "coinInhibitPin", "21" },
+		{ "coinBaudRate", "9600" },
+		{ "coinAcceptorType", "dg600f" },
+		{ "buttonPin", "33" },
+		{ "buttonDelay", "5000" },
+		{ "buttonDebounce", "100" },
+		{ "webUrl", "https://www.bleskomat.com" },
+		{ "platformSockUri", "wss://p.bleskomat.com/device" },
+		{ "pingSockUri", "ws://ping.bleskomat.com" },
+		{ "referencePhrase", "" },
+		{ "enabled", "true" },
+		{ "wifi.ssid", "" },
+		{ "wifi.password", "" },
+		{ "locale", "en" },
+		{ "strictTls", "false" },
 	};
+
+	// https://arduinojson.org/v6/api/dynamicjsondocument/
+	DynamicJsonDocument configJsonDoc(8192);
+	JsonObject values;// current configuration values
 
 	// Using Preferences library as a wrapper to Non-Volatile Storage (flash memory):
 	// https://github.com/espressif/arduino-esp32/tree/master/libraries/Preferences
 	// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/nvs_flash.html
-	BleskomatConfig nvs_values;
-	const std::string nvs_namespace = "BleskomatConfig";
+	const char* nvs_namespace = "BleskomatConfig";
 	const bool nvs_readonly = false;
 	Preferences nvs_prefs;
 	bool nvs_available = false;
 
-	bool setConfigValue(const std::string &key, const std::string &value, BleskomatConfig &t_values) {
-		if (key == "apiKey.id") {
-			t_values.lnurl.apiKey.id = value;
-		} else if (key == "apiKey.key") {
-			t_values.lnurl.apiKey.key = value;
-		} else if (key == "apiKey.encoding") {
-			t_values.lnurl.apiKey.encoding = value;
-		} else if (key == "callbackUrl") {
-			t_values.lnurl.callbackUrl = value;
-		} else if (key == "shorten") {
-			t_values.lnurl.shorten = (value == "true" || value == "1");
-		} else if (key == "uriSchemaPrefix") {
-			t_values.uriSchemaPrefix = value;
-		} else if (key == "fiatCurrency") {
-			t_values.fiatCurrency = value;
-		} else if (key == "feePercent") {
-			t_values.feePercent = value;
-		} else if (key == "buyLimit") {
-			// Convert string to double:
-			t_values.buyLimit = std::strtod(value.c_str(), NULL);
-		} else if (key == "coinValues") {
-			t_values.coinValues = util::stringListToFloatVector(value);
-		} else if (key == "billValues") {
-			t_values.billValues = util::stringListToFloatVector(value);
-		} else if (key == "fiatPrecision") {
-			// Convert string to short:
-			t_values.fiatPrecision = (char)( *value.c_str() - '0' );
-		} else if (key == "webUrl") {
-			t_values.webUrl = value;
-		} else if (key == "platformSockUri") {
-			t_values.platformSockUri = value;
-		} else if (key == "pingSockUri") {
-			t_values.pingSockUri = value;
-		} else if (key == "referencePhrase") {
-			t_values.referencePhrase = value;
-		} else if (key == "enabled") {
-			t_values.enabled = (value == "true" || value == "1");
-		} else if (key == "wifi.ssid") {
-			t_values.wifi.ssid = value;
-		} else if (key == "wifi.password") {
-			t_values.wifi.password = value;
-		} else if (key == "locale") {
-			t_values.locale = value;
-		} else if (key == "strictTls") {
-			t_values.strictTls = (value == "true" || value == "1");
-		} else {
-			return false;
+	bool isConfigKey(const char* key) {
+		if (values.containsKey(key)) {
+			return true;
 		}
-		return true;
+		const auto pos = defaultValues.find(key);
+		return pos != defaultValues.end();
 	}
 
-	std::string getConfigValue(const std::string &key, const BleskomatConfig &t_values) {
-		if (key == "apiKey.id") {
-			return t_values.lnurl.apiKey.id;
-		} else if (key == "apiKey.key") {
-			return t_values.lnurl.apiKey.key;
-		} else if (key == "apiKey.encoding") {
-			return t_values.lnurl.apiKey.encoding;
-		} else if (key == "callbackUrl") {
-			return t_values.lnurl.callbackUrl;
-		} else if (key == "shorten") {
-			return t_values.lnurl.shorten ? "true" : "false";
-		} else if (key == "uriSchemaPrefix") {
-			return t_values.uriSchemaPrefix;
-		} else if (key == "fiatCurrency") {
-			return t_values.fiatCurrency;
-		} else if (key == "feePercent") {
-			return t_values.feePercent;
-		} else if (key == "buyLimit") {
-			return util::doubleToStringWithPrecision(t_values.buyLimit, t_values.fiatPrecision);
-		} else if (key == "coinValues") {
-			return util::floatVectorToStringList(t_values.coinValues);
-		} else if (key == "billValues") {
-			return util::floatVectorToStringList(t_values.billValues);
-		} else if (key == "fiatPrecision") {
-			return std::to_string(t_values.fiatPrecision);
-		} else if (key == "webUrl") {
-			return t_values.webUrl;
-		} else if (key == "platformSockUri") {
-			return t_values.platformSockUri;
-		} else if (key == "pingSockUri") {
-			return t_values.pingSockUri;
-		} else if (key == "referencePhrase") {
-			return t_values.referencePhrase;
-		} else if (key == "enabled") {
-			return t_values.enabled ? "true" : "false";
-		} else if (key == "wifi.ssid") {
-			return t_values.wifi.ssid;
-		} else if (key == "wifi.password") {
-			return t_values.wifi.password;
-		} else if (key == "locale") {
-			return t_values.locale;
-		} else if (key == "strictTls") {
-			return t_values.strictTls ? "true" : "false";
+	bool setConfigValue(const char* key, const std::string &value) {
+		if (isConfigKey(key)) {
+			values[key] = value;
+			return true;
+		}
+		return false;
+	}
+
+	std::string getConfigValue(const char* key) {
+		if (values.containsKey(key)) {
+			const std::string value = values[key].as<const char*>();
+			if (key == "coinValueIncrement") {
+				const unsigned short fiatPrecision = (unsigned short) std::stoi(getConfigValue("fiatPrecision"));
+				return util::floatToStringWithPrecision((unsigned short) std::stoi(value), fiatPrecision);
+			}
+			return value;
 		}
 		return "";
 	}
 
-	bool readFromConfigLine(const std::string &line, BleskomatConfig &t_values) {
+	bool initNVS() {
+		const bool result = nvs_prefs.begin(nvs_namespace, nvs_readonly);
+		if (result) {
+			nvs_available = true;
+		}
+		return result;
+	}
+
+	void endNVS() {
+		nvs_prefs.end();
+		nvs_available = false;
+	}
+
+	// Maximum NVS key length is 15 characters.
+	const unsigned short nvsKeyMaxLength = 15;
+
+	std::string truncateNVSKey(const char* key) {
+		return std::string(key).substr(0, nvsKeyMaxLength);
+	}
+
+	bool keyExistsInNVS(const char* t_key) {
+		const std::string key = truncateNVSKey(t_key);
+		return nvs_prefs.isKey(key.c_str());
+	}
+
+	std::string readValueFromNVS(const char* t_key) {
+		const std::string key = truncateNVSKey(t_key);
+		return std::string(nvs_prefs.getString(key.c_str(), "").c_str());
+	}
+
+	void saveKeyValueToNVS(const char* t_key, const std::string &value) {
+		if (!keyExistsInNVS(t_key) || readValueFromNVS(t_key) != value) {
+			const std::string key = truncateNVSKey(t_key);
+			nvs_prefs.putString(key.c_str(), value.c_str());
+		}
+	}
+
+	bool readFromNVS() {
+		if (!nvs_available && !initNVS()) {
+			return false;
+		}
+		for (auto const& defaultValue : defaultValues) {
+			const char* key = defaultValue.first;
+			if (keyExistsInNVS(key)) {
+				setConfigValue(key, readValueFromNVS(key));
+			} else {
+				setConfigValue(key, defaultValue.second);
+			}
+		}
+		return true;
+	}
+
+	KeyValuePair readFromConfigLine(const std::string &line) {
 		// The character used to separate key/value pair - e.g "key=value".
 		const std::string delimiter = "=";
 		const auto pos = line.find(delimiter);
 		if (pos != std::string::npos) {
 			// Found delimiter.
-			const std::string key = line.substr(0, pos);
-			const std::string value = line.substr(pos + 1);
-			if (setConfigValue(key, value, t_values)) {
-				return true;
+			const char* key = line.substr(0, pos).c_str();
+			if (isConfigKey(key)) {
+				const std::string value = line.substr(pos + 1);
+				return std::make_pair(key, value);
 			} else {
-				logger::write("Unknown key found in configuration file: \"" + key + "\"");
+				logger::write("Unknown key found in configuration file: \"" + std::string(key) + "\"");
 			}
 		}
-		return false;
+		return std::make_pair("", "");
 	}
 
 	bool readFromConfigFile() {
@@ -167,7 +161,13 @@ namespace {
 			}
 			std::string line = "";
 			while (std::getline(file, line)) {
-				readFromConfigLine(line, values);
+				const KeyValuePair kv = readFromConfigLine(line);
+				const char* key = kv.first;
+				if (key != "") {
+					const std::string value = kv.second;
+					setConfigValue(key, value);
+					saveKeyValueToNVS(key, value);
+				}
 			}
 			file.close();
 		} catch (const std::exception &e) {
@@ -178,74 +178,15 @@ namespace {
 	}
 
 	bool deleteConfigFile() {
-		const std::string filePath = sdcard::getMountedPath(configFileName);
-		return std::remove(filePath.c_str()) == 0;
+		return std::remove(sdcard::getMountedPath(configFileName).c_str()) == 0;
 	}
 
-	bool initNVS() {
-		const char* name = nvs_namespace.c_str();
-		const bool result = nvs_prefs.begin(name, nvs_readonly);
-		if (result) {
-			nvs_available = true;
-		}
-		return result;
-	}
-
-	bool readKeyValueFromNVS(const std::string &key) {
-		// Maximum NVS key length is 15 characters.
-		const std::string value = nvs_prefs.getString(key.substr(0, 15).c_str(), "").c_str();
-		return setConfigValue(key, value, nvs_values) && setConfigValue(key, value, values);
-	}
-
-	bool readFromNVS() {
-		if (!nvs_available) {
-			if (!initNVS()) {
-				return false;
-			}
-		}
-		for (int index = 0; index < configKeys.size(); index++) {
-			const std::string key = configKeys[index];
-			readKeyValueFromNVS(key);
-		}
-		return true;
-	}
-
-	bool saveKeyValueToNVS(const std::string &key, const std::string &value) {
-		// Maximum NVS key length is 15 characters.
-		return nvs_prefs.putString(key.substr(0, 15).c_str(), value.c_str()) != 0;
-	}
-
-	bool saveConfigurationsToNVS(const BleskomatConfig &t_values) {
-		if (!nvs_available) {
-			if (!initNVS()) {
-				return false;
-			}
-		}
-		for (int index = 0; index < configKeys.size(); index++) {
-			const std::string key = configKeys[index];
-			const std::string value = getConfigValue(key, t_values);
-			if (value != getConfigValue(key, nvs_values)) {
-				// Configuration has been changed.
-				// Save the new value to non-volatile storage.
-				if (!saveKeyValueToNVS(key, value)) {
-					logger::write("Failed to save configuration to non-volatile storage ( " + key + "=" + value + " )");
-				}
-			}
-		}
-		return true;
-	}
-
-	void endNVS() {
-		nvs_prefs.end();
-		nvs_available = false;
-	}
-
-	void printConfig(const BleskomatConfig &t_values) {
+	void printConfig() {
 		std::string msg = "Printing Bleskomat configurations:\n";
-		for (int index = 0; index < configKeys.size(); index++) {
-			const std::string key = configKeys[index];
-			const std::string value = getConfigValue(key, t_values);
-			msg += "  " + key + "=";
+		for (auto const& defaultValue : defaultValues) {
+			const char* key = defaultValue.first;
+			const std::string value = getConfigValue(key);
+			msg += "  " + std::string(key) + "=";
 			if (value != "") {
 				if (key == "apiKey.key") {
 					// Don't print some configuration value(s).
@@ -264,6 +205,7 @@ namespace {
 namespace config {
 
 	void init() {
+		values = configJsonDoc.createNestedObject("values");
 		if (initNVS()) {
 			logger::write("Non-volatile storage initialized");
 			if (!readFromNVS()) {
@@ -274,14 +216,10 @@ namespace config {
 		}
 		if (sdcard::isMounted()) {
 			if (readFromConfigFile()) {
-				if (saveConfigurationsToNVS(values)) {
-					if (deleteConfigFile()) {
-						logger::write("Deleted configuration file");
-					} else {
-						logger::write("Failed to delete configuration file");
-					}
+				if (deleteConfigFile()) {
+					logger::write("Deleted configuration file");
 				} else {
-					logger::write("Failed to save configurations to non-volatile storage");
+					logger::write("Failed to delete configuration file");
 				}
 			} else {
 				logger::write("Failed to read configurations from file");
@@ -290,97 +228,97 @@ namespace config {
 		endNVS();
 		// Hard-coded configuration overrides - for development purposes.
 		// Uncomment the following lines, as needed, to override config options.
-		// values.lnurl.apiKey.id = "";
-		// values.lnurl.apiKey.key = "";
-		// values.lnurl.apiKey.encoding = "";
-		// values.lnurl.callbackUrl = "https://ln.bleskomat.com/u";
-		// values.lnurl.shorten = true;
-		// values.uriSchemaPrefix = "LIGHTNING:";
-		// values.fiatCurrency = "EUR";
-		// values.fiatPrecision = 2;
-		// values.feePercent = "0.00";
-		// values.buyLimit = 100.00;
-		// values.coinValues = { 0.05, 0.10, 0.20, 0.50, 1.00, 2.00 };
-		// values.billValues = { 5, 10, 20, 50, 100, 200 };
-		// values.webUrl = "https://www.bleskomat.com";
-		// values.platformSockUri = "wss://www.bleskomat.com/device";
-		// values.pingSockUri = "ws://ping.bleskomat.com";
-		// values.referencePhrase = "absurd cake";
-		// values.enabled = true;
-		// values.wifi.ssid = "";
-		// values.wifi.password = "";
-		// values.locale = "en";
-		// values.strictTls = false;
-		printConfig(values);
+		// values["apiKey.id"] = "";
+		// values["apiKey.key"] = "";
+		// values["apiKey.encoding"] = "";
+		// values["callbackUrl"] = "https://p.bleskomat.com/u";
+		// values["shorten"] = "true";
+		// values["uriSchemaPrefix"] = "";
+		// values["fiatCurrency"] = "EUR";
+		// values["fiatPrecision"] = "2";
+		// values["feePercent"] = "0.00";
+		// values["buyLimit"] = "100.00";
+		// values["billValues"] = "5,10,20,50,100,200";
+		// values["coinValues"] = "0.05,0.10,0.20,0.50,1.00,2.00";// DG600F
+		// values["coinValueIncrement"] = "0.05";// HX616
+		// values["coinSignalPin"] = "16";
+		// values["coinInhibitPin"] = "21";
+		// values["coinBaudRate"] = "9600";
+		// values["coinAcceptorType"] = "dg600f";
+		// values["buttonPin"] = "33";
+		// values["buttonDelay"] = "2000";
+		// values["buttonDebounce"] = "50";
+		// values["webUrl"] = "https://www.bleskomat.com";
+		// values["platformSockUri"] = "wss://www.bleskomat.com/device";
+		// values["pingSockUri"] = "ws://ping.bleskomat.com";
+		// values["referencePhrase"] = "absurd cake";
+		// values["enabled"] = "true";
+		// values["wifi.ssid"] = "";
+		// values["wifi.password"] = "";
+		// values["locale"] = "en";
+		// values["strictTls"] = "false";
+		printConfig();
 	}
 
 	Lnurl::SignerConfig getLnurlSignerConfig() {
-		return values.lnurl;
+		struct Lnurl::SignerConfig lnurl;
+		lnurl.apiKey.id = config::getString("apiKey.id");
+		lnurl.apiKey.key = config::getString("apiKey.key");
+		lnurl.apiKey.encoding = config::getString("apiKey.encoding");
+		lnurl.callbackUrl = config::getString("callbackUrl");
+		lnurl.shorten = config::getBool("shorten");
+		return lnurl;
 	}
 
-	BleskomatWifiConfig getWifiConfig() {
-		return values.wifi;
+	std::string getString(const char* key) {
+		return getConfigValue(key);
 	}
 
-	bool strictTls() {
-		return values.strictTls;
+	unsigned int getUnsignedInt(const char* key) {
+		return (unsigned int) std::stoi(getConfigValue(key));
 	}
 
-	std::string get(const char* t_key) {
-		const std::string key = std::string(t_key);
-		return get(key);
+	unsigned short getUnsignedShort(const char* key) {
+		return (unsigned short) std::stoi(getConfigValue(key));
 	}
 
-	std::string get(const std::string &key) {
-		return getConfigValue(key, values);
+	float getFloat(const char* key) {
+		return std::atof(getConfigValue(key).c_str());
 	}
 
-	unsigned short getFiatPrecision() {
-		return values.fiatPrecision;
+	std::vector<float> getFloatVector(const char* key) {
+		return util::stringListToFloatVector(getConfigValue(key));
 	}
 
-	double getBuyLimit() {
-		return values.buyLimit;
-	}
-
-	std::vector<float> getCoinValues() {
-		return values.coinValues;
-	}
-
-	std::vector<float> getBillValues() {
-		return values.billValues;
-	}
-
-	bool isEnabled() {
-		return values.enabled;
+	bool getBool(const char* key) {
+		const std::string value = getConfigValue(key);
+		return (value == "true" || value == "1");
 	}
 
 	JsonObject getConfigurations() {
-		DynamicJsonDocument doc(4096);
-		for (int index = 0; index < configKeys.size(); index++) {
-			const std::string key = configKeys[index];
-			const std::string value = getConfigValue(key, values);
-			if (value != "" && key == "apiKey.key") {
-				doc[key] = "XXX";
+		DynamicJsonDocument docConfigs(8192);
+		for (JsonPair kv : values) {
+			const char* key = kv.key().c_str();
+			const std::string value = kv.value().as<const char*>();
+			if (key == "apiKey.key") {
+				docConfigs[key] = "XXX";
 			} else {
-				doc[key] = value;
+				docConfigs[key] = value;
 			}
 		}
-		return doc.to<JsonObject>();
+		return docConfigs.as<JsonObject>();
 	}
 
 	bool saveConfigurations(const JsonObject &configurations) {
 		if (!nvs_available && !initNVS()) {
 			return false;
 		}
-		for (int index = 0; index < configKeys.size(); index++) {
-			const std::string key = configKeys[index];
-			if (configurations.containsKey(key)) {
-				const std::string value = configurations[key];
-				if (value != getConfigValue(key, nvs_values)) {
-					saveKeyValueToNVS(key, value);
-				}
-				setConfigValue(key, value, values);
+		for (JsonPair kv : configurations) {
+			const char* key = kv.key().c_str();
+			if (isConfigKey(key)) {
+				const std::string value = kv.value().as<const char*>();
+				saveKeyValueToNVS(key, value);
+				setConfigValue(key, value);
 			}
 		}
 		endNVS();

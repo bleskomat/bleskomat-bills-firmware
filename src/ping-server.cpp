@@ -8,7 +8,7 @@
 
 namespace {
 
-	const std::string certFileName = "pingCACert.pem";
+	const char* certFileName = "pingCACert.pem";
 
 	unsigned long lastReconnectAttemptTime = 0;
 	const unsigned int reconnectDelay = 30000;// milliseconds
@@ -43,15 +43,15 @@ namespace {
 			esp_websocket_client_config_t websocket_cfg = {};
 			// We implement our own reconnection logic.
 			websocket_cfg.disable_auto_reconnect = true;
-			const std::string uri = config::get("pingSockUri");
-			if (config::strictTls() && uri.substr(0, 6) == "wss://") {
+			const std::string uri = config::getString("pingSockUri");
+			if (config::getBool("strictTls") && uri.substr(0, 6) == "wss://") {
 				if (sdcard::fileExists(certFileName)) {
 					const char* cert = sdcard::readFile(certFileName).c_str();
 					if (strlen(cert) > 0) {
 						websocket_cfg.cert_pem = cert;
 					}
 				} else {
-					throw std::runtime_error("Initialization failed: Missing " + certFileName);
+					throw std::runtime_error("Initialization failed: Missing " + std::string(certFileName));
 				}
 			}
 			websocket_cfg.uri = uri.c_str();
@@ -115,7 +115,7 @@ namespace pingServer {
 	}
 
 	bool isConfigured() {
-		return config::get("pingSockUri") != "";
+		return config::getString("pingSockUri") != "";
 	}
 
 	bool isConnected() {

@@ -9,8 +9,10 @@
 #include <string>
 
 namespace jsonRpc {
+	void init();
 	void loop();
 	bool inUse();
+	bool hasPinConflict();
 }
 
 #endif

@@ -1,7 +1,4 @@
-#include "modules/dummy/screen.h"
-
-// Dummy implementation of screen module.
-// This module does nothing.
+#include "screen.h"
 
 namespace {
 	std::string currentScreen = "";
@@ -10,32 +7,38 @@ namespace {
 namespace screen {
 
 	void init() {
-		logger::write("Dummy screen module initialized");
+		screen_epaper::init();
 	}
 
-	void loop() {}
+	void loop() {
+		screen_epaper::loop();
+	}
 
 	bool isReady() {
-		return true;
+		return screen_epaper::isReady();
 	}
 
-	std::string getCurrentScreen() {
-		return currentScreen;
+	void debugCommands() {
+		screen_epaper::debugCommands();
 	}
 
 	void showSplashScreen() {
+		screen_epaper::showSplashScreen();
 		currentScreen = "splash";
 	}
 
 	void showDisabledScreen() {
+		screen_epaper::showDisabledScreen();
 		currentScreen = "disabled";
 	}
 
 	void showInstructionsScreen() {
+		screen_epaper::showInstructionsScreen();
 		currentScreen = "instructions";
 	}
 
 	void showInsertFiatScreen(const float &amount) {
+		screen_epaper::showInsertFiatScreen(amount);
 		currentScreen = "insertFiat";
 	}
 
@@ -44,6 +47,11 @@ namespace screen {
 		const std::string &qrcodeData,
 		const std::string &referencePhrase
 	) {
+		screen_epaper::showTradeCompleteScreen(amount, qrcodeData, referencePhrase);
 		currentScreen = "tradeComplete";
+	}
+
+	std::string getCurrentScreen() {
+		return currentScreen;
 	}
 }

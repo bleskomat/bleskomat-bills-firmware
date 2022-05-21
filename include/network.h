@@ -3,6 +3,7 @@
 
 #include "config.h"
 #include "logger.h"
+#include "main.h"
 #include "ping-server.h"
 #include "platform.h"
 

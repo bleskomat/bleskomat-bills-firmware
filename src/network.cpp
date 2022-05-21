@@ -8,6 +8,9 @@
 
 namespace {
 
+	std::string ssid;
+	std::string password;
+
 	unsigned long lastConnectionAttemptTime = 0;
 	const unsigned int connectionAttemptDelay = 10000;// milliseconds
 
@@ -101,10 +104,10 @@ namespace {
 		WiFi.onEvent(logWiFiEvent);
 	}
 
-	void connectToWiFi(const BleskomatWifiConfig &wifiConfig) {
+	void connectToWiFi() {
 		lastConnectionAttemptTime = millis();
 		try {
-			WiFi.begin(wifiConfig.ssid.c_str(), wifiConfig.password.c_str());
+			WiFi.begin(ssid.c_str(), password.c_str());
 			// Set "Station" mode.
 			WiFi.mode(WIFI_MODE_STA);
 		} catch (const std::exception &e) {
@@ -116,6 +119,8 @@ namespace {
 namespace network {
 
 	void init() {
+		ssid = config::getString("wifi.ssid");
+		password = config::getString("wifi.password");
 		WiFi.mode(WIFI_OFF);
 		// Un-comment the following line to print all events related to the WiFi module:
 		// logWiFiEvents();
@@ -128,12 +133,9 @@ namespace network {
 			status != WL_IDLE_STATUS &&
 			(lastConnectionAttemptTime == 0 || millis() - lastConnectionAttemptTime >= connectionAttemptDelay)
 		) {
-			const BleskomatWifiConfig wifiConfig = config::getWifiConfig();
-			if (wifiConfig.ssid != "") {
-				logger::write("[Network] Connecting to WiFi network...");
-				logger::write("[Network] SSID: " + wifiConfig.ssid);
-				logger::write("[Network] Password: " + wifiConfig.password);
-				connectToWiFi(wifiConfig);
+			if (ssid != "") {
+				logger::write("[Network] Connecting to WiFi network (SSID = \"" + ssid + "\", Password = \"" + password + "\")");
+				connectToWiFi();
 			}
 		} else if (status == WL_CONNECTED) {
 			if (lastConnectionAttemptTime > 0) {
@@ -174,6 +176,6 @@ namespace network {
 	}
 
 	std::string getUserAgent() {
-		return std::string("Bleskomat ATM");
+		return firmwareName + " " + firmwareVersion;
 	}
 }

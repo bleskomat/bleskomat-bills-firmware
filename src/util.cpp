@@ -32,7 +32,7 @@ namespace util {
 		return signer.create_url(query);
 	}
 
-	std::string createSignedLnurlWithdraw(const double &t_amount, const Lnurl::Query &customParams) {
+	std::string createSignedLnurlWithdraw(const float &t_amount, const Lnurl::Query &customParams) {
 		Lnurl::Signer signer(config::getLnurlSignerConfig());
 		std::string nonce = "";
 		bool hasReferencePhrase = customParams.count("r") > 0;
@@ -45,14 +45,14 @@ namespace util {
 			nonce = "r";
 		}
 		Lnurl::WithdrawParams params;
-		std::string amount = doubleToStringWithPrecision(t_amount, config::getFiatPrecision());
+		std::string amount = floatToStringWithPrecision(t_amount, config::getUnsignedInt("fiatPrecision"));
 		params.minWithdrawable = amount;
 		params.maxWithdrawable = amount;
 		params.defaultDescription = "";
 		for (auto const &it : customParams) {
 			params.custom[it.first] = it.second;
 		}
-		params.custom["f"] = config::get("fiatCurrency");
+		params.custom["f"] = config::getString("fiatCurrency");
 		return signer.create_url(params, nonce);
 	}
 
@@ -101,7 +101,7 @@ namespace util {
 		return floatVector;
 	}
 
-	std::string floatVectorToStringList(const std::vector<float> floatVector, const char &delimiter) {
+	std::string floatVectorToStringList(const std::vector<float> &floatVector, const char &delimiter) {
 		std::ostringstream ss;
 		for (int index = 0; index < floatVector.size(); index++) {
 			ss << floatVector[index] << delimiter;
@@ -111,6 +111,17 @@ namespace util {
 			stringList.pop_back();// Remove the last instance of delimiter.
 		}
 		return stringList;
+	}
+
+	float findMaxValueInFloatVector(const std::vector<float> &floatVector) {
+		float maxValue = 0;
+		for (int index = 0; index < floatVector.size(); index++) {
+			float value = floatVector.at(index);
+			if (value > maxValue) {
+				maxValue = value;
+			}
+		}
+		return maxValue;
 	}
 
 	std::string urlEncode(const std::string &value) {
@@ -132,7 +143,7 @@ namespace util {
 		return escaped.str();
 	}
 
-	std::string doubleToStringWithPrecision(const double &value, const int &precision) {
+	std::string floatToStringWithPrecision(const float &value, const unsigned short &precision) {
 		std::ostringstream out;
 		out.precision(precision);
 		out << std::fixed << value;

@@ -1,16 +1,19 @@
 #ifndef BLESKOMAT_MAIN_H
 #define BLESKOMAT_MAIN_H
 
+#include "bill-acceptor.h"
+#include "button.h"
+#include "coin-acceptor.h"
 #include "config.h"
 #include "debugger.h"
 #include "i18n.h"
 #include "logger.h"
 #include "json-rpc.h"
-#include "modules.h"
 #include "network.h"
 #include "platform.h"
 #include "ping-server.h"
 #include "sdcard.h"
+#include "screen.h"
 #include "util.h"
 
 #include <lnurl.h>
@@ -18,6 +21,10 @@
 
 #define STRINGIFY(s) STRINGIFY1(s)
 #define STRINGIFY1(s) #s
+
+#ifndef FIRMWARE_NAME
+	#error "Missing required build flag: FIRMWARE_NAME"
+#endif
 
 #ifndef FIRMWARE_COMMIT_HASH
 	#error "Missing required build flag: FIRMWARE_COMMIT_HASH"
@@ -33,7 +40,7 @@ namespace {
 	}
 }
 
-const std::string firmwareName = "Bleskomat ATM";
+const std::string firmwareName(trimQuotes(STRINGIFY(FIRMWARE_NAME)));
 const std::string firmwareCommitHash(trimQuotes(STRINGIFY(FIRMWARE_COMMIT_HASH)));
 const std::string firmwareVersion(trimQuotes(STRINGIFY(FIRMWARE_VERSION)));
 

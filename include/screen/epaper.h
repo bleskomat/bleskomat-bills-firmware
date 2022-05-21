@@ -1,5 +1,5 @@
-#ifndef BLESKOMAT_MODULES_EPAPER_H
-#define BLESKOMAT_MODULES_EPAPER_H
+#ifndef BLESKOMAT_SCREEN_EPAPER_H
+#define BLESKOMAT_SCREEN_EPAPER_H
 
 #include "fonts/u8g2/courier_prime_code_48pt.h"
 #include "fonts/u8g2/courier_prime_code_44pt.h"
@@ -80,11 +80,10 @@
 #include <stdexcept>
 #include <vector>
 
-namespace epaper {
+namespace screen_epaper {
 	void init();
 	void loop();
 	bool isReady();
-	std::string getCurrentScreen();
 	void debugCommands();
 	void showSplashScreen();
 	void showDisabledScreen();

@@ -1,8 +1,8 @@
-#ifndef BLESKOMAT_MODULES_DUMMY_SCREEN_H
-#define BLESKOMAT_MODULES_DUMMY_SCREEN_H
+#ifndef BLESKOMAT_SCREEN_H
+#define BLESKOMAT_SCREEN_H
 
 #include "logger.h"
-
+#include "screen/epaper.h"
 #include <string>
 
 namespace screen {
@@ -10,6 +10,7 @@ namespace screen {
 	void loop();
 	bool isReady();
 	std::string getCurrentScreen();
+	void debugCommands();
 	void showSplashScreen();
 	void showDisabledScreen();
 	void showInstructionsScreen();

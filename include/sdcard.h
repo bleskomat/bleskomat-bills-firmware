@@ -25,10 +25,10 @@ namespace sdcard {
 	bool isMounted();
 	void mount();
 	void unmount();
-	std::string getMountedPath(const std::string &partialPath);
-	void appendToFile(const std::string &filePath, const std::string &text);
-	std::string readFile(const std::string &filePath);
-	bool fileExists(const std::string &filePath);
+	std::string getMountedPath(const char* partialPath);
+	void appendToFile(const char* filePath, const std::string &text);
+	std::string readFile(const char* filePath);
+	bool fileExists(const char* filePath);
 }
 
 #endif

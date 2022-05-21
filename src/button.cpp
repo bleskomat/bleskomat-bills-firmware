@@ -1,21 +1,25 @@
-#include "modules/button.h"
+#include "button.h"
 
 namespace {
 	bool pressed = false;
 	int lastState;
 	unsigned long lastStateChangeTime = 0;// Last time the button pin was toggled.
-	const unsigned int debounceDelay = 50;// Debounce time; increase it if the output flickers
+	unsigned int debounceDelay;// Debounce time; increase it if the output flickers
+	unsigned short pinNumber;
 }
 
 namespace button {
 
 	void init() {
-		pinMode(BUTTON_PIN, INPUT);
+		logger::write("Initializing button...");
+		debounceDelay = config::getUnsignedInt("buttonDebounce");
+		pinNumber = config::getUnsignedShort("buttonPin");
+		pinMode(pinNumber, INPUT);
 	}
 
 	void loop() {
-		const int state = digitalRead(BUTTON_PIN);
 		if ((millis() - lastStateChangeTime) > debounceDelay) {
+			const int state = digitalRead(pinNumber);
 			if (state != lastState) {
 				if (state == HIGH) {
 					pressed = true;

@@ -15,7 +15,7 @@ namespace platform {
 	void loop();
 	bool isConfigured();
 	bool isConnected();
-	double getExchangeRate();
+	float getExchangeRate();
 }
 
 #endif

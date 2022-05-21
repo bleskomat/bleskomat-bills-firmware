@@ -1,4 +1,4 @@
-#include "modules/epaper.h"
+#include "screen/epaper.h"
 
 //
 //  Using GxEPD2 library:
@@ -35,7 +35,7 @@ namespace {
 	typedef const uint8_t* Font;
 	typedef std::vector<Font> FontList;
 
-	const FontList monospaceFonts = {
+	FontList monospaceFonts = {
 		// Ordered from largest (top) to smallest (bottom).
 		u8g2_courier_prime_code_48pt,
 		u8g2_courier_prime_code_44pt,
@@ -51,7 +51,7 @@ namespace {
 		u8g2_courier_prime_code_8pt
 	};
 
-	const FontList brandFonts = {
+	FontList brandFonts = {
 		// Ordered from largest (top) to smallest (bottom).
 		u8g2_checkbook_48pt,
 		u8g2_checkbook_44pt,
@@ -64,7 +64,7 @@ namespace {
 		u8g2_checkbook_16pt
 	};
 
-	const FontList proportionalFonts = {
+	FontList proportionalFonts = {
 		// Ordered from largest (top) to smallest (bottom).
 		u8g2_opensans_light_18pt,
 		u8g2_opensans_light_16pt,
@@ -74,10 +74,10 @@ namespace {
 		u8g2_opensans_light_8pt
 	};
 
-	const Font monospaceFontSmall = u8g2_courier_prime_code_12pt;
-	const Font monospaceFontNormal = u8g2_courier_prime_code_16pt;
-	const Font proportionalFontSmall = u8g2_opensans_light_12pt;
-	const Font proportionalFontNormal = u8g2_opensans_light_16pt;
+	Font monospaceFontSmall = u8g2_courier_prime_code_12pt;
+	Font monospaceFontNormal = u8g2_courier_prime_code_16pt;
+	Font proportionalFontSmall = u8g2_opensans_light_12pt;
+	Font proportionalFontNormal = u8g2_opensans_light_16pt;
 
 	std::string currentScreen = "";
 
@@ -98,28 +98,27 @@ namespace {
 		return bbox;
 	}
 
-	Font getBestFitFont(const std::string &text, const FontList &fonts, uint16_t max_w = 0, uint16_t max_h = 0) {
-		Font font;
+	Font getBestFitFont(const std::string &text, const FontList fonts, uint16_t max_w = 0, uint16_t max_h = 0) {
 		if (max_w == 0) {
 			max_w = display.epd2.WIDTH;
 		}
 		if (max_h == 0) {
 			max_h = display.epd2.HEIGHT;
 		}
-		for (int index = 0; index < fonts.size(); index++) {
-			font = fonts.at(index);
-			BoundingBox bbox = calculateTextSize(text, font);
+		for (uint8_t index = 0; index < fonts.size(); index++) {
+			const Font font = fonts.at(index);
+			const BoundingBox bbox = calculateTextSize(text, font);
 			if (bbox.w <= max_w && bbox.h <= max_h) {
 				// Best fit font found.
-				// Stop searching.
-				break;
+				return font;
 			}
 		}
-		return font;
+		// Default to last font in list - should be smallest.
+		return fonts.at(fonts.size() - 1);
 	}
 
-	std::string getAmountFiatCurrencyString(const double &amount) {
-		return util::doubleToStringWithPrecision(amount, config::getFiatPrecision()) + " " + config::get("fiatCurrency");
+	std::string getAmountFiatCurrencyString(const float &amount) {
+		return util::floatToStringWithPrecision(amount, config::getUnsignedInt("fiatPrecision")) + " " + config::getString("fiatCurrency");
 	}
 
 	BoundingBox renderText(
@@ -266,14 +265,14 @@ namespace {
 	}
 
 	std::string getInstructionsUrl() {
-		const std::string apiKeyId = config::get("apiKey.id");
-		std::string instructionsUrl = config::get("webUrl");
+		const std::string apiKeyId = config::getString("apiKey.id");
+		std::string instructionsUrl = config::getString("webUrl");
 		instructionsUrl += "/intro?id=" + util::urlEncode(apiKeyId);
 		return instructionsUrl;
 	}
 }
 
-namespace epaper {
+namespace screen_epaper {
 
 	void init() {}
 
@@ -297,10 +296,6 @@ namespace epaper {
 		return initialized;
 	}
 
-	std::string getCurrentScreen() {
-		return currentScreen;
-	}
-
 	void debugCommands() {
 		// Uncomment the following lines to render each screen after a short delay between each.
 		// epaper::showSplashScreen();
@@ -311,15 +306,15 @@ namespace epaper {
 		// delay(2000);
 		// epaper::showInsertFiatScreen(100.00);
 		// delay(2000);
-		// const double amount = 100.00;
+		// const float amount = 100.00;
 		// const std::string referencePhrase = util::generateRandomPhrase(5);
 		// Lnurl::Query customParams;
 		// customParams["r"] = referencePhrase;
-		// const double exchangeRate = 38000.441;
+		// const float exchangeRate = 38000.441;
 		// if (exchangeRate > 0) {
 		// 	customParams["er"] = std::to_string(exchangeRate);
 		// }
-		// const std::string qrcodeData = config::get("uriSchemaPrefix") + util::toUpperCase(util::lnurlEncode(util::createSignedLnurlWithdraw(amount, customParams)));
+		// const std::string qrcodeData = config::getString("uriSchemaPrefix") + util::toUpperCase(util::lnurlEncode(util::createSignedLnurlWithdraw(amount, customParams)));
 		// epaper::showTradeCompleteScreen(amount, qrcodeData, referencePhrase);
 	}
 
@@ -351,7 +346,7 @@ namespace epaper {
 			prevText_bbox = renderText(slogan_line2, slogan_line2_font, slogan_line2_x, slogan_line2_y);
 		}
 		const std::string instructions = i18n::t("splash_instructions");
-		BoundingBox instructions_bbox = calculateTextSize(instructions, proportionalFontNormal);
+		const BoundingBox instructions_bbox = calculateTextSize(instructions, proportionalFontNormal);
 		int16_t instructions_x = display.epd2.WIDTH / 2;// center
 		int16_t instructions_y = display.epd2.HEIGHT - (instructions_bbox.h + margin);// bottom
 		renderText(instructions, proportionalFontNormal, instructions_x, instructions_y);
@@ -364,13 +359,13 @@ namespace epaper {
 		startNewScreen();
 		const int16_t margin = 24;
 		const std::string text = i18n::t("disabled_heading");
-		int16_t text_x = (display.epd2.WIDTH / 2);// center
-		int16_t text_y = (display.epd2.HEIGHT / 2) - margin;
-		Font font = getBestFitFont(text, monospaceFonts);
-		BoundingBox text_bbox = renderText(text, font, text_x, text_y);
+		const int16_t text_x = (display.epd2.WIDTH / 2);// center
+		const int16_t text_y = (display.epd2.HEIGHT / 2) - margin;
+		const Font font = getBestFitFont(text, monospaceFonts);
+		const BoundingBox text_bbox = renderText(text, font, text_x, text_y);
 		const std::string text2 = i18n::t("disabled_subheading");
-		int16_t text2_x = display.epd2.WIDTH / 2;// center
-		int16_t text2_y = text_bbox.h + text_bbox.y + margin;// bottom
+		const int16_t text2_x = display.epd2.WIDTH / 2;// center
+		const int16_t text2_y = text_bbox.h + text_bbox.y + margin;// bottom
 		renderText(text2, proportionalFontSmall, text2_x, text2_y);
 		finishNewScreen("disabled");
 	}
@@ -382,10 +377,10 @@ namespace epaper {
 		const std::string instructionsUrl = getInstructionsUrl();
 		const int16_t margin = 24;
 		const int16_t line_spacing = 8;
-		uint16_t qrcode_w = 100;
-		uint16_t qrcode_h = 100;
-		int16_t qrcode_x = margin;
-		int16_t qrcode_y = margin;
+		const uint16_t qrcode_w = 100;
+		const uint16_t qrcode_h = 100;
+		const int16_t qrcode_x = margin;
+		const int16_t qrcode_y = margin;
 		BoundingBox qrcode_bbox = renderQRCode(instructionsUrl, qrcode_x, qrcode_y, qrcode_w, qrcode_h, false);
 		{
 			const std::string text1 = i18n::t("instructions_qr_text1");
@@ -459,19 +454,19 @@ namespace epaper {
 			const Font amount_font = getBestFitFont(amount_text, monospaceFonts, amount_max_w);
 			prevText_bbox = renderText(amount_text, amount_font, amount_x, amount_y);
 		}
-		const double buyLimit = config::getBuyLimit();
+		const float buyLimit = config::getFloat("buyLimit");
 		if (buyLimit > 0) {
 			std::string limitText = i18n::t("insert_fiat_limit") + " = ";
-			limitText += util::doubleToStringWithPrecision(buyLimit, config::getFiatPrecision());
-			limitText += " " + config::get("fiatCurrency");
+			limitText += util::floatToStringWithPrecision(buyLimit, config::getUnsignedInt("fiatPrecision"));
+			limitText += " " + config::getString("fiatCurrency");
 			const int16_t limitText_y = prevText_bbox.y + prevText_bbox.h + margin;
 			prevText_bbox = renderText(limitText, monospaceFontNormal, center_x, limitText_y);
 		}
-		const double exchangeRate = platform::getExchangeRate();
+		const float exchangeRate = platform::getExchangeRate();
 		if (exchangeRate > 0) {
 			std::string exchangeRateText = "1 BTC = ";
-			exchangeRateText += util::doubleToStringWithPrecision(exchangeRate, config::getFiatPrecision());
-			exchangeRateText += " " + config::get("fiatCurrency");
+			exchangeRateText += util::floatToStringWithPrecision(exchangeRate, config::getUnsignedInt("fiatPrecision"));
+			exchangeRateText += " " + config::getString("fiatCurrency");
 			const int16_t exchangeRateText_y = prevText_bbox.y + prevText_bbox.h + margin;
 			prevText_bbox = renderText(exchangeRateText, monospaceFontNormal, center_x, exchangeRateText_y);
 		}
@@ -537,7 +532,7 @@ namespace epaper {
 			// Render reference code (bottom-right).
 			const std::string referencePhrase = util::toUpperCase(t_referencePhrase);
 			std::vector<std::string> words = util::stringListToStringVector(referencePhrase, ' ');
-			const std::string deviceReferencePhrase = util::toUpperCase(config::get("referencePhrase"));
+			const std::string deviceReferencePhrase = util::toUpperCase(config::getString("referencePhrase"));
 			if (deviceReferencePhrase != "") {
 				const std::vector<std::string> deviceWords = util::stringListToStringVector(deviceReferencePhrase, ' ');
 				words.insert(words.end(), deviceWords.begin(), deviceWords.end());

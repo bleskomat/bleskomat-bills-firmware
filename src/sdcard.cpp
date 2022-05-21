@@ -12,10 +12,10 @@ namespace {
 	const int maxMountAttempts = 3;
 	unsigned long lastMountFailureTime = 0;
 	const unsigned long mountAttemptWaitTime = 2000;
-	typedef std::pair< std::string, std::string > AppendToFileBufferItem;
+	typedef std::pair< const char*, std::string > AppendToFileBufferItem;
 	std::deque<AppendToFileBufferItem> appendToFileBuffer;
 
-	void doAppendToFile(const std::string &t_filePath, const std::string &text) {
+	void doAppendToFile(const char* t_filePath, const std::string &text) {
 		std::ofstream file;
 		const std::string filePath = sdcard::getMountedPath(t_filePath);
 		// Open file for writing (append mode):
@@ -28,9 +28,7 @@ namespace {
 		while (appendToFileBuffer.size() > 0) {
 			const AppendToFileBufferItem item = appendToFileBuffer.front();
 			appendToFileBuffer.pop_front();
-			const std::string filePath = item.first;
-			const std::string text = item.second;
-			doAppendToFile(filePath, text);
+			doAppendToFile(item.first, item.second);
 		}
 	}
 
@@ -117,18 +115,18 @@ namespace sdcard {
 		}
 	}
 
-	std::string getMountedPath(const std::string &partialPath) {
-		return std::string(mountpoint) + "/" + partialPath;
+	std::string getMountedPath(const char* partialPath) {
+		return std::string(mountpoint) + "/" + std::string(partialPath);
 	}
 
-	void appendToFile(const std::string &filePath, const std::string &text) {
+	void appendToFile(const char* filePath, const std::string &text) {
 		AppendToFileBufferItem item;
 		item.first = filePath;
 		item.second = text;
 		appendToFileBuffer.push_back(item);
 	}
 
-	std::string readFile(const std::string &t_filePath) {
+	std::string readFile(const char* t_filePath) {
 		std::ostringstream buffer;
 		std::ifstream file;
 		const std::string filePath = sdcard::getMountedPath(t_filePath);
@@ -147,8 +145,8 @@ namespace sdcard {
 		return buffer.str();
 	}
 
-	bool fileExists(const std::string &filePath) {
+	bool fileExists(const char* filePath) {
 		// http://elm-chan.org/fsw/ff/doc/stat.html
-		return f_stat(filePath.c_str(), NULL) == FR_OK;
+		return f_stat(filePath, NULL) == FR_OK;
 	}
 }

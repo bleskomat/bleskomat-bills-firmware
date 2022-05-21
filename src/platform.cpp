@@ -11,9 +11,9 @@
 
 namespace {
 
-	const std::string certFileName = "platformCACert.pem";
+	const char* certFileName = "platformCACert.pem";
 
-	double exchangeRate = 0.00;
+	float exchangeRate = 0.00;
 	unsigned long lastExchangeRateRefreshTime = 0;
 	const unsigned int exchangeRateMaxAge = 300000;// milliseconds
 
@@ -79,11 +79,11 @@ namespace {
 					config::saveConfigurations(json["data"]);
 				} else if (type == "exchangeRate") {
 					const std::string fiatCurrency = json["data"]["fiatCurrency"];
-					if (fiatCurrency == config::get("fiatCurrency")) {
+					if (fiatCurrency == config::getString("fiatCurrency")) {
 						exchangeRate = std::strtod(json["data"]["exchangeRate"], NULL);
 						lastExchangeRateRefreshTime = millis();
 					} else {
-						logger::write("[Platform] Received exchange rate currency (\"" + config::get("fiatCurrency") + "\") does not match the device's fiatCurrency option (\"" + fiatCurrency + "\")");
+						logger::write("[Platform] Received exchange rate currency (\"" + config::getString("fiatCurrency") + "\") does not match the device's fiatCurrency option (\"" + fiatCurrency + "\")");
 					}
 				} else if (type == "error") {
 					const std::string message = json["message"];
@@ -121,15 +121,15 @@ namespace {
 			esp_websocket_client_config_t websocket_cfg = {};
 			// We implement our own reconnection logic.
 			websocket_cfg.disable_auto_reconnect = true;
-			const std::string uri = config::get("platformSockUri");
-			if (config::strictTls() && uri.substr(0, 6) == "wss://") {
+			const std::string uri = config::getString("platformSockUri");
+			if (config::getBool("strictTls") && uri.substr(0, 6) == "wss://") {
 				if (sdcard::fileExists(certFileName)) {
 					const char* cert = sdcard::readFile(certFileName).c_str();
 					if (strlen(cert) > 0) {
 						websocket_cfg.cert_pem = cert;
 					}
 				} else {
-					throw std::runtime_error("Initialization failed: Missing " + certFileName);
+					throw std::runtime_error("Initialization failed: Missing " + std::string(certFileName));
 				}
 			}
 			websocket_cfg.uri = uri.c_str();
@@ -196,7 +196,7 @@ namespace platform {
 	}
 
 	bool isConfigured() {
-		if (config::get("platformSockUri") == "") {
+		if (config::getString("platformSockUri") == "") {
 			return false;
 		}
 		const Lnurl::SignerConfig signerConfig = config::getLnurlSignerConfig();
@@ -215,7 +215,7 @@ namespace platform {
 		}
 	}
 
-	double getExchangeRate() {
+	float getExchangeRate() {
 		if ((lastExchangeRateRefreshTime == 0 || millis() - lastExchangeRateRefreshTime >= exchangeRateMaxAge)) {
 			// Exchange rate is stale.
 			// Return 0, indicating that the exchange rate value should not be used.
