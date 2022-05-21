@@ -5,6 +5,7 @@
 #include "debugger.h"
 #include "i18n.h"
 #include "logger.h"
+#include "json-rpc.h"
 #include "modules.h"
 #include "network.h"
 #include "platform.h"
@@ -32,6 +33,7 @@ namespace {
 	}
 }
 
+const std::string firmwareName = "Bleskomat ATM";
 const std::string firmwareCommitHash(trimQuotes(STRINGIFY(FIRMWARE_COMMIT_HASH)));
 const std::string firmwareVersion(trimQuotes(STRINGIFY(FIRMWARE_VERSION)));
 

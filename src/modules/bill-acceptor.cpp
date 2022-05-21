@@ -2,6 +2,7 @@
 
 namespace {
 
+	bool initialized = false;
 	std::vector<float> billValues;
 	std::deque<int> buffer;
 	float accumulatedValue = 0.00;
@@ -39,18 +40,20 @@ namespace {
 
 namespace billAcceptor {
 
-	void init() {
-		billValues = config::getBillValues();
-		Serial1.begin(BILL_ACCEPTOR_BAUDRATE, SERIAL_8N1, BILL_ACCEPTOR_TX, BILL_ACCEPTOR_RX);
-		billAcceptor::on();
-		billAcceptor::enableEscrowMode();
-	}
+	void init() {}
 
 	void loop() {
+		if (!initialized) {
+			initialized = true;
+			logger::write("Initializing bill acceptor...");
+			billValues = config::getBillValues();
+			Serial1.begin(BILL_ACCEPTOR_BAUDRATE, SERIAL_8N1, BILL_ACCEPTOR_TX, BILL_ACCEPTOR_RX);
+			billAcceptor::on();
+			billAcceptor::enableEscrowMode();
+		}
 		while (Serial1.available()) {
-			byte byteIn = Serial1.read();
+			int byteIn = Serial1.read();
 			if (byteIn > 0) {
-				logger::write("Bill acceptor byte received: " + std::to_string(byteIn));
 				buffer.push_back(byteIn);
 			}
 		}
@@ -99,6 +102,6 @@ namespace billAcceptor {
 
 	void clearEscrowValue() {
 		logger::write("Clearing escrow value in bill acceptor");
-		escrowValue = 0.0;
+		escrowValue = 0.00;
 	}
 }

@@ -82,6 +82,8 @@
 
 namespace epaper {
 	void init();
+	void loop();
+	bool isReady();
 	std::string getCurrentScreen();
 	void debugCommands();
 	void showSplashScreen();

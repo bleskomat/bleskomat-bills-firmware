@@ -7,6 +7,8 @@
 
 namespace screen {
 	void init();
+	void loop();
+	bool isReady();
 	std::string getCurrentScreen();
 	void showSplashScreen();
 	void showDisabledScreen();

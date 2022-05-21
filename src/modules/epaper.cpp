@@ -15,16 +15,17 @@
 
 namespace {
 
+	bool initialized = false;
+
+	GxEPD2_BW<GxEPD2_420, GxEPD2_420::HEIGHT> display(GxEPD2_420(EPAPER_CS, EPAPER_DC, EPAPER_RST, EPAPER_BUSY));
+	U8G2_FOR_ADAFRUIT_GFX u8g2Fonts;
+
 	struct BoundingBox {
 		int16_t x = 0;
 		int16_t y = 0;
 		uint16_t w = 0;
 		uint16_t h = 0;
 	};
-
-	bool initialized = false;
-	GxEPD2_BW<GxEPD2_420, GxEPD2_420::HEIGHT> display(GxEPD2_420(EPAPER_CS, EPAPER_DC, EPAPER_RST, EPAPER_BUSY));
-	U8G2_FOR_ADAFRUIT_GFX u8g2Fonts;
 
 	BoundingBox renderedAmountTextBoundingBox;
 
@@ -241,11 +242,11 @@ namespace {
 	}
 
 	uint16_t numWrites = 0;
-	bool isDirty(const uint16_t maxWrites = 3) {
+	bool isDirty(const uint16_t maxWrites = 5) {
 		return ++numWrites > maxWrites;
 	}
 
-	bool startNewScreen(const uint16_t maxWrites = 3) {
+	bool startNewScreen(const uint16_t maxWrites = 5) {
 		activate();
 		bool scrubbed = false;
 		if (currentScreen == "tradeComplete" || isDirty(maxWrites)) {
@@ -258,7 +259,8 @@ namespace {
 		return scrubbed;
 	}
 
-	void finishNewScreen() {
+	void finishNewScreen(const std::string &name) {
+		currentScreen = name;
 		display.displayWindow(0, 0, display.epd2.WIDTH, display.epd2.HEIGHT);
 		deactivate();
 	}
@@ -273,18 +275,26 @@ namespace {
 
 namespace epaper {
 
-	void init() {
-		if (display.epd2.panel == GxEPD2::GDEW042T2) {
-			display.init(0);
-			u8g2Fonts.begin(display);// connect u8g2 procedures to Adafruit GFX
-			activate();
-			display.setRotation(0);
-			deactivate();
+	void init() {}
+
+	void loop() {
+		if (!initialized) {
 			initialized = true;
-			logger::write("E-Paper display initialized and ready for use");
-		} else {
-			logger::write("Unknown display connected. This device supports WaveShare 4.2 inch e-paper b/w");
+			logger::write("Initializing e-paper display...");
+			if (display.epd2.panel == GxEPD2::GDEW042T2) {
+				display.init(0);
+				u8g2Fonts.begin(display);// connect u8g2 procedures to Adafruit GFX
+				activate();
+				display.setRotation(0);
+				deactivate();
+			} else {
+				logger::write("Unknown display connected. This device supports WaveShare 4.2 inch e-paper b/w");
+			}
 		}
+	}
+
+	bool isReady() {
+		return initialized;
 	}
 
 	std::string getCurrentScreen() {
@@ -315,6 +325,7 @@ namespace epaper {
 
 	void showSplashScreen() {
 		if (!initialized) return;
+		logger::write("Show screen: Splash");
 		startNewScreen();
 		const int16_t margin = 24;
 		BoundingBox prevText_bbox;
@@ -344,12 +355,12 @@ namespace epaper {
 		int16_t instructions_x = display.epd2.WIDTH / 2;// center
 		int16_t instructions_y = display.epd2.HEIGHT - (instructions_bbox.h + margin);// bottom
 		renderText(instructions, proportionalFontNormal, instructions_x, instructions_y);
-		currentScreen = "splash";
-		finishNewScreen();
+		finishNewScreen("splash");
 	}
 
 	void showDisabledScreen() {
 		if (!initialized) return;
+		logger::write("Show screen: Disabled");
 		startNewScreen();
 		const int16_t margin = 24;
 		const std::string text = i18n::t("disabled_heading");
@@ -361,12 +372,12 @@ namespace epaper {
 		int16_t text2_x = display.epd2.WIDTH / 2;// center
 		int16_t text2_y = text_bbox.h + text_bbox.y + margin;// bottom
 		renderText(text2, proportionalFontSmall, text2_x, text2_y);
-		currentScreen = "disabled";
-		finishNewScreen();
+		finishNewScreen("disabled");
 	}
 
 	void showInstructionsScreen() {
 		if (!initialized) return;
+		logger::write("Show screen: Instructions");
 		startNewScreen();
 		const std::string instructionsUrl = getInstructionsUrl();
 		const int16_t margin = 24;
@@ -429,12 +440,12 @@ namespace epaper {
 			int16_t text7_y = numbering4_bbox.y;// align w/ fourth number
 			renderText(text7, text4_font, text4_x, text7_y, false);
 		}
-		currentScreen = "instructions";
-		finishNewScreen();
+		finishNewScreen("instructions");
 	}
 
 	void showInsertFiatScreen(const float &amount) {
 		if (!initialized) return;
+		logger::write("Show screen: Insert Fiat");
 		startNewScreen();
 		const int16_t margin = 24;
 		const int16_t center_x = display.epd2.WIDTH / 2;// center
@@ -472,8 +483,7 @@ namespace epaper {
 		const std::string text2 = i18n::t("insert_fiat_instructions_line2");
 		const int16_t text2_y = prevText_bbox.y + prevText_bbox.h + margin;
 		prevText_bbox = renderText(text2, proportionalFontSmall, center_x, text2_y);
-		currentScreen = "insertFiat";
-		finishNewScreen();
+		finishNewScreen("insertFiat");
 	}
 
 	void showTradeCompleteScreen(
@@ -482,6 +492,7 @@ namespace epaper {
 		const std::string &t_referencePhrase
 	) {
 		if (!initialized) return;
+		logger::write("Show screen: Trade Complete");
 		startNewScreen(0/* always scrub */);
 		// Margin between rendered elements.
 		const int16_t margin = 24;
@@ -544,7 +555,6 @@ namespace epaper {
 				prev_word_bbox = renderText(word, word_font, word_x, word_y, false);
 			}
 		}
-		currentScreen = "tradeComplete";
-		finishNewScreen();
+		finishNewScreen("tradeComplete");
 	}
 }

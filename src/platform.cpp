@@ -56,7 +56,7 @@ namespace {
 					throw std::runtime_error("deserializeJson failed: " + std::string(err.c_str()));
 				}
 				const JsonObject json = docIn.as<JsonObject>();
-				const std::string type = json["type"].as<char*>();
+				const std::string type = json["type"].as<const char*>();
 				if (type == "authorization") {
 					if (json["data"].containsKey("challenge")) {
 						const std::string challenge = json["data"]["challenge"];
@@ -196,7 +196,14 @@ namespace platform {
 	}
 
 	bool isConfigured() {
-		return config::get("platformSockUri") != "";
+		if (config::get("platformSockUri") == "") {
+			return false;
+		}
+		const Lnurl::SignerConfig signerConfig = config::getLnurlSignerConfig();
+		if (signerConfig.apiKey.id == "" || signerConfig.apiKey.key == "") {
+			return false;
+		}
+		return true;
 	}
 
 	bool isConnected() {
