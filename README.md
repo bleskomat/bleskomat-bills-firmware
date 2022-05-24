@@ -17,6 +17,7 @@ This repository contains the source code and basic documentation about how to co
 	* [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
 	* [Prepare SD Card](#prepare-sd-card)
 * [Fonts](#fonts)
+* [Changelog](#changelog)
 * [License](#license)
 
 
@@ -302,6 +303,11 @@ Each font used to render text on the E-Paper display is loaded from a C-style he
 			* Checkbook = 2 (monospace)
 		* `FONT_SIZE` - The point size - e.g. "12" is equivalent to 12 pixel / pt.
 		* Outputs a new header file in `./include/fonts/u8g2`. You will need to include the new font header file in `./includes/modules/epaper.h`.
+
+
+## Changelog
+
+See [CHANGELOG.md](https://github.com/bleskomat/bleskomat-firmware/blob/master/CHANGELOG.md)
 
 
 ## License
