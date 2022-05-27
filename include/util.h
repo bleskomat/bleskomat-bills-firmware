@@ -9,11 +9,19 @@
 
 #include <chrono>
 #include <cmath>
+#include <cstring>
 #include <sstream>
 #include <string>
 #include <vector>
 
 namespace util {
+
+	// This is needed to use char* as the key in std::map.
+	struct MapCharPointerComparator {
+		bool operator()(char const *a, char const *b) const {
+			return std::strcmp(a, b) < 0;
+		}
+	};
 
 	std::string createSignature(const std::string &payload);
 	std::string createSignedUrl(const std::string t_baseUrl, const Lnurl::Query &t_query);

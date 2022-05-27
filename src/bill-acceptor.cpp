@@ -83,10 +83,17 @@ namespace {
 		{ "command_error", 255 }
 	};
 
+	uint8_t getSIOCodeByte(const char* key) {
+		if (SIO_Codes.count(key) > 0) {
+			return SIO_Codes.at(key);
+		}
+		return 0;
+	}
+
 	void serialWriteSIOCode(const char* key) {
-		const uint8_t byteValue = SIO_Codes.at(key);
-		if (byteValue != -1) {
-			Serial2.write(byteValue);
+		const uint8_t byteOut = getSIOCodeByte(key);
+		if (byteOut > 0) {
+			Serial2.write(byteOut);
 		}
 	}
 
@@ -111,13 +118,13 @@ namespace {
 		while (buffer.size() >= 3) {
 			const uint8_t byteIn1 = buffer.front();
 			buffer.pop_front();
-			if (byteIn1 == SIO_Codes.at("validator_busy")) {
+			if (byteIn1 == getSIOCodeByte("validator_busy")) {
 				const uint8_t byteIn2 = buffer.front();
 				buffer.pop_front();
-				if (byteIn2 == SIO_Codes.at("validator_not_busy")) {
+				if (byteIn2 == getSIOCodeByte("validator_not_busy")) {
 					const uint8_t byteIn3 = buffer.front();
 					buffer.pop_front();
-					if (byteIn3 >= SIO_Codes.at("note_accepted_c1") && byteIn3 <= SIO_Codes.at("note_accepted_c16")) {
+					if (byteIn3 >= getSIOCodeByte("note_accepted_c1") && byteIn3 <= getSIOCodeByte("note_accepted_c16")) {
 						// The third byte is the number of the bill from the dataset.
 						float billValue = getBillValue(byteIn3);
 						if (billValue > 0) {

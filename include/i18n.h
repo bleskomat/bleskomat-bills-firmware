@@ -3,12 +3,11 @@
 
 #include "config.h"
 
-#include <cstring>
 #include <map>
 #include <string>
 
 namespace i18n {
-	typedef std::map<const char*, const char*> Locale;
+	typedef std::map<const char*, const char*, util::MapCharPointerComparator> Locale;
 	std::string t(const char* key);
 	std::string t(const char* key, const char* locale);
 }

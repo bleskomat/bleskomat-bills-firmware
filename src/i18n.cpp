@@ -2,14 +2,7 @@
 
 namespace {
 
-	// This is needed to use char* as key in std::map.
-	struct cmp_str {
-		bool operator()(char const *a, char const *b) const {
-			return std::strcmp(a, b) < 0;
-		}
-	};
-
-	const std::map<const char*, const i18n::Locale*, cmp_str> locales {
+	const std::map<const char*, const i18n::Locale*, util::MapCharPointerComparator> locales {
 		{ "cs", &locale_cs },
 		{ "de", &locale_de },
 		{ "en", &locale_en },
