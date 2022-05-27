@@ -93,7 +93,7 @@ namespace {
 	void serialWriteSIOCode(const char* key) {
 		const uint8_t byteOut = getSIOCodeByte(key);
 		if (byteOut > 0) {
-			Serial2.write(byteOut);
+			Serial1.write(byteOut);
 		}
 	}
 
@@ -106,9 +106,9 @@ namespace {
 	}
 
 	std::string getSIOCodeKey(const uint8_t &byteIn) {
-		for (auto &kv : SIO_Codes) {
+		for (auto kv : SIO_Codes) {
 			if (kv.second == byteIn) {
-				return kv.first;
+				return std::string(kv.first);
 			}
 		}
 		return "";
@@ -149,8 +149,8 @@ namespace billAcceptor {
 
 	void loop() {
 		if (initialized) {
-			while (Serial2.available()) {
-				const uint8_t byteIn = Serial2.read();
+			while (Serial1.available()) {
+				const uint8_t byteIn = Serial1.read();
 				if (byteIn > 0) {
 					const std::string code = getSIOCodeKey(byteIn);
 					if (code != "") {
@@ -169,7 +169,7 @@ namespace billAcceptor {
 		} else {
 			initialized = true;
 			logger::write("Initializing bill acceptor...");
-			Serial2.begin(billBaudRate, SERIAL_8N1, billTxPin, billRxPin);
+			Serial1.begin(billBaudRate, SERIAL_8N1, billTxPin, billRxPin);
 			billAcceptor::disinhibit();
 			billAcceptor::enableEscrowMode();
 		}

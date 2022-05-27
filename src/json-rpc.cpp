@@ -184,6 +184,7 @@ namespace {
 	void checkForPinConflicts() {
 		const std::vector<const char*> pinConfigKeys = {
 			"coinSignalPin", "coinInhibitPin",
+			"billRxPin", "billTxPin",
 			"buttonPin"
 		};
 		for (int index = 0; index < pinConfigKeys.size(); index++) {
