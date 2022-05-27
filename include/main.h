@@ -5,15 +5,15 @@
 #include "button.h"
 #include "coin-acceptor.h"
 #include "config.h"
-#include "debugger.h"
 #include "i18n.h"
 #include "logger.h"
 #include "json-rpc.h"
 #include "network.h"
 #include "platform.h"
 #include "ping-server.h"
-#include "sdcard.h"
 #include "screen.h"
+#include "sdcard.h"
+#include "spiffs.h"
 #include "util.h"
 
 #include <lnurl.h>

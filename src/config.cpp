@@ -39,6 +39,7 @@ namespace {
 		{ "wifi.password", "" },
 		{ "locale", "en" },
 		{ "strictTls", "false" },
+		{ "logLevel", "info" }
 	};
 
 	// https://arduinojson.org/v6/api/dynamicjsondocument/
@@ -180,26 +181,6 @@ namespace {
 	bool deleteConfigFile() {
 		return std::remove(sdcard::getMountedPath(configFileName).c_str()) == 0;
 	}
-
-	void printConfig() {
-		std::string msg = "Printing Bleskomat configurations:\n";
-		for (auto const& defaultValue : defaultValues) {
-			const char* key = defaultValue.first;
-			const std::string value = getConfigValue(key);
-			msg += "  " + std::string(key) + "=";
-			if (value != "") {
-				if (key == "apiKey.key") {
-					// Don't print some configuration value(s).
-					msg += "XXX";
-				} else {
-					msg += value;
-				}
-			}
-			msg += "\n";
-		}
-		msg.pop_back();// Remove the last line-break character.
-		logger::write(msg);
-	}
 }
 
 namespace config {
@@ -207,22 +188,22 @@ namespace config {
 	void init() {
 		values = configJsonDoc.createNestedObject("values");
 		if (initNVS()) {
-			logger::write("Non-volatile storage initialized");
+			std::cout << "Non-volatile storage initialized" << std::endl;
 			if (!readFromNVS()) {
-				logger::write("Failed to read configurations from non-volatile storage");
+				std::cout << "Failed to read configurations from non-volatile storage" << std::endl;
 			}
 		} else {
-			logger::write("Failed to initialize non-volatile storage");
+			std::cout << "Failed to initialize non-volatile storage" << std::endl;
 		}
 		if (sdcard::isMounted()) {
 			if (readFromConfigFile()) {
 				if (deleteConfigFile()) {
-					logger::write("Deleted configuration file");
+					std::cout << "Deleted configuration file" << std::endl;
 				} else {
-					logger::write("Failed to delete configuration file");
+					std::cout << "Failed to delete configuration file" << std::endl;
 				}
 			} else {
-				logger::write("Failed to read configurations from file");
+				std::cout << "Failed to read configurations from file" << std::endl;
 			}
 		}
 		endNVS();
@@ -257,7 +238,7 @@ namespace config {
 		// values["wifi.password"] = "";
 		// values["locale"] = "en";
 		// values["strictTls"] = "false";
-		printConfig();
+		// values["logLevel"] = "info";
 	}
 
 	Lnurl::SignerConfig getLnurlSignerConfig() {
@@ -307,6 +288,25 @@ namespace config {
 			}
 		}
 		return docConfigs.as<JsonObject>();
+	}
+
+	std::string getConfigurationsAsString() {
+		std::string str = "Bleskomat configurations:\n";
+		for (JsonPair kv : values) {
+			const char* key = kv.key().c_str();
+			const std::string value = kv.value().as<const char*>();
+			str += "  " + std::string(key) + "=";
+			if (value != "") {
+				if (key == "apiKey.key") {
+					str += "XXX";
+				} else {
+					str += value;
+				}
+			}
+			str += "\n";
+		}
+		str.pop_back();// remove last line-break character
+		return str;
 	}
 
 	bool saveConfigurations(const JsonObject &configurations) {

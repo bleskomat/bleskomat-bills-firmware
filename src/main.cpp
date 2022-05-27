@@ -1,21 +1,25 @@
 #include "main.h"
 
 float maxCoinValue;
+unsigned int buttonDelay;
 
 void setup() {
 	Serial.begin(MONITOR_SPEED);
-	logger::write(firmwareName);
-	logger::write("Firmware version = " + firmwareVersion + ", commit hash = " + firmwareCommitHash);
+	spiffs::init();
 	sdcard::init();
 	config::init();
+	logger::init();
+	logger::write(firmwareName + ": Firmware version = " + firmwareVersion + ", commit hash = " + firmwareCommitHash);
+	logger::write(config::getConfigurationsAsString());
+	sdcard::init();
 	jsonRpc::init();
 	screen::init();
 	network::init();
 	coinAcceptor::init();
-	maxCoinValue = util::findMaxValueInFloatVector(config::getFloatVector("coinValues"));
 	billAcceptor::init();
 	button::init();
-	logger::write("Setup OK");
+	maxCoinValue = util::findMaxValueInFloatVector(config::getFloatVector("coinValues"));
+	buttonDelay = config::getUnsignedInt("buttonDelay");
 }
 
 float getAccumulatedValue() {
@@ -36,6 +40,14 @@ float getAccumulatedValue() {
 }
 
 float amountShown = 0;
+unsigned long tradeCompleteTime = 0;
+
+void writeTradeCompleteLog(const float &amount, const std::string &signedUrl) {
+	std::string msg = "Trade completed:\n";
+	msg += "  Amount  = " + util::floatToStringWithPrecision(amount, config::getUnsignedShort("fiatPrecision")) + " " + config::getString("fiatCurrency") + "\n";
+	msg += "  URL     = " + signedUrl;
+	logger::write(msg);
+}
 
 void runAppLoop() {
 	sdcard::loop();
@@ -128,11 +140,10 @@ void runAppLoop() {
 					// QR codes with only uppercase letters are less complex (easier to scan).
 					qrcodeData += util::toUpperCase(encoded);
 					screen::showTradeCompleteScreen(accumulatedValue, qrcodeData, referencePhrase);
-					// Save the transaction for debugging and auditing purposes.
-					logger::write(signedUrl, "trade");
+					writeTradeCompleteLog(accumulatedValue, signedUrl);
 					coinAcceptor::inhibit();
 					billAcceptor::inhibit();
-					delay(config::getUnsignedInt("buttonDelay"));
+					tradeCompleteTime = millis();
 				} else {
 					// Button pressed with zero amount.
 					screen::showInstructionsScreen();
@@ -151,7 +162,7 @@ void runAppLoop() {
 				}
 			}
 		} else if (currentScreen == "tradeComplete") {
-			if (button::isPressed()) {
+			if (button::isPressed() && millis() - tradeCompleteTime > buttonDelay) {
 				// Button pushed while showing the transaction complete screen.
 				// Reset accumulated values.
 				coinAcceptor::resetAccumulatedValue();
@@ -166,8 +177,7 @@ void runAppLoop() {
 }
 
 void loop() {
-	// Un-comment the following to enable extra debugging information:
-	// debugger::loop();
+	logger::loop();
 	jsonRpc::loop();
 	if (!jsonRpc::hasPinConflict() || !jsonRpc::inUse()) {
 		runAppLoop();
