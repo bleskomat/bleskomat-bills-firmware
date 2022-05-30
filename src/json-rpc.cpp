@@ -133,6 +133,7 @@ namespace {
 					}
 				}
 				Serial.println(std::string("\"}").c_str());
+				delay(1000);
 			} else if (method == "deletelogs") {
 				if (!spiffs::isInitialized()) {
 					throw JsonRpcError("SPIFFS file system not initialized. Reformat SPIFFS then try again.");

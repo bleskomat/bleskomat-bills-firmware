@@ -14,10 +14,6 @@ namespace {
 	unsigned long lastConnectionAttemptTime = 0;
 	const unsigned int connectionAttemptDelay = 10000;// milliseconds
 
-	unsigned long platformDownLastChangeTime = 0;
-	const unsigned int platformDownDebounceTime = 10000;// milliseconds
-	bool platformDown = false;
-
 	void logWiFiEvent(WiFiEvent_t event) {
 		switch (event) {
 			case SYSTEM_EVENT_WIFI_READY:
@@ -122,8 +118,7 @@ namespace network {
 		ssid = config::getString("wifi.ssid");
 		password = config::getString("wifi.password");
 		WiFi.mode(WIFI_OFF);
-		// Un-comment the following line to print all events related to the WiFi module:
-		// logWiFiEvents();
+		logWiFiEvents();
 	}
 
 	void loop() {
@@ -149,30 +144,6 @@ namespace network {
 
 	bool isConnected() {
 		return WiFi.status() == WL_CONNECTED;
-	}
-
-	bool platformIsDown() {
-		bool down = (
-			// Device has network connection.
-			network::isConnected() &&
-			// Both platform and ping-server are configured.
-			platform::isConfigured() && pingServer::isConfigured() &&
-			// Platform is NOT connected, but ping-server is connected.
-			!platform::isConnected() && pingServer::isConnected()
-		);
-		if (
-			down != platformDown &&
-			(
-				platformDownLastChangeTime == 0 ||
-				millis() - platformDownLastChangeTime > platformDownDebounceTime
-			)
-		) {
-			if (platformDownLastChangeTime > 0) {
-				platformDown = down;
-			}
-			platformDownLastChangeTime = millis();
-		}
-		return platformDown;
 	}
 
 	std::string getUserAgent() {

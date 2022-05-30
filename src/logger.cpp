@@ -3,8 +3,8 @@
 namespace {
 
 	const char* logFilePath = "/bleskomat.log";
-	const unsigned int logFileMaxBytes = 65536;
-	const uint8_t maxLogFileNum = 3;
+	const unsigned int logFileMaxBytes = 32768;
+	const uint8_t maxLogFileNum = 5;
 	unsigned long lastLogFileSizeCheckTime = millis();
 	const unsigned int logFileSizeCheckDelay = 5000;
 	const char* defaultLogLevel = "info";
@@ -69,7 +69,16 @@ namespace logger {
 	void loop() {
 		if (configuredLogLevelValue <= 1) {
 			if (lastHeapSizePrintTime == 0 || millis() - lastHeapSizePrintTime > heapSizePrintDelay) {
-				heap_caps_print_heap_info(MALLOC_CAP_DEFAULT);
+				// heap_caps_print_heap_info(MALLOC_CAP_DEFAULT);
+				const uint32_t freeHeap = ESP.getFreeHeap();
+				const uint32_t totalHeap = ESP.getHeapSize();
+				const uint32_t usedHeap = totalHeap - freeHeap;
+				std::string msg = "Memory usage information:\n";
+				msg += "  Heap:\n";
+				msg += "    USED       = " + std::to_string(usedHeap) + "\n";
+				msg += "    TOTAL      = " + std::to_string(totalHeap) + "\n";
+				msg += "    MIN. FREE  = " + std::to_string(ESP.getMinFreeHeap());
+				logger::write(msg, "debug");
 				lastHeapSizePrintTime = millis();
 			}
 		}

@@ -10,7 +10,6 @@
 #include "json-rpc.h"
 #include "network.h"
 #include "platform.h"
-#include "ping-server.h"
 #include "screen.h"
 #include "sdcard.h"
 #include "spiffs.h"

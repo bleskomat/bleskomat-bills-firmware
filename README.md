@@ -238,17 +238,10 @@ buyLimit=20000
 coinValues=1,2,5,10,20,50
 billValues=100,200,500,1000,2000,5000
 webUrl=https://www.bleskomat.com
-platformSockUri=wss://www.bleskomat.com/device
-pingSockUri=wss://ping.bleskomat.com/
+platformSockUri=wss://platform.bleskomat.com/device
+onlineOnly=0
 strictTls=0
 ```
-
-Create PEM-encoded certificates for web services:
-```bash
-make fetchCACert HOST=www.bleskomat.com PORT=443 > platformCACert.pem
-make fetchCACert HOST=ping.bleskomat.com PORT=443 > pingCACert.pem
-```
-Copy the `.pem` files to the SD card.
 
 
 ### Configuration Options
@@ -273,11 +266,10 @@ The following is a list of all possible configuration options that can be set vi
 * `webUrl` - The base URL for the web platform. If non-empty, it will be the base URL for:
 	* `/intro?id=API_KEY_ID` - URL shown as a QR code on the instructions screen.
 * `platformSockUri` - If the device is connected to WiFi and this value is non-empty, a WebSocket connection will be created to the provided URI. Example values:
-	* `wss://www.bleskomat.com/device` -  Uses TLS encryption, must provide the domain's TLS certificate via the SD card saved as a file named `platformCACert.pem`
-	* `ws://www.bleskomat.com/device` - Unencrypted WebSocket
-* `pingSockUri` - If the device is connected to WiFi and this value is non-empty, a WebSocket connection will be created to the provided URI. Example values:
-	* `wss://ping.bleskomat.com/` -  Uses TLS encryption, must provide the domain's TLS certificate via the SD card saved as a file named `pingCACert.pem`
-	* `ws://ping.bleskomat.com/` - Unencrypted WebSocket
+	* `wss://platform.bleskomat.com/device` -  Uses TLS encryption, must provide the intermediate CA certificate. This can be saved to the device's SPIFFS file system via the [/serial](https://platform.bleskomat.com/serial) tool.
+	* `ws://platform.bleskomat.com/device` - Unencrypted WebSocket
+* `platformCACert` - The PEM-encoded CA certificate for the platform. This is used to create a secure (TLS) connection to the platform.
+* `onlineOnly` - If set to `1` or `true`, then the ATM will only be enabled when connected to the platform.
 
 
 ## Fonts

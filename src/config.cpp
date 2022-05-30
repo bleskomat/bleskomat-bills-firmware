@@ -32,13 +32,14 @@ namespace {
 		{ "buttonDebounce", "100" },
 		{ "webUrl", "https://www.bleskomat.com" },
 		{ "platformSockUri", "wss://p.bleskomat.com/device" },
-		{ "pingSockUri", "ws://ping.bleskomat.com" },
+		{ "platformCACert", "" },
+		{ "strictTls", "false" },
+		{ "onlineOnly", "false" },
 		{ "referencePhrase", "" },
 		{ "enabled", "true" },
 		{ "wifi.ssid", "" },
 		{ "wifi.password", "" },
 		{ "locale", "en" },
-		{ "strictTls", "false" },
 		{ "logLevel", "info" }
 	};
 
@@ -231,13 +232,13 @@ namespace config {
 		// values["buttonDebounce"] = "50";
 		// values["webUrl"] = "https://www.bleskomat.com";
 		// values["platformSockUri"] = "wss://www.bleskomat.com/device";
-		// values["pingSockUri"] = "ws://ping.bleskomat.com";
+		// values["strictTls"] = "false";
+		// values["onlineOnly"] = "false";
 		// values["referencePhrase"] = "absurd cake";
 		// values["enabled"] = "true";
 		// values["wifi.ssid"] = "";
 		// values["wifi.password"] = "";
 		// values["locale"] = "en";
-		// values["strictTls"] = "false";
 		// values["logLevel"] = "info";
 	}
 

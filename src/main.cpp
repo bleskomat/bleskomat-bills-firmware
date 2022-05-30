@@ -53,7 +53,6 @@ void runAppLoop() {
 	sdcard::loop();
 	screen::loop();
 	network::loop();
-	pingServer::loop();
 	platform::loop();
 	coinAcceptor::loop();
 	billAcceptor::loop();
@@ -84,8 +83,8 @@ void runAppLoop() {
 		(
 			// Device is disabled via configuration option.
 			!config::getBool("enabled") ||
-			// Or, platform is down.
-			network::platformIsDown()
+			// Online-only mode and not connected to platform.
+			config::getBool("onlineOnly") && !platform::isConnected()
 		)
 	) {
 		// Show device disabled screen and do not allow normal operation.

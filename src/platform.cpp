@@ -1,101 +1,112 @@
 #include "platform.h"
 
-// WebSocket implementation for ESP32:
-// https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/api-reference/protocols/esp_websocket_client.html
-// https://github.com/espressif/esp-idf/blob/master/components/esp_websocket_client/include/esp_websocket_client.h
-// https://github.com/espressif/esp-idf/blob/master/components/esp_websocket_client/esp_websocket_client.c
-// https://github.com/espressif/esp-idf/blob/master/examples/protocols/websocket/main/websocket_example.c
+// ESP32 WebSocket Client:
+// https://espressif.github.io/esp-protocols/esp_websocket_client/index.html
 
-// ArduinoJson documentation:
+// ArduinoJson:
 // https://arduinojson.org/
 
 namespace {
 
-	const char* certFileName = "platformCACert.pem";
+	// Configurations which can be changed via the connection to the platform:
+	const std::vector<const char*> allowSaveConfigKeys = {
+		"enabled",
+		"buyLimit",
+		"feePercent"
+	};
 
+	bool initialized = false;
+	esp_websocket_client_handle_t client;
+	std::string platformCACert;
 	float exchangeRate = 0.00;
 	unsigned long lastExchangeRateRefreshTime = 0;
 	const unsigned int exchangeRateMaxAge = 300000;// milliseconds
 
-	unsigned long lastReconnectAttemptTime = 0;
-	const unsigned int reconnectDelay = 30000;// milliseconds
-
-	enum class State {
-		UNINITIALIZED,
-		INITIALIZED,
-		FAILED,
-		DISCONNECTED,
-		CONNECTED,
-		CLOSING,
-		UNAUTHORIZED,
-		AUTHORIZED
-	};
-	State state = State::UNINITIALIZED;
-	esp_websocket_client_handle_t client;
-
 	void sendMessage(const std::string &message) {
 		try {
 			const char* data = message.c_str();
-			logger::write("[Platform] Sending message: " + message);
+			logger::write("Sending message to platform: " + message);
 			esp_websocket_client_send_text(client, data, strlen(data), portMAX_DELAY);
 		} catch (const std::exception &e) {
-			logger::write("[Platform] " + std::string(e.what()), "error");
+			logger::write("Error while sending message to platform: " + std::string(e.what()), "error");
 		}
 	}
 
 	void onMessage(const std::string &message) {
 		try {
-			if (message != "") {
-				logger::write("[Platform] Received message: " + message);
-				// !! Important !!
-				// Keep the JsonDocument instance until done reading from the deserialized document; more info:
-				// https://arduinojson.org/v6/issues/garbage-out/
-				DynamicJsonDocument docIn(1024);
-				const DeserializationError err = deserializeJson(docIn, message);
-				if (err) {
-					throw std::runtime_error("deserializeJson failed: " + std::string(err.c_str()));
+			if (message == "" || message.substr(0, 1) != "{") return;
+			logger::write("Received message from platform: " + message);
+			// !! Important !!
+			// Keep the JsonDocument instance until done reading from the deserialized document; more info:
+			// https://arduinojson.org/v6/issues/garbage-out/
+			DynamicJsonDocument docIn(1024);
+			const DeserializationError deserializationError = deserializeJson(docIn, message);
+			if (deserializationError) {
+				std::cerr << "deserializeJson error: " << deserializationError.c_str();
+				throw std::runtime_error("Invalid JSON");
+			}
+			const JsonObject data = docIn.as<JsonObject>();
+			const std::string type = data["type"].as<const char*>();
+			if (type == "authorization") {
+				if (!data.containsKey("data")) {
+					throw std::runtime_error("Missing required property: \"data\"");
 				}
-				const JsonObject json = docIn.as<JsonObject>();
-				const std::string type = json["type"].as<const char*>();
-				if (type == "authorization") {
-					if (json["data"].containsKey("challenge")) {
-						const std::string challenge = json["data"]["challenge"];
-						const std::string signature = util::createSignature(challenge);
-						Lnurl::SignerConfig signerConfig = config::getLnurlSignerConfig();
-						DynamicJsonDocument docOut(1024);
-						docOut["id"] = signerConfig.apiKey.id.c_str();
-						docOut["signature"] = signature.c_str();
-						std::string json_string;
-						serializeJson(docOut, json_string);
-						sendMessage(json_string);
-					} else if (json["data"].containsKey("success")) {
-						const bool success = json["data"]["success"];
-						if (success) {
-							logger::write("[Platform] WebSocket authorized");
-							state = State::AUTHORIZED;
+				if (data["data"].containsKey("challenge")) {
+					const std::string challenge = data["data"]["challenge"];
+					const std::string signature = util::createSignature(challenge);
+					const Lnurl::SignerConfig signerConfig = config::getLnurlSignerConfig();
+					DynamicJsonDocument docOut(1024);
+					docOut["id"] = signerConfig.apiKey.id.c_str();
+					docOut["signature"] = signature.c_str();
+					std::string output;
+					serializeJson(docOut, output);
+					sendMessage(output);
+				} else if (data["data"].containsKey("success")) {
+					const bool success = data["data"]["success"];
+					if (success) {
+						logger::write("Connection to platform authorized successfully");
+					}
+				}
+			} else if (type == "deviceOptions") {
+				if (!data.containsKey("data")) {
+					throw std::runtime_error("Missing required property: \"data\"");
+				}
+				DynamicJsonDocument doc(1024);
+				for (const char* key : allowSaveConfigKeys) {
+					if (data["data"].containsKey(key)) {
+						if (key == "enabled") {
+							const bool enabled = data["data"][key].as<const bool>();
+							doc[key] = enabled == true ? "true" : "false";
+						} else {
+							doc[key] = data["data"][key].as<const char*>();
 						}
 					}
-				} else if (type == "deviceOptions") {
-					config::saveConfigurations(json["data"]);
-				} else if (type == "exchangeRate") {
-					const std::string fiatCurrency = json["data"]["fiatCurrency"];
-					if (fiatCurrency == config::getString("fiatCurrency")) {
-						exchangeRate = std::strtod(json["data"]["exchangeRate"], NULL);
-						lastExchangeRateRefreshTime = millis();
-					} else {
-						logger::write("[Platform] Received exchange rate currency (\"" + config::getString("fiatCurrency") + "\") does not match the device's fiatCurrency option (\"" + fiatCurrency + "\")");
-					}
-				} else if (type == "error") {
-					const std::string message = json["message"];
-					if (state == State::CONNECTED) {
-						state = State::UNAUTHORIZED;
-					}
-				} else {
-					logger::write("[Platform] Unknown message type: " + type);
 				}
+				config::saveConfigurations(doc.as<JsonObject>());
+			} else if (type == "exchangeRate") {
+				if (!data.containsKey("data")) {
+					throw std::runtime_error("Missing required property: \"data\"");
+				}
+				if (!data["data"].containsKey("fiatCurrency")) {
+					throw std::runtime_error("Missing required property: \"data.fiatCurrency\"");
+				}
+				if (!data["data"].containsKey("exchangeRate")) {
+					throw std::runtime_error("Missing required property: \"data.exchangeRate\"");
+				}
+				const std::string fiatCurrency = data["data"]["fiatCurrency"];
+				if (fiatCurrency != config::getString("fiatCurrency")) {
+					throw std::runtime_error("Received exchange rate currency (\"" + fiatCurrency + "\") does not match the device's fiatCurrency option (\"" + config::getString("fiatCurrency") + "\")");
+				}
+				exchangeRate = std::strtod(data["data"]["exchangeRate"], NULL);
+				lastExchangeRateRefreshTime = millis();
+			} else if (type == "error") {
+				const std::string message = data["message"];
+				logger::write("Received error message from platform: " + message);
+			} else {
+				throw std::runtime_error("Unknown message type: " + type);
 			}
 		} catch (const std::exception &e) {
-			logger::write("[Platform] " + std::string(e.what()), "error");
+			logger::write("Error while handling message from platform: " + std::string(e.what()), "error");
 		}
 	}
 
@@ -103,95 +114,50 @@ namespace {
 		try {
 			esp_websocket_event_data_t *data = (esp_websocket_event_data_t *)event_data;
 			if (event_id == WEBSOCKET_EVENT_CONNECTED) {
-				logger::write("[Platform] WebSocket connected");
-				state = State::CONNECTED;
+				logger::write("Websocket connected to platform");
 			} else if (event_id == WEBSOCKET_EVENT_DISCONNECTED) {
-				logger::write("[Platform] WebSocket disconnected");
-				state = State::DISCONNECTED;
+				logger::write("Websocket disconnected from platform");
 			} else if (event_id == WEBSOCKET_EVENT_DATA) {
 				onMessage(std::string(data->data_ptr, data->payload_offset, data->payload_len));
 			}
 		} catch (const std::exception &e) {
-			logger::write("[Platform] " + std::string(e.what()), "error");
+			logger::write("Error while handling platform websocket event: " + std::string(e.what()), "error");
 		}
 	}
 
 	void initialize() {
 		try {
+			const std::string platformSockUri = config::getString("platformSockUri");
+			logger::write("Initializing connection to platform at " + platformSockUri);
 			esp_websocket_client_config_t websocket_cfg = {};
-			// We implement our own reconnection logic.
-			websocket_cfg.disable_auto_reconnect = true;
-			const std::string uri = config::getString("platformSockUri");
-			if (config::getBool("strictTls") && uri.substr(0, 6) == "wss://") {
-				if (sdcard::fileExists(certFileName)) {
-					const char* cert = sdcard::readFile(certFileName).c_str();
-					if (strlen(cert) > 0) {
-						websocket_cfg.cert_pem = cert;
-					}
-				} else {
-					throw std::runtime_error("Initialization failed: Missing " + std::string(certFileName));
+			if (platformSockUri.substr(0, 6) == "wss://") {
+				platformCACert = config::getString("platformCACert");
+				if (platformCACert == "") {
+					throw std::runtime_error("Missing required config: \"platformCACert\"");
 				}
+				websocket_cfg.cert_pem = (const char*)platformCACert.c_str();
+				websocket_cfg.skip_cert_common_name_check = config::getBool("strictTls") == false;
 			}
-			websocket_cfg.uri = uri.c_str();
+			websocket_cfg.uri = platformSockUri.c_str();
 			websocket_cfg.user_agent = (char *)network::getUserAgent().c_str();
-			logger::write("[Platform] Initializing WebSocket connection to " + uri);
 			client = esp_websocket_client_init(&websocket_cfg);
-			esp_websocket_register_events(client, WEBSOCKET_EVENT_ANY, websocket_event_handler, (void *)client);
-			const esp_err_t result = esp_websocket_client_start(client);
-			if (result == ESP_OK) {
-				state = State::INITIALIZED;
-			} else {
-				state = State::FAILED;
-			}
+			logger::write("client = esp_websocket_client_init");
+			const esp_err_t registerEventsResult = esp_websocket_register_events(client, WEBSOCKET_EVENT_ANY, websocket_event_handler, (void *)client);
+			logger::write("esp_websocket_register_events: " + std::string(esp_err_to_name(registerEventsResult)), "debug");
+			const esp_err_t startResult = esp_websocket_client_start(client);
+			logger::write("esp_websocket_client_start: " + std::string(esp_err_to_name(startResult)), "debug");
 		} catch (const std::exception &e) {
-			state = State::FAILED;
-			logger::write("[Platform] " + std::string(e.what()), "error");
+			logger::write("Error while initializing connection to platform: " + std::string(e.what()), "error");
 		}
-	}
-
-	void close() {
-		if (state != State::CLOSING) {
-			try {
-				logger::write("[Platform] Closing WebSocket connection...");
-				state = State::CLOSING;
-				esp_websocket_client_stop(client);
-				esp_websocket_client_destroy(client);
-			} catch (const std::exception &e) {
-				logger::write("[Platform] " + std::string(e.what()), "error");
-			}
-		}
+		initialized = true;
 	}
 }
 
 namespace platform {
 
 	void loop() {
-		if (platform::isConfigured()) {
-			if (network::isConnected()) {
-				if (
-					state == State::UNINITIALIZED &&
-					(
-						lastReconnectAttemptTime == 0 ||
-						millis() - lastReconnectAttemptTime > reconnectDelay
-					)
-				) {
-					initialize();
-					lastReconnectAttemptTime = millis();
-				} else if (state == State::UNAUTHORIZED) {
-					close();
-					// Do not reset the state to prevent a reconnection attempt.
-				} else if (state == State::DISCONNECTED) {
-					close();
-					// Set state back to uninitialized so that we can reconnect later.
-					state = State::UNINITIALIZED;
-				}
-			} else {
-				// No network connection.
-				if (state != State::UNINITIALIZED) {
-					close();
-					state = State::UNINITIALIZED;
-				}
-			}
+		if (!initialized && platform::isConfigured() && network::isConnected()) {
+			initialize();
 		}
 	}
 
@@ -210,7 +176,7 @@ namespace platform {
 		try {
 			return esp_websocket_client_is_connected(client);
 		} catch (const std::exception &e) {
-			logger::write("[Platform] " + std::string(e.what()), "error");
+			logger::write("Error while checking if platform websocket connected: " + std::string(e.what()), "error");
 			return false;
 		}
 	}
