@@ -17,6 +17,7 @@ namespace {
 
 	bool initialized = false;
 	esp_websocket_client_handle_t client;
+	std::string platformSockUri;
 	std::string platformCACert;
 	float exchangeRate = 0.00;
 	unsigned long lastExchangeRateRefreshTime = 0;
@@ -127,7 +128,7 @@ namespace {
 
 	void initialize() {
 		try {
-			const std::string platformSockUri = config::getString("platformSockUri");
+			platformSockUri = config::getString("platformSockUri");
 			logger::write("Initializing connection to platform at " + platformSockUri);
 			esp_websocket_client_config_t websocket_cfg = {};
 			if (platformSockUri.substr(0, 6) == "wss://") {
@@ -144,7 +145,6 @@ namespace {
 			websocket_cfg.uri = platformSockUri.c_str();
 			websocket_cfg.user_agent = (char *)network::getUserAgent().c_str();
 			client = esp_websocket_client_init(&websocket_cfg);
-			logger::write("client = esp_websocket_client_init");
 			const esp_err_t registerEventsResult = esp_websocket_register_events(client, WEBSOCKET_EVENT_ANY, websocket_event_handler, (void *)client);
 			logger::write("esp_websocket_register_events: " + std::string(esp_err_to_name(registerEventsResult)), "debug");
 			const esp_err_t startResult = esp_websocket_client_start(client);

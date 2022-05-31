@@ -17,97 +17,82 @@ namespace {
 	void logWiFiEvent(WiFiEvent_t event) {
 		switch (event) {
 			case SYSTEM_EVENT_WIFI_READY:
-				logger::write("[Network] WiFi interface ready");
+				logger::write("WiFi interface ready");
 				break;
 			case SYSTEM_EVENT_SCAN_DONE:
-				logger::write("[Network] Completed scan for access points");
+				logger::write("Completed scan for access points");
 				break;
 			case SYSTEM_EVENT_STA_START:
-				logger::write("[Network] WiFi client started");
+				logger::write("WiFi client started");
 				break;
 			case SYSTEM_EVENT_STA_STOP:
-				logger::write("[Network] WiFi clients stopped");
+				logger::write("WiFi clients stopped");
 				break;
 			case SYSTEM_EVENT_STA_CONNECTED:
-				logger::write("[Network] Connected to access point");
+				logger::write("Connected to access point");
 				break;
 			case SYSTEM_EVENT_STA_DISCONNECTED:
-				logger::write("[Network] Disconnected from WiFi access point");
+				logger::write("Disconnected from WiFi access point");
 				break;
 			case SYSTEM_EVENT_STA_AUTHMODE_CHANGE:
-				logger::write("[Network] Authentication mode of access point has changed");
+				logger::write("Authentication mode of access point has changed");
 				break;
 			case SYSTEM_EVENT_STA_GOT_IP:
-				logger::write("[Network] Obtained IP address: " + std::string(WiFi.localIP().toString().c_str()));
+				logger::write("Obtained IP address: " + std::string(WiFi.localIP().toString().c_str()));
 				break;
 			case SYSTEM_EVENT_STA_LOST_IP:
-				logger::write("[Network] Lost IP address and IP address is reset to 0");
+				logger::write("Lost IP address and IP address is reset to 0");
 				break;
 			case SYSTEM_EVENT_STA_WPS_ER_SUCCESS:
-				logger::write("[Network] WiFi Protected Setup (WPS): succeeded in enrollee mode");
+				logger::write("WiFi Protected Setup (WPS): succeeded in enrollee mode");
 				break;
 			case SYSTEM_EVENT_STA_WPS_ER_FAILED:
-				logger::write("[Network] WiFi Protected Setup (WPS): failed in enrollee mode");
+				logger::write("WiFi Protected Setup (WPS): failed in enrollee mode");
 				break;
 			case SYSTEM_EVENT_STA_WPS_ER_TIMEOUT:
-				logger::write("[Network] WiFi Protected Setup (WPS): timeout in enrollee mode");
+				logger::write("WiFi Protected Setup (WPS): timeout in enrollee mode");
 				break;
 			case SYSTEM_EVENT_STA_WPS_ER_PIN:
-				logger::write("[Network] WiFi Protected Setup (WPS): pin code in enrollee mode");
+				logger::write("WiFi Protected Setup (WPS): pin code in enrollee mode");
 				break;
 			case SYSTEM_EVENT_AP_START:
-				logger::write("[Network] WiFi access point started");
+				logger::write("WiFi access point started");
 				break;
 			case SYSTEM_EVENT_AP_STOP:
-				logger::write("[Network] WiFi access point  stopped");
+				logger::write("WiFi access point  stopped");
 				break;
 			case SYSTEM_EVENT_AP_STACONNECTED:
-				logger::write("[Network] Client connected");
+				logger::write("Client connected");
 				break;
 			case SYSTEM_EVENT_AP_STADISCONNECTED:
-				logger::write("[Network] Client disconnected");
+				logger::write("Client disconnected");
 				break;
 			case SYSTEM_EVENT_AP_STAIPASSIGNED:
-				logger::write("[Network] Assigned IP address to client");
+				logger::write("Assigned IP address to client");
 				break;
 			case SYSTEM_EVENT_AP_PROBEREQRECVED:
-				logger::write("[Network] Received probe request");
+				logger::write("Received probe request");
 				break;
 			case SYSTEM_EVENT_GOT_IP6:
-				logger::write("[Network] IPv6 is preferred");
+				logger::write("IPv6 is preferred");
 				break;
 			case SYSTEM_EVENT_ETH_START:
-				logger::write("[Network] Ethernet started");
+				logger::write("Ethernet started");
 				break;
 			case SYSTEM_EVENT_ETH_STOP:
-				logger::write("[Network] Ethernet stopped");
+				logger::write("Ethernet stopped");
 				break;
 			case SYSTEM_EVENT_ETH_CONNECTED:
-				logger::write("[Network] Ethernet connected");
+				logger::write("Ethernet connected");
 				break;
 			case SYSTEM_EVENT_ETH_DISCONNECTED:
-				logger::write("[Network] Ethernet disconnected");
+				logger::write("Ethernet disconnected");
 				break;
 			case SYSTEM_EVENT_ETH_GOT_IP:
-				logger::write("[Network] Obtained IP address");
+				logger::write("Obtained IP address");
 				break;
 			default:
 				break;
-		}
-	}
-
-	void logWiFiEvents() {
-		WiFi.onEvent(logWiFiEvent);
-	}
-
-	void connectToWiFi() {
-		lastConnectionAttemptTime = millis();
-		try {
-			WiFi.begin(ssid.c_str(), password.c_str());
-			// Set "Station" mode.
-			WiFi.mode(WIFI_MODE_STA);
-		} catch (const std::exception &e) {
-			logger::write("[Network] " + std::string(e.what()), "error");
 		}
 	}
 }
@@ -118,27 +103,26 @@ namespace network {
 		ssid = config::getString("wifi.ssid");
 		password = config::getString("wifi.password");
 		WiFi.mode(WIFI_OFF);
-		logWiFiEvents();
+		WiFi.onEvent(logWiFiEvent);
 	}
 
 	void loop() {
 		const int status = WiFi.status();
-		if (
-			status != WL_CONNECTED &&
-			status != WL_IDLE_STATUS &&
-			(lastConnectionAttemptTime == 0 || millis() - lastConnectionAttemptTime >= connectionAttemptDelay)
-		) {
-			if (ssid != "") {
-				logger::write("[Network] Connecting to WiFi network (SSID = \"" + ssid + "\", Password = \"" + password + "\")");
-				connectToWiFi();
-			}
-		} else if (status == WL_CONNECTED) {
+		if (status == WL_CONNECTED) {
 			if (lastConnectionAttemptTime > 0) {
-				logger::write("[Network] Connected to WiFi network");
+				logger::write("Connected to WiFi network");
 				lastConnectionAttemptTime = 0;
 			}
-		} else {
-			// WiFi not connected.
+		} else if (status != WL_IDLE_STATUS && (lastConnectionAttemptTime == 0 || millis() - lastConnectionAttemptTime >= connectionAttemptDelay)) {
+			if (ssid != "") {
+				lastConnectionAttemptTime = millis();
+				try {
+					WiFi.begin(ssid.c_str(), password.c_str());
+					WiFi.mode(WIFI_MODE_STA);// Set "Station" mode.
+				} catch (const std::exception &e) {
+					logger::write("Error while connecting to WiFi: " + std::string(e.what()), "error");
+				}
+			}
 		}
 	}
 
