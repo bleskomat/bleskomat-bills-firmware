@@ -13,7 +13,6 @@ namespace billAcceptor {
 	void loop();
 	float getAccumulatedValue();
 	float getEscrowValue();
-	void enableEscrowMode();
 	void clearEscrowValue();
 	void acceptEscrow();
 	void rejectEscrow();

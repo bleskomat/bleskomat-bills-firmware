@@ -93,6 +93,7 @@ namespace {
 	void serialWriteSIOCode(const char* key) {
 		const uint8_t byteOut = getSIOCodeByte(key);
 		if (byteOut > 0) {
+			logger::write("Sending SIO code to bill acceptor: \"" + std::string(key) + "\"");
 			Serial1.write(byteOut);
 		}
 	}
@@ -131,6 +132,11 @@ namespace {
 							logger::write("Bill inserted with value = " + std::to_string(billValue));
 							escrowValue += billValue;
 						}
+					}
+				} else if (byteIn2 == getSIOCodeByte("note_not_recognized")) {
+					const uint8_t byteIn3 = buffer.front();
+					if (byteIn3 == getSIOCodeByte("validator_not_busy")) {
+						buffer.pop_front();
 					}
 				}
 			}
@@ -171,7 +177,8 @@ namespace billAcceptor {
 			logger::write("Initializing bill acceptor...");
 			Serial1.begin(billBaudRate, SERIAL_8N1, billTxPin, billRxPin);
 			billAcceptor::disinhibit();
-			billAcceptor::enableEscrowMode();
+			serialWriteSIOCode("enable_escrow_mode");
+			serialWriteSIOCode("enable_escrow_timeout");
 		}
 	}
 
@@ -188,29 +195,20 @@ namespace billAcceptor {
 	}
 
 	void disinhibit() {
-		logger::write("Switching bill acceptor ON");
 		serialWriteSIOCode("enable_all");
 	}
 
 	void inhibit() {
-		logger::write("Switching bill acceptor OFF");
 		serialWriteSIOCode("disable_all");
 	}
 
-	void enableEscrowMode() {
-		logger::write("Enabling escrow mode in bill acceptor");
-		serialWriteSIOCode("enable_escrow_mode");
-	}
-
 	void acceptEscrow() {
-		logger::write("Accepting escrow in bill acceptor");
-		accumulatedValue += escrowValue;
 		serialWriteSIOCode("accept_escrow");
+		accumulatedValue += escrowValue;
 		billAcceptor::clearEscrowValue();
 	}
 
 	void rejectEscrow() {
-		logger::write("Rejecting escrow in bill acceptor");
 		serialWriteSIOCode("reject_escrow");
 		billAcceptor::clearEscrowValue();
 	}
