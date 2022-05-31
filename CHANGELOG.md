@@ -1,9 +1,15 @@
 # Changelog
 
 * v1.3.0:
+	* Added "onlineOnly" configuration option
+	* Fixed TLS connection problems
+		* "platformCACert" configuration option can contain the CA cert for TLS
+	* Improved logging
+	* Simplify network/platform.cpp and SD card usage
+	* Use SPIFFS file system to store logs
+	* JSON-RPC via serial - echo, getconfig, setconfig, getlogs, deletelogs, spiffs_reformat, restart
 	* Button delay to fix issue re: accidental clearing of QR code
 	* Move bill/coin/button build flags to configuration options
 	* Fix excessive memory usage (RAM) by i18n/locale
-	* JSON-RPC via serial - echo, getconfig, setconfig, restart
 * v1.2.0:
 	* Tagged release version
