@@ -36,7 +36,6 @@
 #include "logger.h"
 #include "network.h"
 #include "platform.h"
-#include "sdcard.h"
 #include "util.h"
 
 #ifndef EPAPER_CLK

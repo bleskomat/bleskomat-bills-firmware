@@ -221,18 +221,6 @@ namespace {
 		return bbox;
 	}
 
-	void activate() {
-		// It is necessary to unmount the SD card before using another SPI device.
-		sdcard::unmount();
-		SPI.end();
-		SPI.begin(EPAPER_CLK, EPAPER_MISO, EPAPER_DIN, EPAPER_CS);
-	}
-
-	void deactivate() {
-		// Stop using SPI here and re-mount the SD card.
-		SPI.end();
-	}
-
 	void scrub() {
 		// Repeatedly clear the screen w/ alternating colors.
 		// This ensures that no pixels are left over from a previous state.
@@ -246,7 +234,6 @@ namespace {
 	}
 
 	bool startNewScreen(const uint16_t maxWrites = 5) {
-		activate();
 		bool scrubbed = false;
 		if (currentScreen == "tradeComplete" || isDirty(maxWrites)) {
 			scrub();
@@ -261,7 +248,6 @@ namespace {
 	void finishNewScreen(const std::string &name) {
 		currentScreen = name;
 		display.displayWindow(0, 0, display.epd2.WIDTH, display.epd2.HEIGHT);
-		deactivate();
 	}
 
 	std::string getInstructionsUrl() {
@@ -283,9 +269,10 @@ namespace screen_epaper {
 			if (display.epd2.panel == GxEPD2::GDEW042T2) {
 				display.init(0);
 				u8g2Fonts.begin(display);// connect u8g2 procedures to Adafruit GFX
-				activate();
+				// It is necessary to stop other SPI device(s) before initializing SPI for the epaper display.
+				SPI.end();
+				SPI.begin(EPAPER_CLK, EPAPER_MISO, EPAPER_DIN, EPAPER_CS);
 				display.setRotation(0);
-				deactivate();
 			} else {
 				logger::write("Unknown display connected. This device supports WaveShare 4.2 inch e-paper b/w");
 			}

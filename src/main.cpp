@@ -11,7 +11,6 @@ void setup() {
 	logger::init();
 	logger::write(firmwareName + ": Firmware version = " + firmwareVersion + ", commit hash = " + firmwareCommitHash);
 	logger::write(config::getConfigurationsAsString());
-	sdcard::init();
 	jsonRpc::init();
 	screen::init();
 	network::init();
@@ -50,7 +49,6 @@ void writeTradeCompleteLog(const float &amount, const std::string &signedUrl) {
 }
 
 void runAppLoop() {
-	sdcard::loop();
 	screen::loop();
 	network::loop();
 	platform::loop();
