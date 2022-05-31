@@ -28,7 +28,7 @@ namespace {
 		{ "coinBaudRate", "9600" },
 		{ "coinAcceptorType", "dg600f" },
 		{ "buttonPin", "33" },
-		{ "buttonDelay", "5000" },
+		{ "buttonDelay", "10000" },
 		{ "buttonDebounce", "100" },
 		{ "webUrl", "https://www.bleskomat.com" },
 		{ "platformSockUri", "wss://p.bleskomat.com/device" },
