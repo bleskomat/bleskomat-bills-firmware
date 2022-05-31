@@ -19,6 +19,7 @@ namespace {
 	esp_websocket_client_handle_t client;
 	std::string platformSockUri;
 	std::string platformCACert;
+	std::string userAgent;
 	float exchangeRate = 0.00;
 	unsigned long lastExchangeRateRefreshTime = 0;
 	const unsigned int exchangeRateMaxAge = 300000;// milliseconds
@@ -128,22 +129,23 @@ namespace {
 
 	void initialize() {
 		try {
+			// !! IMPORTANT !!
+			// Do not locally scope these variables.
+			// They must survive in-memory until the websocket client has finished reading them.
 			platformSockUri = config::getString("platformSockUri");
+			platformCACert = config::getString("platformCACert");
+			userAgent = network::getUserAgent();
 			logger::write("Initializing connection to platform at " + platformSockUri);
 			esp_websocket_client_config_t websocket_cfg = {};
 			if (platformSockUri.substr(0, 6) == "wss://") {
-				// !! IMPORTANT !!
-				// Do not locally scope the platform CA certificate variable.
-				// The cert data must survive in-memory until the websocket client (mbed tls) can read it.
-				platformCACert = config::getString("platformCACert");
 				if (platformCACert == "") {
 					throw std::runtime_error("Missing required config: \"platformCACert\"");
 				}
 				websocket_cfg.cert_pem = (const char*)platformCACert.c_str();
 				websocket_cfg.skip_cert_common_name_check = config::getBool("strictTls") == false;
 			}
-			websocket_cfg.uri = platformSockUri.c_str();
-			websocket_cfg.user_agent = (char *)network::getUserAgent().c_str();
+			websocket_cfg.uri = (const char*)platformSockUri.c_str();
+			websocket_cfg.user_agent = (const char *)userAgent.c_str();
 			client = esp_websocket_client_init(&websocket_cfg);
 			const esp_err_t registerEventsResult = esp_websocket_register_events(client, WEBSOCKET_EVENT_ANY, websocket_event_handler, (void *)client);
 			logger::write("esp_websocket_register_events: " + std::string(esp_err_to_name(registerEventsResult)), "debug");
