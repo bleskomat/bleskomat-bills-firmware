@@ -131,6 +131,9 @@ namespace {
 			logger::write("Initializing connection to platform at " + platformSockUri);
 			esp_websocket_client_config_t websocket_cfg = {};
 			if (platformSockUri.substr(0, 6) == "wss://") {
+				// !! IMPORTANT !!
+				// Do not locally scope the platform CA certificate variable.
+				// The cert data must survive in-memory until the websocket client (mbed tls) can read it.
 				platformCACert = config::getString("platformCACert");
 				if (platformCACert == "") {
 					throw std::runtime_error("Missing required config: \"platformCACert\"");
