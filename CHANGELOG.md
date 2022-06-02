@@ -1,5 +1,7 @@
 # Changelog
 
+* v1.3.1:
+	* Fix randomly failing platform WebSocket connection
 * v1.3.0:
 	* Added "onlineOnly" configuration option
 	* Fixed TLS connection problems
