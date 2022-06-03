@@ -1,5 +1,7 @@
 # Changelog
 
+* v1.3.3:
+	* Fix getInt/Short/Float config value when set to empty-string
 * v1.3.2:
 	* Added spiffsFormatted config flag
 	* Return spiffsInitialized flag in getinfo JSON-RPC command
