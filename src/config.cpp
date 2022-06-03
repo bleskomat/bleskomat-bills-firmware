@@ -40,7 +40,8 @@ namespace {
 		{ "wifi.ssid", "" },
 		{ "wifi.password", "" },
 		{ "locale", "en" },
-		{ "logLevel", "info" }
+		{ "logLevel", "info" },
+		{ "spiffsFormatted", "false" }
 	};
 
 	// https://arduinojson.org/v6/api/dynamicjsondocument/
