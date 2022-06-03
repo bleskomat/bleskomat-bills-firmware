@@ -1,5 +1,9 @@
 # Changelog
 
+* v1.3.2:
+	* Added spiffsFormatted config flag
+	* Return spiffsInitialized flag in getinfo JSON-RPC command
+	* Send response for restart JSON-RPC command
 * v1.3.1:
 	* Fix randomly failing platform WebSocket connection
 * v1.3.0:
