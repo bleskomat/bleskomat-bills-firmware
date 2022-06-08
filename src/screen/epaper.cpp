@@ -53,15 +53,15 @@ namespace {
 
 	FontList brandFonts = {
 		// Ordered from largest (top) to smallest (bottom).
-		u8g2_checkbook_48pt,
-		u8g2_checkbook_44pt,
-		u8g2_checkbook_40pt,
-		u8g2_checkbook_36pt,
-		u8g2_checkbook_32pt,
-		u8g2_checkbook_28pt,
-		u8g2_checkbook_24pt,
-		u8g2_checkbook_20pt,
-		u8g2_checkbook_16pt
+		u8g2_bleskomat_48pt,
+		u8g2_bleskomat_44pt,
+		u8g2_bleskomat_40pt,
+		u8g2_bleskomat_36pt,
+		u8g2_bleskomat_32pt,
+		u8g2_bleskomat_28pt,
+		u8g2_bleskomat_24pt,
+		u8g2_bleskomat_20pt,
+		u8g2_bleskomat_16pt
 	};
 
 	FontList proportionalFonts = {
@@ -114,7 +114,7 @@ namespace {
 			}
 		}
 		// Default to last font in list - should be smallest.
-		return fonts.at(fonts.size() - 1);
+		return fonts.back();
 	}
 
 	std::string getAmountFiatCurrencyString(const float &amount) {

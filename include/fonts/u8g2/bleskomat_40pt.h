@@ -1,15 +1,15 @@
-#ifndef BLESKOMAT_FONTS_U8G2_CHECKBOOK_40PT_H
-#define BLESKOMAT_FONTS_U8G2_CHECKBOOK_40PT_H
+#ifndef BLESKOMAT_FONTS_U8G2_BLESKOMAT_40PT_H
+#define BLESKOMAT_FONTS_U8G2_BLESKOMAT_40PT_H
 
 #include <U8g2_for_Adafruit_GFX.h>
 
 /*
-  Fontname: -FreeType-Checkbook-Medium-R-Normal--55-400-100-100-P-229-ISO10646-1
-  Copyright: Allen R. Walden's Friendly Fonts (Unprotected. Please distribute freely.)
+  Fontname: -FreeType-Bleskomat-Medium-R-Normal--55-400-100-100-P-229-ISO10646-1
+  Copyright: Copyright (c) 2021-2022 Bleskomat s.r.o.
   Glyphs: 85/85
   BBX Build Mode: 1
 */
-const uint8_t u8g2_checkbook_40pt[6437] U8G2_FONT_SECTION("u8g2_checkbook_40pt") = 
+const uint8_t u8g2_bleskomat_40pt[6437] U8G2_FONT_SECTION("u8g2_bleskomat_40pt") = 
   "U\1\5\5\6\6\1\5\7&\70\0\367.\0.\375\6\42\20\301\31\10 \14\22\376H\77\370\377\377"
   "\377\203\0!*\16\376\70\345a\22\262\214e\60\202M,c=\222\224\364\314q\316\35#\225K\204\42"
   "\326\360\201\231\220e\254\337P>\70\2\0$\242\33\376l\223@\4\71\220!\16d\210\304\30\32U."

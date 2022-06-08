@@ -292,7 +292,7 @@ Each font used to render text on the E-Paper display is loaded from a C-style he
 		* `BUILD_MODE` - "Font build mode, 0: proportional, 1: common height, 2: monospace, 3: multiple of 8".
 			* OpenSans = 1 (common height)
 			* Courier Prime Code = 2 (monospace)
-			* Checkbook = 2 (monospace)
+			* Bleskomat = 2 (monospace)
 		* `FONT_SIZE` - The point size - e.g. "12" is equivalent to 12 pixel / pt.
 		* Outputs a new header file in `./include/fonts/u8g2`. You will need to include the new font header file in `./includes/modules/epaper.h`.
 
