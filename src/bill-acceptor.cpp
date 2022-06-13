@@ -2,7 +2,13 @@
 
 namespace {
 
-	bool initialized = false;
+	enum class State {
+		uninitialized,
+		initialized,
+		failed
+	};
+	State state = State::uninitialized;
+
 	std::deque<int> buffer;
 	float accumulatedValue = 0.00;
 	float escrowValue = 0.00;
@@ -91,10 +97,12 @@ namespace {
 	}
 
 	void serialWriteSIOCode(const char* key) {
-		const uint8_t byteOut = getSIOCodeByte(key);
-		if (byteOut > 0) {
-			logger::write("Sending SIO code to bill acceptor: \"" + std::string(key) + "\"");
-			Serial1.write(byteOut);
+		if (state == State::initialized) {
+			const uint8_t byteOut = getSIOCodeByte(key);
+			if (byteOut > 0) {
+				logger::write("Sending SIO code to bill acceptor: \"" + std::string(key) + "\"");
+				Serial1.write(byteOut);
+			}
 		}
 	}
 
@@ -154,7 +162,7 @@ namespace billAcceptor {
 	}
 
 	void loop() {
-		if (initialized) {
+		if (state == State::initialized) {
 			while (Serial1.available()) {
 				const uint8_t byteIn = Serial1.read();
 				if (byteIn > 0) {
@@ -166,19 +174,24 @@ namespace billAcceptor {
 				}
 			}
 			parseBuffer();
-		} else if (!(billRxPin > 0)) {
-			logger::write("Cannot initialize bill acceptor: \"billRxPin\" not set");
-		} else if (!(billTxPin > 0)) {
-			logger::write("Cannot initialize bill acceptor: \"billTxPin\" not set");
-		} else if (!(billBaudRate > 0)) {
-			logger::write("Cannot initialize bill acceptor: \"billBaudRate\" not set");
-		} else {
-			initialized = true;
-			logger::write("Initializing bill acceptor...");
-			Serial1.begin(billBaudRate, SERIAL_8N1, billTxPin, billRxPin);
-			billAcceptor::disinhibit();
-			serialWriteSIOCode("enable_escrow_mode");
-			serialWriteSIOCode("enable_escrow_timeout");
+		} else if (state == State::uninitialized) {
+			if (!(billRxPin > 0)) {
+				logger::write("Cannot initialize bill acceptor: \"billRxPin\" not set", "warn");
+				state = State::failed;
+			} else if (!(billTxPin > 0)) {
+				logger::write("Cannot initialize bill acceptor: \"billTxPin\" not set", "warn");
+				state = State::failed;
+			} else if (!(billBaudRate > 0)) {
+				logger::write("Cannot initialize bill acceptor: \"billBaudRate\" not set", "warn");
+				state = State::failed;
+			} else {
+				logger::write("Initializing bill acceptor...");
+				Serial1.begin(billBaudRate, SERIAL_8N1, billTxPin, billRxPin);
+				billAcceptor::disinhibit();
+				serialWriteSIOCode("enable_escrow_mode");
+				serialWriteSIOCode("enable_escrow_timeout");
+				state = State::initialized;
+			}
 		}
 	}
 
