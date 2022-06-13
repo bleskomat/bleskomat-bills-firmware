@@ -1,5 +1,7 @@
 # Changelog
 
+* v1.3.4:
+	* Better initialization state handling
 * v1.3.3:
 	* Fix getInt/Short/Float config value when set to empty-string
 * v1.3.2:
