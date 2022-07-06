@@ -10,6 +10,7 @@ namespace i18n {
 	typedef std::map<const char*, const char*, util::MapCharPointerComparator> Locale;
 	std::string t(const char* key);
 	std::string t(const char* key, const char* locale);
+	std::string getSupportedLocales();
 }
 
 #include "locale/cs.h"

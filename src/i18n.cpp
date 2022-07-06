@@ -31,4 +31,15 @@ namespace i18n {
 		}
 		return std::string(key);
 	}
+
+	std::string getSupportedLocales() {
+		std::string supportedLocales;
+		for (auto const& locale: locales) {
+			supportedLocales += std::string(locale.first) + ",";
+		}
+		if (supportedLocales != "") {
+			supportedLocales.pop_back();// remove last comma
+		}
+		return supportedLocales;
+	}
 }
