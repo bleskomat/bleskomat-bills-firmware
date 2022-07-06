@@ -83,7 +83,6 @@ namespace screen_epaper {
 	void init();
 	void loop();
 	bool isReady();
-	void debugCommands();
 	void showSplashScreen();
 	void showDisabledScreen();
 	void showInstructionsScreen();

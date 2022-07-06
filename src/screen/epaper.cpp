@@ -283,28 +283,6 @@ namespace screen_epaper {
 		return initialized;
 	}
 
-	void debugCommands() {
-		// Uncomment the following lines to render each screen after a short delay between each.
-		// epaper::showSplashScreen();
-		// delay(2000);
-		// epaper::showDisabledScreen();
-		// delay(2000);
-		// epaper::showInstructionsScreen();
-		// delay(2000);
-		// epaper::showInsertFiatScreen(100.00);
-		// delay(2000);
-		// const float amount = 100.00;
-		// const std::string referencePhrase = util::generateRandomPhrase(5);
-		// Lnurl::Query customParams;
-		// customParams["r"] = referencePhrase;
-		// const float exchangeRate = 38000.441;
-		// if (exchangeRate > 0) {
-		// 	customParams["er"] = std::to_string(exchangeRate);
-		// }
-		// const std::string qrcodeData = config::getString("uriSchemaPrefix") + util::toUpperCase(util::lnurlEncode(util::createSignedLnurlWithdraw(amount, customParams)));
-		// epaper::showTradeCompleteScreen(amount, qrcodeData, referencePhrase);
-	}
-
 	void showSplashScreen() {
 		if (!initialized) return;
 		logger::write("Show screen: Splash");

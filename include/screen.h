@@ -10,7 +10,6 @@ namespace screen {
 	void loop();
 	bool isReady();
 	std::string getCurrentScreen();
-	void debugCommands();
 	void showSplashScreen();
 	void showDisabledScreen();
 	void showInstructionsScreen();

@@ -18,10 +18,6 @@ namespace screen {
 		return screen_epaper::isReady();
 	}
 
-	void debugCommands() {
-		screen_epaper::debugCommands();
-	}
-
 	void showSplashScreen() {
 		screen_epaper::showSplashScreen();
 		currentScreen = "splash";
