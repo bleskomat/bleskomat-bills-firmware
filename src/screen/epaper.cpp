@@ -310,7 +310,7 @@ namespace screen_epaper {
 			const Font slogan_line2_font = getBestFitFont(slogan_line2, brandFonts, display.epd2.WIDTH * .65);
 			prevText_bbox = renderText(slogan_line2, slogan_line2_font, slogan_line2_x, slogan_line2_y);
 		}
-		const std::string instructions = i18n::t("splash_instructions");
+		const std::string instructions = "(" + i18n::t("press button to begin") + ")";
 		const BoundingBox instructions_bbox = calculateTextSize(instructions, proportionalFontNormal);
 		int16_t instructions_x = display.epd2.WIDTH / 2;// center
 		int16_t instructions_y = display.epd2.HEIGHT - (instructions_bbox.h + margin);// bottom
@@ -323,12 +323,12 @@ namespace screen_epaper {
 		logger::write("Show screen: Disabled");
 		startNewScreen();
 		const int16_t margin = 24;
-		const std::string text = i18n::t("disabled_heading");
+		const std::string text = i18n::t("Temporarily disabled");
 		const int16_t text_x = (display.epd2.WIDTH / 2);// center
 		const int16_t text_y = (display.epd2.HEIGHT / 2) - margin;
 		const Font font = getBestFitFont(text, monospaceFonts);
 		const BoundingBox text_bbox = renderText(text, font, text_x, text_y);
-		const std::string text2 = i18n::t("disabled_subheading");
+		const std::string text2 = i18n::t("Please check again later");
 		const int16_t text2_x = display.epd2.WIDTH / 2;// center
 		const int16_t text2_y = text_bbox.h + text_bbox.y + margin;// bottom
 		renderText(text2, proportionalFontSmall, text2_x, text2_y);
@@ -348,9 +348,9 @@ namespace screen_epaper {
 		const int16_t qrcode_y = margin;
 		BoundingBox qrcode_bbox = renderQRCode(instructionsUrl, qrcode_x, qrcode_y, qrcode_w, qrcode_h, false);
 		{
-			const std::string text1 = i18n::t("instructions_qr_text1");
-			const std::string text2 = i18n::t("instructions_qr_text2");
-			const std::string text3 = i18n::t("instructions_qr_text3");
+			const std::string fullText = i18n::t("Scan this QR code to see a list of supported mobile wallet apps");
+			const std::string text1 = fullText.substr(0, std::floor(fullText.size() / 2));
+			const std::string text2 = fullText.substr(std::ceil(fullText.size() / 2));
 			int16_t text1_x = qrcode_bbox.x + qrcode_bbox.w + margin;// right of the QR code
 			int16_t text1_y = qrcode_bbox.y;// align w/ QR code
 			const int16_t max_w = display.epd2.WIDTH - (text1_x + margin);
@@ -360,8 +360,6 @@ namespace screen_epaper {
 			prevText_bbox = renderText(text1, text1_font, text1_x, text1_y, false);
 			int16_t text2_y = prevText_bbox.y + prevText_bbox.h + line_spacing;
 			prevText_bbox = renderText(text2, text1_font, text1_x, text2_y, false);
-			int16_t text3_y = prevText_bbox.y + prevText_bbox.h + line_spacing;
-			renderText(text3, text1_font, text1_x, text3_y, false);
 		}
 		{
 			const int16_t box_margin = line_spacing / 2;
@@ -385,10 +383,10 @@ namespace screen_epaper {
 			BoundingBox numbering3_bbox = renderText(numbering3, numbering_font, numbering1_x, numbering3_y, false);
 			int16_t numbering4_y = numbering3_bbox.y + numbering3_bbox.h + line_spacing;
 			BoundingBox numbering4_bbox = renderText(numbering4, numbering_font, numbering1_x, numbering4_y, false);
-			const std::string text4 = i18n::t("instructions_step1_text");
-			const std::string text5 = i18n::t("instructions_step2_text");
-			const std::string text6 = i18n::t("instructions_step3_text");
-			const std::string text7 = i18n::t("instructions_step4_text");
+			const std::string text4 = i18n::t("Install supported mobile wallet app");
+			const std::string text5 = i18n::t("Insert bills and coins");
+			const std::string text6 = i18n::t("Press the button when done");
+			const std::string text7 = i18n::t("Scan QR code with mobile wallet app");
 			const Font text4_font = u8g2_opensans_light_12pt;
 			int16_t text4_x = numbering1_bbox.x + numbering1_bbox.w + line_spacing;// left, next to the numbering
 			int16_t text4_y = numbering1_bbox.y;// align w/ first number
@@ -421,7 +419,7 @@ namespace screen_epaper {
 		}
 		const float buyLimit = config::getFloat("buyLimit");
 		if (buyLimit > 0) {
-			std::string limitText = i18n::t("insert_fiat_limit") + " = ";
+			std::string limitText = i18n::t("Limit") + " = ";
 			limitText += util::floatToStringWithPrecision(buyLimit, config::getUnsignedInt("fiatPrecision"));
 			limitText += " " + config::getString("fiatCurrency");
 			const int16_t limitText_y = prevText_bbox.y + prevText_bbox.h + margin;
@@ -436,11 +434,11 @@ namespace screen_epaper {
 			prevText_bbox = renderText(exchangeRateText, monospaceFontNormal, center_x, exchangeRateText_y);
 		}
 		// Instructional text #1:
-		const std::string text1 = i18n::t("insert_fiat_instructions_line1");
+		const std::string text1 = i18n::t("Insert bills and coins");
 		const int16_t text1_y = prevText_bbox.y + prevText_bbox.h + (margin * 2);
 		prevText_bbox = renderText(text1, proportionalFontNormal, center_x, text1_y);
 		// Instructional text #2:
-		const std::string text2 = i18n::t("insert_fiat_instructions_line2");
+		const std::string text2 = "(" + i18n::t("press button when done") + ")";
 		const int16_t text2_y = prevText_bbox.y + prevText_bbox.h + margin;
 		prevText_bbox = renderText(text2, proportionalFontSmall, center_x, text2_y);
 		finishNewScreen("insertFiat");
@@ -461,8 +459,9 @@ namespace screen_epaper {
 		BoundingBox instr_text1_bbox;
 		{
 			// Render instructional text (bottom-left).
-			const std::string instr_text1 = i18n::t("trade_complete_instructions_line1");
-			const std::string instr_text2 = i18n::t("trade_complete_instructions_line2");
+			const std::string fullText = i18n::t("scan with mobile app to redeem and take a picture for your records");
+			const std::string instr_text1 = fullText.substr(0, std::floor(fullText.size() / 2));
+			const std::string instr_text2 = fullText.substr(std::ceil(fullText.size() / 2));
 			const Font instr_font = proportionalFontSmall;
 			instr_text1_bbox = calculateTextSize(instr_text1, instr_font);
 			BoundingBox instr_text2_bbox = calculateTextSize(instr_text2, instr_font);
