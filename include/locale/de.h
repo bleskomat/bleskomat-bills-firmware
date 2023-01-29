@@ -7,7 +7,7 @@ const i18n::Locale locale_de = {
 	{ "Please check again later", "Bitte später nochmal versuchen" },
 	{ "Scan this QR code to see a list of supported mobile wallet apps", "Scannen Sie diesen QR-Code, um eine Liste kompatibler Bitcoin Wallet" },
 	{ "Install supported mobile wallet app", "Installiere kompatible Bitcoin Wallet" },
-	{ "Insert bills and coins", "Münzen und scheine einwerfen" },
+	{ "Insert bills", "Scheine einwerfen" },
 	{ "Press the button when done", "Zum abschließen den knopf drücken" },
 	{ "Scan QR code with mobile wallet app", "Scanne den QR Code mit einer Bitcoin Wallet" },
 	{ "Limit", "Limit" },

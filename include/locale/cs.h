@@ -7,7 +7,7 @@ const i18n::Locale locale_cs = {
 	{ "Please check again later", "Zkontrolujte to znovu později" },
 	{ "Scan this QR code to see a list of supported mobile wallet apps", "Naskenováním QR kódu zobrazíte seznam aplikací mobilní peněženku" },
 	{ "Install supported mobile wallet app", "Nainstalujte si mobilní aplikaci peněženky" },
-	{ "Insert bills and coins", "Vložte bankovky a mince" },
+	{ "Insert bills", "Vložte bankovky" },
 	{ "Press the button when done", "Po dokončení stiskněte tlačítko" },
 	{ "Scan QR code with mobile wallet app", "Naskenujte QR kód pomocí mobilní aplikace" },
 	{ "Limit", "Limit" },
