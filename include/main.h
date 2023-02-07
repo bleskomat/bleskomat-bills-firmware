@@ -3,7 +3,6 @@
 
 #include "bill-acceptor.h"
 #include "button.h"
-#include "coin-acceptor.h"
 #include "config.h"
 #include "i18n.h"
 #include "logger.h"

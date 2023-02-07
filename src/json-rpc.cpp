@@ -210,7 +210,6 @@ namespace {
 	bool pinConflict = false;
 	void checkForPinConflicts() {
 		const std::vector<const char*> pinConfigKeys = {
-			"coinSignalPin", "coinInhibitPin",
 			"billTxPin", "billRxPin",
 			"buttonPin"
 		};
