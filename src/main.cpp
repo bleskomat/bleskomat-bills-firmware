@@ -1,6 +1,5 @@
 #include "main.h"
 
-float maxCoinValue;
 unsigned int buttonDelay;
 
 void setup() {
@@ -14,16 +13,13 @@ void setup() {
 	jsonRpc::init();
 	screen::init();
 	network::init();
-	coinAcceptor::init();
 	billAcceptor::init();
 	button::init();
-	maxCoinValue = util::findMaxValueInFloatVector(config::getFloatVector("coinValues"));
 	buttonDelay = config::getUnsignedInt("buttonDelay");
 }
 
 float getAccumulatedValue() {
 	float accumulatedValue = 0;
-	accumulatedValue += coinAcceptor::getAccumulatedValue();
 	accumulatedValue += billAcceptor::getAccumulatedValue();
 	const float billAcceptorEscrowValue = billAcceptor::getEscrowValue();
 	if (billAcceptorEscrowValue > 0) {
@@ -52,18 +48,15 @@ void runAppLoop() {
 	screen::loop();
 	network::loop();
 	platform::loop();
-	coinAcceptor::loop();
 	billAcceptor::loop();
 	button::loop();
 	const std::string currentScreen = screen::getCurrentScreen();
 	if (currentScreen == "" && screen::isReady()) {
 		if (config::getBool("enabled")) {
 			screen::showSplashScreen();
-			coinAcceptor::disinhibit();
 			billAcceptor::disinhibit();
 		} else {
 			screen::showDisabledScreen();
-			coinAcceptor::inhibit();
 			billAcceptor::inhibit();
 		}
 	}
@@ -87,7 +80,6 @@ void runAppLoop() {
 	) {
 		// Show device disabled screen and do not allow normal operation.
 		if (currentScreen != "disabled") {
-			coinAcceptor::inhibit();
 			billAcceptor::inhibit();
 			screen::showDisabledScreen();
 		}
@@ -96,7 +88,6 @@ void runAppLoop() {
 		if (currentScreen == "disabled") {
 			// Previously disabled, return to normal operation.
 			screen::showSplashScreen();
-			coinAcceptor::disinhibit();
 			billAcceptor::disinhibit();
 		}
 		if (
@@ -138,7 +129,6 @@ void runAppLoop() {
 					qrcodeData += util::toUpperCase(encoded);
 					screen::showTradeCompleteScreen(accumulatedValue, qrcodeData, referencePhrase);
 					writeTradeCompleteLog(accumulatedValue, signedUrl);
-					coinAcceptor::inhibit();
 					billAcceptor::inhibit();
 					tradeCompleteTime = millis();
 				} else {
@@ -152,18 +142,11 @@ void runAppLoop() {
 					screen::showInsertFiatScreen(accumulatedValue);
 					amountShown = accumulatedValue;
 				}
-				const float buyLimit = config::getFloat("buyLimit");
-				if (buyLimit > 0 && !coinAcceptor::isInhibited() && (accumulatedValue + maxCoinValue) > buyLimit) {
-					// Possible to exceed tx limit, so disallow entering more coins.
-					coinAcceptor::inhibit();
-				}
 			}
 		} else if (currentScreen == "tradeComplete") {
 			if (button::isPressed() && millis() - tradeCompleteTime > buttonDelay) {
 				// Button pushed while showing the transaction complete screen.
 				// Reset accumulated values.
-				coinAcceptor::resetAccumulatedValue();
-				coinAcceptor::disinhibit();
 				billAcceptor::resetAccumulatedValue();
 				billAcceptor::disinhibit();
 				amountShown = 0;

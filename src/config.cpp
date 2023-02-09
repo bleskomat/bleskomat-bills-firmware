@@ -18,15 +18,9 @@ namespace {
 		{ "feePercent", "0.00" },
 		{ "buyLimit", "100.00" },
 		{ "billValues", "5,10,20,50,100,200" },
-		{ "billTxPin", "3" },
+		{ "billTxPin", "16" },
 		{ "billRxPin", "17" },
 		{ "billBaudRate", "300" },
-		{ "coinValues", "0.05,0.10,0.20,0.50,1.00,2.00" },// DG600F
-		{ "coinValueIncrement", "0.05" },// HX616
-		{ "coinSignalPin", "16" },
-		{ "coinInhibitPin", "21" },
-		{ "coinBaudRate", "9600" },
-		{ "coinAcceptorType", "dg600f" },
 		{ "buttonPin", "33" },
 		{ "buttonDelay", "10000" },
 		{ "buttonDebounce", "100" },
@@ -75,10 +69,6 @@ namespace {
 	std::string getConfigValue(const char* key) {
 		if (values.containsKey(key)) {
 			const std::string value = values[key].as<const char*>();
-			if (key == "coinValueIncrement") {
-				const unsigned short fiatPrecision = (unsigned short) std::stoi(getConfigValue("fiatPrecision"));
-				return util::floatToStringWithPrecision((unsigned short) std::stoi(value), fiatPrecision);
-			}
 			return value;
 		}
 		return "";
@@ -221,12 +211,9 @@ namespace config {
 		// values["feePercent"] = "0.00";
 		// values["buyLimit"] = "100.00";
 		// values["billValues"] = "5,10,20,50,100,200";
-		// values["coinValues"] = "0.05,0.10,0.20,0.50,1.00,2.00";// DG600F
-		// values["coinValueIncrement"] = "0.05";// HX616
-		// values["coinSignalPin"] = "16";
-		// values["coinInhibitPin"] = "21";
-		// values["coinBaudRate"] = "9600";
-		// values["coinAcceptorType"] = "dg600f";
+		// values["billTxPin"] = "16";
+		// values["billRxPin"] = "17";
+		// values["billBaudRate"] = "9600";
 		// values["buttonPin"] = "33";
 		// values["buttonDelay"] = "2000";
 		// values["buttonDebounce"] = "50";

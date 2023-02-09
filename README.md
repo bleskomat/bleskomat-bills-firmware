@@ -11,8 +11,6 @@ This repository contains the source code and basic documentation about how to co
 		* [Wiring the SD Card SPI Module](#wiring-the-sd-card-spi-module)
 		* [Wiring the button](#wiring-the-button)
 		* [Wiring the Bill Acceptor](#wiring-the-bill-acceptor)
-		* [Wiring the Coin Acceptor](#wiring-the-coin-acceptor)
-	* [Configure and Train Coin Acceptor](#configure-and-train-coin-acceptor)
 	* [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
 	* [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
 	* [Prepare SD Card](#prepare-sd-card)
@@ -38,9 +36,6 @@ The following list includes all the parts needed to build the commercial Bleskom
 	* [laskarduino.cz](https://www.laskarduino.cz/sd-card-modul-spi/)
 * [NV9 Banknote Validator](https://innovative-technology.com/products/products-main/378-nv9-usb-2) from Innovative Technology
 	* [COMAX LEISURE CZ,a.s.](https://www.akceptory-bankovek.cz/) (located outside of Prague)
-* DG600F Coin Acceptor:
-	* [Alibaba.com](https://www.alibaba.com/trade/search?fsb=y&IndexArea=product_en&CatId=&SearchText=DG600F)
-	* [Sparkfun.com](https://www.sparkfun.com/products/11636)
 * 12V DC power adapter (1.5A < 3A):
 	* [2.5A (GME)](https://www.gme.cz/napajeci-zdroj-sitovy-12v-2500ma-5-5-2-1mm-t3-sys1588-3012-t3)
 * XL4005 Step-down converter:
@@ -129,56 +124,6 @@ Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable
 |              | 15       | + 12V DC      |
 
 
-#### Wiring the Coin Acceptor
-
-
-|  ESP32      | DG600F   | Power Supply  |
-|-------------|----------|---------------|
-| GPIO21      | INHIBIT  |               |
-| GPIO16      | SERIAL   |               |
-|             | COUNTER  |               |
-|             | GND      | - Ground      |
-|             | 12V DC   | + 12V DC      |
-
-
-### Configure and Train Coin Acceptor
-
-Physical switches on the DG600F should set as follows:
-
-| Switch           | State         |
-|------------------|---------------|
-| 1 (Port Level)   | Down (NO)     |
-| 2 (Security)     | Down (Normal) |
-| 3 (Transmitting) | Up (RS232)    |
-| 4 (Inhibiting)   | Down (> +3V)  |
-
-![](docs/DG600F-DIP-switch-configuration.png)
-
-Open the [DG600F manual](docs/DG600F-Coin-Acceptor-Technical-Manual.pdf) to "Coin Acceptor Parameters Setting" on page 18. Set the parameters as follows:
-
-| Parameter | Description                      | Value | Meaning                                          |
-|-----------|----------------------------------|-------|--------------------------------------------------|
-| A1        | machine charge amount            | 01    | min. coin value before data sent                 |
-| A2        | serial output signal pulse-width | 01    | 25ms / 9600 bps (RS232 baud rate)                |
-| A3        | faulty alarm option              | 01    | (rings only one time)                            |
-| A4        | serial port RS232 signal length  | 03    | 3 bytes: 0xAA, coin value, XOR of prev two bytes |
-| A5        | serial port output               | 01    | output to serial pin                             |
-
-
-To train the coin acceptor, have a look at "Coin Parameters Setting" on page 16 of the [DG600F manual](docs/DG600F-Coin-Acceptor-Technical-Manual.pdf). Be sure to set the "coin value" for each coin in series, incremented by 1. For example:
-* 1 CZK = 1 coin value
-* 2 CZK = 2 coin value
-* 5 CZK = 3 coin value
-* 10 CZK = 4 coin value
-* 20 CZK = 5 coin value
-* 50 CZK = 6 coin value
-
-Then in bleskomat.conf, set the `coinValues` setting as follows:
-```
-coinValues=1,2,5,10,20,50
-```
-
-
 ### Installing Libraries and Dependencies
 
 Before proceeding, be sure that you have all the project's [software requirements](#software-requirements).
@@ -235,7 +180,6 @@ locale=en
 fiatCurrency=CZK
 fiatPrecision=0
 buyLimit=20000
-coinValues=1,2,5,10,20,50
 billValues=100,200,500,1000,2000,5000
 webUrl=https://www.bleskomat.com
 platformSockUri=wss://platform.bleskomat.com/device
@@ -256,11 +200,8 @@ The following is a list of all possible configuration options that can be set vi
 * `locale` - The locale used when rendering text to the screen. Localization strings are defined in `./include/locale`. Each supported locale has its own file.
 * `fiatCurrency` - The fiat currency symbol for which the device is configured; see [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 * `fiatPrecision` - The number of digits to the right of the decimal point when rendering fiat currency amounts.
-* `buyLimit` - The per trade (buy) limit that will be accepted by the device. When an inserted bill would cause the accumulated value to exceed the limit, the bill will be rejected. All coins will be rejected once the largest coin value would cause the limit to be exceeded.
-* `coinValues` - The value of coins for which the coin acceptor has been configured. Each value separated by a comma. Integers and floating point (decimal) values are accepted. Examples:
-	* CZK: `1,2,5,10,20,50`
-	* EUR: `0.05,0.10,0.20,0.50,1,2`
-* `billValues` - Same as coin values (above), but for the bill acceptor. Examples:
+* `buyLimit` - The per trade (buy) limit that will be accepted by the device. When an inserted bill would cause the accumulated value to exceed the limit, the bill will be rejected.
+* `billValues` - Each value separated by a comma. Integers and floating point (decimal) values are accepted. Examples: Examples:
 	* CZK: `100,200,500,1000,2000,5000`
 	* EUR: `5,10,20,50,100,200,500`
 * `webUrl` - The base URL for the web platform. If non-empty, it will be the base URL for:
