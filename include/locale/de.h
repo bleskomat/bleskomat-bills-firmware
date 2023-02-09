@@ -12,7 +12,7 @@ const i18n::Locale locale_de = {
 	{ "Scan QR code with mobile wallet app", "Scanne den QR Code mit einer Bitcoin Wallet" },
 	{ "Limit", "Limit" },
 	{ "press button when done", "nach abschluss den knopf drücken" },
-	{ "scan with mobile app to redeem", "Scanne den QR Code mit einer Bitcoin Wallet um die Sats zu erhalten. Dann ein bild der wörter machen." }
+	{ "Scan with mobile app to redeem and take a picture for your records", "Scanne den QR Code mit einer Bitcoin Wallet um die Sats zu erhalten. Dann ein bild der wörter machen." }
 };
 
 #endif

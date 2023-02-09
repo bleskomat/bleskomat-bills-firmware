@@ -12,7 +12,7 @@ const i18n::Locale locale_es = {
 	{ "Scan QR code with mobile wallet app", "Escanear el código QR con la aplicación móvil" },
 	{ "Limit", "Límite" },
 	{ "press button when done", "presionar el botón cuando termine" },
-	{ "scan with mobile app to redeem", "escanear con la aplicación móvil para canjear y toma una foto para tus registros" }
+	{ "Scan with mobile app to redeem and take a picture for your records", "Escanear con la aplicación móvil para canjear y toma una foto para tus registros" }
 };
 
 #endif

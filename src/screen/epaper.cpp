@@ -459,7 +459,7 @@ namespace screen_epaper {
 		BoundingBox instr_text1_bbox;
 		{
 			// Render instructional text (bottom-left).
-			const std::string fullText = i18n::t("scan with mobile app to redeem and take a picture for your records");
+			const std::string fullText = i18n::t("Scan with mobile app to redeem and take a picture for your records");
 			const std::string instr_text1 = fullText.substr(0, std::floor(fullText.size() / 2));
 			const std::string instr_text2 = fullText.substr(std::ceil(fullText.size() / 2));
 			const Font instr_font = proportionalFontSmall;
