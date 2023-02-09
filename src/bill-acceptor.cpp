@@ -169,6 +169,7 @@ namespace billAcceptor {
 			while (Serial1.available()) {
 				if (!ackEnableEscrowMode && millis() - lastSentEnableEscrowMode > resendDelay) {
 					billAcceptor::enableEscrow();
+					lastSentEnableEscrowMode = millis();
 				}
 				const uint8_t byteIn = Serial1.read();
 				if (byteIn > 0) {
