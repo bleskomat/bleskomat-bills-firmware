@@ -16,6 +16,9 @@ namespace {
 	unsigned short billTxPin;
 	unsigned short billRxPin;
 	unsigned int billBaudRate;
+	bool ackEnableEscrowMode = false;
+	unsigned long lastSentEnableEscrowMode = 0;
+	unsigned int resendDelay = 500;
 
 	const std::map<const char*, const uint8_t> SIO_Codes = {
 		{ "note_accepted_c1", 1 },
@@ -164,12 +167,18 @@ namespace billAcceptor {
 	void loop() {
 		if (state == State::initialized) {
 			while (Serial1.available()) {
+				if (!ackEnableEscrowMode && millis() - lastSentEnableEscrowMode > resendDelay) {
+					billAcceptor::enableEscrow();
+				}
 				const uint8_t byteIn = Serial1.read();
 				if (byteIn > 0) {
 					const std::string code = getSIOCodeKey(byteIn);
 					if (code != "") {
 						logger::write("Bill acceptor code received: " + code);
 						buffer.push_back(byteIn);
+						if (code == "enable_escrow_mode") {
+							ackEnableEscrowMode = true;
+						}
 					}
 				}
 			}
@@ -187,9 +196,6 @@ namespace billAcceptor {
 			} else {
 				logger::write("Initializing bill acceptor...");
 				Serial1.begin(billBaudRate, SERIAL_8N1, billTxPin, billRxPin);
-				billAcceptor::disinhibit();
-				serialWriteSIOCode("enable_escrow_mode");
-				serialWriteSIOCode("enable_escrow_timeout");
 				state = State::initialized;
 			}
 		}
@@ -213,6 +219,11 @@ namespace billAcceptor {
 
 	void inhibit() {
 		serialWriteSIOCode("disable_all");
+	}
+
+	void enableEscrow() {
+		serialWriteSIOCode("enable_escrow_mode");
+		serialWriteSIOCode("enable_escrow_timeout");
 	}
 
 	void acceptEscrow() {

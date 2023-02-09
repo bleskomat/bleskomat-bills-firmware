@@ -14,6 +14,7 @@ namespace billAcceptor {
 	float getAccumulatedValue();
 	float getEscrowValue();
 	void clearEscrowValue();
+	void enableEscrow();
 	void acceptEscrow();
 	void rejectEscrow();
 	void resetAccumulatedValue();
