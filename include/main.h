@@ -11,7 +11,6 @@
 #include "network.h"
 #include "platform.h"
 #include "screen.h"
-#include "sdcard.h"
 #include "spiffs.h"
 #include "util.h"
 
