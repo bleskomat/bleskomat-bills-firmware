@@ -8,12 +8,10 @@ This repository contains the source code and basic documentation about how to co
 * [Setup](#setup)
 	* [Building the Hardware Device](#building-the-hardware-device)
 		* [Wiring the E-Paper Module](#wiring-the-e-paper-module)
-		* [Wiring the SD Card SPI Module](#wiring-the-sd-card-spi-module)
 		* [Wiring the button](#wiring-the-button)
 		* [Wiring the Bill Acceptor](#wiring-the-bill-acceptor)
 	* [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
 	* [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
-	* [Prepare SD Card](#prepare-sd-card)
 * [Fonts](#fonts)
 * [Changelog](#changelog)
 * [License](#license)
@@ -32,8 +30,6 @@ The following list includes all the parts needed to build the commercial Bleskom
 	* [laskarduino.cz](https://www.laskarduino.cz/iot-esp-32s-2-4ghz-dual-mode-wifi-bluetooth-rev-1--cp2102/)
 * [WaveShare 4.2 inch E-Paper Module (b/w)](https://www.waveshare.com/wiki/4.2inch_e-Paper_Module):
 	* [laskarduino.cz](https://www.laskarduino.cz/waveshare-4-2--400x300-epaper-displej-modul-bw/)
-* SD Card SPI Module:
-	* [laskarduino.cz](https://www.laskarduino.cz/sd-card-modul-spi/)
 * [NV9 Banknote Validator](https://innovative-technology.com/products/products-main/378-nv9-usb-2) from Innovative Technology
 	* [COMAX LEISURE CZ,a.s.](https://www.akceptory-bankovek.cz/) (located outside of Prague)
 * 12V DC power adapter (1.5A < 3A):
@@ -81,22 +77,6 @@ Connect the E-Paper display module to the ESP32 using the following table as a g
 | D14   | DIN                    |
 | GND   | GND                    |
 | 3.3V  | VCC                    |
-
-
-#### Wiring the SD Card SPI Module
-
-Connect the SD card SPI module to the ESP32 using the following table as a guide:
-
-| ESP32 | SD Card SPI Module |
-|-------|--------------------|
-| GND   | GND                |
-| 3.3V  | 3.3                |
-|       | 5                  |
-| D5    | CS                 |
-| D23   | MOSI               |
-| D18   | SCK                |
-| D19   | MISO               |
-| GND   | GND                |
 
 
 #### Wiring the button
@@ -164,28 +144,7 @@ make monitor DEVICE=/dev/ttyUSB0
 Again the device path here could be different for your operating system.
 
 
-## Prepare SD Card
 
-Format the SD card with the FAT32 filesystem.
-
-The following is an example `bleskomat.conf` file that you could use to configure a bleskomat device. Create the file and copy it to the root directory of the SD card.
-```
-apiKey.id=6d830ddeb0
-apiKey.key=b11cd6b002916691ccf3097eee3b49e51759225704dde88ecfced76ad95324c9
-apiKey.encoding=hex
-callbackUrl=https://ln.bleskomat.com/u
-shorten=true
-uriSchemaPrefix=LIGHTNING:
-locale=en
-fiatCurrency=CZK
-fiatPrecision=0
-buyLimit=20000
-billValues=100,200,500,1000,2000,5000
-webUrl=https://www.bleskomat.com
-platformSockUri=wss://platform.bleskomat.com/device
-onlineOnly=0
-strictTls=0
-```
 
 
 ### Configuration Options
