@@ -14,7 +14,7 @@ namespace {
 		{ "shorten", "true" },
 		{ "uriSchemaPrefix", "" },
 		{ "fiatCurrency", "EUR" },
-		{ "fiatPrecision", "2" },
+		{ "fiatPrecision", "0" },
 		{ "feePercent", "0.00" },
 		{ "buyLimit", "100.00" },
 		{ "billValues", "5,10,20,50,100,200" },
@@ -207,7 +207,7 @@ namespace config {
 		// values["shorten"] = "true";
 		// values["uriSchemaPrefix"] = "";
 		// values["fiatCurrency"] = "EUR";
-		// values["fiatPrecision"] = "2";
+		// values["fiatPrecision"] = "0";
 		// values["feePercent"] = "0.00";
 		// values["buyLimit"] = "100.00";
 		// values["billValues"] = "5,10,20,50,100,200";
