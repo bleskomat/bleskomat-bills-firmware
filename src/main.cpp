@@ -160,6 +160,38 @@ void loop() {
 	logger::loop();
 	jsonRpc::loop();
 	if (!jsonRpc::hasPinConflict() || !jsonRpc::inUse()) {
-		runAppLoop();
+
+		// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/log.html
+		// Set up logging
+		esp_log_level_set("*", ESP_LOG_ERROR); // Set the log level to only log errors
+
+		// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/wdts.html
+		// Set up a task watchdog timer to catch crashes
+		esp_task_wdt_init(10, true); // 10 second timeout, panic if not refreshed
+
+		while (true) {
+			runAppLoop();
+
+			// Refresh the task watchdog timer to prevent it from triggering
+			esp_task_wdt_reset();
+		}
 	}
+}
+
+
+// Define a function to be called when a crash is detected
+void my_crash_handler() {
+    ESP_LOGE("APP", "CRASH DETECTED!"); // Log the crash
+    // Do something to handle the crash
+	// Would be possible to store some information and then restart the app knowing what happened and maybe recover to initial state??
+	// File file = SPIFFS.open("/crash.txt", "w");
+    // if(file) {
+    //   file.println("Crash detected!");
+    //   file.close();
+    // }
+}
+
+// Set up the crash handler to be called when a crash is detected
+extern "C" void app_exception_handler() {
+    my_crash_handler();
 }

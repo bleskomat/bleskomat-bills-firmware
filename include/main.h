@@ -1,6 +1,9 @@
 #ifndef BLESKOMAT_MAIN_H
 #define BLESKOMAT_MAIN_H
 
+#include "esp_log.h"
+#include "esp_task_wdt.h"
+
 #include "bill-acceptor.h"
 #include "button.h"
 #include "config.h"
