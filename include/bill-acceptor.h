@@ -18,6 +18,7 @@ namespace billAcceptor {
 	void acceptEscrow();
 	void rejectEscrow();
 	void resetAccumulatedValue();
+	void setAccumulatedValue(float value);
 	void inhibit();
 	void disinhibit();
 }

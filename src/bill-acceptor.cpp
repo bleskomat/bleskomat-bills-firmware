@@ -214,6 +214,10 @@ namespace billAcceptor {
 		accumulatedValue = 0.00;
 	}
 
+	void setAccumulatedValue(float value) {
+		accumulatedValue = value;
+	}
+
 	void disinhibit() {
 		serialWriteSIOCode("enable_all");
 	}

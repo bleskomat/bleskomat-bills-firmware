@@ -1,6 +1,7 @@
 #include "main.h"
 
 unsigned int buttonDelay;
+std::string initializeScreen = "";
 
 void setup() {
 	Serial.begin(MONITOR_SPEED);
@@ -11,10 +12,14 @@ void setup() {
 	logger::write(firmwareName + ": Firmware version = " + firmwareVersion + ", commit hash = " + firmwareCommitHash);
 	logger::write(config::getConfigurationsAsString());
 	jsonRpc::init();
-	screen::init();
 	network::init();
+	screen::init();
 	billAcceptor::init();
 	button::init();
+	cache::init();
+	initializeScreen = cache::getString("lastScreen");
+	logger::write("Cache loaded lastScreen: " + initializeScreen);
+	cache::end();
 	buttonDelay = config::getUnsignedInt("buttonDelay");
 }
 
@@ -53,8 +58,42 @@ void runAppLoop() {
 	const std::string currentScreen = screen::getCurrentScreen();
 	if (currentScreen == "" && screen::isReady()) {
 		if (config::getBool("enabled")) {
-			screen::showSplashScreen();
-			billAcceptor::disinhibit();
+			if (initializeScreen == "insertFiat") {
+				cache::init();
+				const std::string cacheAccumulatedValue = cache::getString("accumulatedValue");
+				logger::write("Cache loaded accumulatedValue: " + cacheAccumulatedValue);
+				cache::end();
+				if (cacheAccumulatedValue != "") {
+					billAcceptor::setAccumulatedValue(util::stringToFloat(cacheAccumulatedValue));
+					screen::showInsertFiatScreen(util::stringToFloat(cacheAccumulatedValue));
+					billAcceptor::disinhibit();
+				} else {
+					screen::showSplashScreen();
+					cache::cacheSplashScreen();
+					billAcceptor::disinhibit();
+				}
+			} else if (initializeScreen == "tradeComplete") {
+				cache::init();
+				const std::string cachedQrcodeData = cache::getString("qrcodeData");
+				const std::string cachedAccumulatedValue = cache::getString("accumulatedValue");
+				const std::string cachedReferencePhrase = cache::getString("referencePhrase");
+				cache::end();
+				logger::write("Cache loaded qrcodeData: " + cachedQrcodeData);
+				logger::write("Cache loaded accumulatedValue: " + cachedAccumulatedValue);
+				logger::write("Cache loaded referencePhrase: " + cachedReferencePhrase);
+				if (cachedQrcodeData != "" && cachedAccumulatedValue != "" && cachedReferencePhrase != "") {
+					screen::showTradeCompleteScreen(util::stringToFloat(cachedAccumulatedValue), cachedQrcodeData, cachedReferencePhrase);
+					billAcceptor::inhibit();
+				} else {
+					screen::showSplashScreen();
+					cache::cacheSplashScreen();
+					billAcceptor::disinhibit();
+				}
+			} else {
+				screen::showSplashScreen();
+				cache::cacheSplashScreen();
+				billAcceptor::disinhibit();
+			}
 		} else {
 			screen::showDisabledScreen();
 			billAcceptor::inhibit();
@@ -88,6 +127,7 @@ void runAppLoop() {
 		if (currentScreen == "disabled") {
 			// Previously disabled, return to normal operation.
 			screen::showSplashScreen();
+			cache::cacheSplashScreen();
 			billAcceptor::disinhibit();
 		}
 		if (
@@ -96,6 +136,7 @@ void runAppLoop() {
 			currentScreen != "tradeComplete"
 		) {
 			screen::showInsertFiatScreen(accumulatedValue);
+			cache::cacheInsertFiatScreen(accumulatedValue);
 			amountShown = accumulatedValue;
 		}
 		if (currentScreen == "splash") {
@@ -105,6 +146,7 @@ void runAppLoop() {
 		} else if (currentScreen == "instructions") {
 			if (button::isPressed()) {
 				screen::showInsertFiatScreen(0);
+				cache::cacheInsertFiatScreen(0);
 			}
 		} else if (currentScreen == "insertFiat") {
 			if (button::isPressed()) {
@@ -129,6 +171,7 @@ void runAppLoop() {
 					qrcodeData += util::toUpperCase(encoded);
 					screen::showTradeCompleteScreen(accumulatedValue, qrcodeData, referencePhrase);
 					writeTradeCompleteLog(accumulatedValue, signedUrl);
+					cache::cacheTradeCompleteScreen(accumulatedValue, qrcodeData, referencePhrase);
 					billAcceptor::inhibit();
 					tradeCompleteTime = millis();
 				} else {
@@ -141,6 +184,7 @@ void runAppLoop() {
 				if (amountShown != accumulatedValue) {
 					screen::showInsertFiatScreen(accumulatedValue);
 					amountShown = accumulatedValue;
+					cache::cacheInsertFiatScreen(accumulatedValue);
 				}
 			}
 		} else if (currentScreen == "tradeComplete") {
@@ -151,6 +195,7 @@ void runAppLoop() {
 				billAcceptor::disinhibit();
 				amountShown = 0;
 				screen::showSplashScreen();
+				cache::cacheSplashScreen();
 			}
 		}
 	}
