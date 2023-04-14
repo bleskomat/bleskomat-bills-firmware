@@ -1,7 +1,13 @@
 #include "screen.h"
 
 namespace {
+
 	std::string currentScreen = "";
+
+	void setCurrentScreen(const std::string t_currentScreen) {
+		currentScreen = t_currentScreen;
+		cache::save("lastScreen", t_currentScreen);
+	}
 }
 
 namespace screen {
@@ -20,22 +26,23 @@ namespace screen {
 
 	void showSplashScreen() {
 		screen_epaper::showSplashScreen();
-		currentScreen = "splash";
+		setCurrentScreen("splash");
 	}
 
 	void showDisabledScreen() {
 		screen_epaper::showDisabledScreen();
-		currentScreen = "disabled";
+		setCurrentScreen("disabled");
 	}
 
 	void showInstructionsScreen() {
 		screen_epaper::showInstructionsScreen();
-		currentScreen = "instructions";
+		setCurrentScreen("instructions");
 	}
 
 	void showInsertFiatScreen(const float &amount) {
 		screen_epaper::showInsertFiatScreen(amount);
-		currentScreen = "insertFiat";
+		setCurrentScreen("insertFiat");
+		cache::save("accumulatedValue", util::floatToStringWithPrecision(amount, config::getUnsignedShort("fiatPrecision")));
 	}
 
 	void showTradeCompleteScreen(
@@ -44,7 +51,8 @@ namespace screen {
 		const std::string &referencePhrase
 	) {
 		screen_epaper::showTradeCompleteScreen(amount, qrcodeData, referencePhrase);
-		currentScreen = "tradeComplete";
+		setCurrentScreen("tradeComplete");
+		cache::save("accumulatedValue", util::floatToStringWithPrecision(amount), "qrcodeData", qrcodeData, "referencePhrase", referencePhrase);
 	}
 
 	std::string getCurrentScreen() {

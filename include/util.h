@@ -35,6 +35,7 @@ namespace util {
 	float findMaxValueInFloatVector(const std::vector<float> &floatVector);
 	std::string urlEncode(const std::string &value);
 	std::string floatToStringWithPrecision(const float &value, const unsigned short &precision = 6);
+	float stringToFloat(const std::string& str);
 }
 
 #endif
