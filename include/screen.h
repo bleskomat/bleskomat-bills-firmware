@@ -1,6 +1,7 @@
 #ifndef BLESKOMAT_SCREEN_H
 #define BLESKOMAT_SCREEN_H
 
+#include "cache.h"
 #include "logger.h"
 #include "screen/epaper.h"
 #include <string>

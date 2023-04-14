@@ -49,56 +49,69 @@ namespace {
 			nvs_prefs.putString(key.c_str(), value.c_str());
 		}
 	}
+
+	void removeKeyValueFromNVS(const char* t_key) {
+		if (keyExistsInNVS(t_key)) {
+			const std::string key = truncateNVSKey(t_key);
+			nvs_prefs.remove(key.c_str());
+		}
+	}
 }
 
 namespace cache {
 
-	void init() {
-		initNVS();
-	}
-
-	void end() {
-		endNVS();
-	}
-
 	std::string getString(const char* key) {
-		if (nvs_available) {
-			return readValueFromNVS(key);
+		if (nvs_available || initNVS()) {
+			const std::string value = readValueFromNVS(key);
+			endNVS();
+			return value;
 		}
 		return "";
 	}
 
 	void save(const char* key, const std::string &value) {
-		if (nvs_available) {
+		if (nvs_available || initNVS()) {
 			saveKeyValueToNVS(key, value);
+			endNVS();
 		}
 	}
 
-	void cacheSplashScreen() {
-		init();
-		save("lastScreen", "splash");
-		end();
+	void save(
+		const char* key1, const std::string &value1,
+		const char* key2, const std::string &value2
+	) {
+		if (nvs_available || initNVS()) {
+			saveKeyValueToNVS(key1, value1);
+			saveKeyValueToNVS(key2, value2);
+			endNVS();
+		}
 	}
 
-	void cacheInstructionsScreen() {
-		init();
-		save("lastScreen", "instructions");
-		end();
+	void save(
+		const char* key1, const std::string &value1,
+		const char* key2, const std::string &value2,
+		const char* key3, const std::string &value3
+	) {
+		if (nvs_available || initNVS()) {
+			saveKeyValueToNVS(key1, value1);
+			saveKeyValueToNVS(key2, value2);
+			saveKeyValueToNVS(key3, value3);
+			endNVS();
+		}
 	}
 
-	void cacheInsertFiatScreen(const float &accumulatedValue) {
-		init();
-		save("lastScreen", "insertFiat");
-		save("accumulatedValue",  util::floatToStringWithPrecision(accumulatedValue, config::getUnsignedShort("fiatPrecision")));
-		end();
+	void remove(const char* key) {
+		if (nvs_available || initNVS()) {
+			removeKeyValueFromNVS(key);
+			endNVS();
+		}
 	}
 
-	void cacheTradeCompleteScreen(const float &accumulatedValue, const std::string &qrcodeData, const std::string &referencePhrase) {
-		init();
-		save("lastScreen", "tradeComplete");
-		save("accumulatedValue", util::floatToStringWithPrecision(accumulatedValue));
-		save("qrcodeData", qrcodeData);
-		save("referencePhrase", referencePhrase);
-		end();
+	void remove(const char* key1, const char* key2) {
+		if (nvs_available || initNVS()) {
+			removeKeyValueFromNVS(key1);
+			removeKeyValueFromNVS(key2);
+			endNVS();
+		}
 	}
 }
