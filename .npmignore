@@ -1,8 +1,0 @@
-assets/
-docs/
-include/
-scripts/
-src/
-.gitattributes
-.gitignore
-Makefile

@@ -1,8 +1,4 @@
 .pio/
 build/
-node_modules/
-config.json
-config.json.enc
 .vscode/
-bleskomat.conf
-*.pem
+.git-commit-hash

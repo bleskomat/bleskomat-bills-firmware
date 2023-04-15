@@ -53,15 +53,15 @@ namespace {
 
 	FontList brandFonts = {
 		// Ordered from largest (top) to smallest (bottom).
-		u8g2_bleskomat_48pt,
-		u8g2_bleskomat_44pt,
-		u8g2_bleskomat_40pt,
-		u8g2_bleskomat_36pt,
-		u8g2_bleskomat_32pt,
-		u8g2_bleskomat_28pt,
-		u8g2_bleskomat_24pt,
-		u8g2_bleskomat_20pt,
-		u8g2_bleskomat_16pt
+		u8g2_checkbooklightning_48pt,
+		u8g2_checkbooklightning_44pt,
+		u8g2_checkbooklightning_40pt,
+		u8g2_checkbooklightning_36pt,
+		u8g2_checkbooklightning_32pt,
+		u8g2_checkbooklightning_28pt,
+		u8g2_checkbooklightning_24pt,
+		u8g2_checkbooklightning_20pt,
+		u8g2_checkbooklightning_16pt
 	};
 
 	FontList proportionalFonts = {

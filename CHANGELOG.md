@@ -1,8 +1,10 @@
 # Changelog
 
 * TBD:
-	* Remove coin acceptor code, documentation, etc.
 	* Fix locale strings
+	* Remove SD card related code
+	* Cache state to be restored when device restarts in case of a crash, power loss, etc.
+	* Add hardware build instructions
 * v1.3.4:
 	* Better initialization state handling
 * v1.3.3:

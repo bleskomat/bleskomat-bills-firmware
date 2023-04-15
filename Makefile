@@ -7,21 +7,11 @@
 #
 
 ## Variables
-HOST ?= www.bleskomat.com
-PORT ?= 443
-DEVICE ?= /dev/ttyUSB0
 BAUDRATE ?= 115200
+DEVICE ?= /dev/ttyUSB0
+FONTS=./assets/fonts
 PLATFORM=espressif32
-
-## Targets
-#
-# The format goes:
-#
-#   target: list of dependencies
-#     commands to build target
-#
-# If something isn't re-compiling double-check the changed file is in the
-# target's dependencies list.
+SCRIPTS=./scripts
 
 ## Phony targets - these are for when the target-side of a definition
 # (such as "install" below) isn't a file but instead a just label. Declaring
@@ -31,24 +21,31 @@ PLATFORM=espressif32
 compile\
 upload\
 monitor\
-fetchCACert
-
-.SILENT: fetchCACert
+.git-commit-hash
 
 install:
-	platformio lib install
-	platformio platform install ${PLATFORM}
+	pio pkg install --platform ${PLATFORM}
 
-compile:
-	platformio run
+compile: .git-commit-hash
+	pio run
 
-upload:
+upload: .git-commit-hash
 	sudo chown ${USER}:${USER} ${DEVICE}
-	platformio run --upload-port ${DEVICE} --target upload
+	pio run --upload-port ${DEVICE} --target upload
 
 monitor:
 	sudo chown ${USER}:${USER} ${DEVICE}
-	platformio device monitor --baud ${BAUDRATE} --port ${DEVICE}
+	pio device monitor --baud ${BAUDRATE} --port ${DEVICE}
 
-fetchCACert:
-	openssl s_client -showcerts -connect ${HOST}:${PORT} < /dev/null 2> /dev/null | openssl x509 -outform PEM
+.git-commit-hash:
+	-git rev-parse HEAD 2>/dev/null && git rev-parse HEAD > .git-commit-hash
+
+fonts: bdfconv
+	$(SCRIPTS)/generate-font-header-files.sh "$(FONTS)/CheckbookLightning/CheckbookLightning.ttf" 1 32-122 16,20,24,28,32,36,40,44,48
+	$(SCRIPTS)/generate-font-header-files.sh "$(FONTS)/Courier Prime Code/Courier Prime Code.ttf" 2 32-382 8,10,12,16,20,24,28,32,36,40,44,48
+	$(SCRIPTS)/generate-font-header-files.sh "$(FONTS)/OpenSans/Light/OpenSans-Light.ttf" 1 32-382 8,10,12,14,16,18
+
+bdfconv: ./tools/bdfconv/bdfconv
+
+./tools/bdfconv/bdfconv:
+	cd ./tools/bdfconv && make bdfconv
