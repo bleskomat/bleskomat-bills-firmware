@@ -2,7 +2,6 @@
 #define BLESKOMAT_CONFIG_H
 
 #include "logger.h"
-#include "sdcard.h"
 #include "util.h"
 
 #include <ArduinoJson.h>

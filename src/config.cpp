@@ -142,36 +142,6 @@ namespace {
 		}
 		return std::make_pair("", "");
 	}
-
-	bool readFromConfigFile() {
-		try {
-			File file = SD.open(configFilePath, FILE_READ);
-			if (!file || file.isDirectory()) {
-				logger::write("Failed to open configuration file " + std::string(configFilePath));
-				return false;
-			}
-			while (file.available()) {
-				const std::string line = file.readStringUntil('\n').c_str();
-				const KeyValuePair kv = readFromConfigLine(line);
-				const std::string key = kv.first;
-				if (key != "") {
-					const std::string value = kv.second;
-					setConfigValue(key.c_str(), value);
-					saveKeyValueToNVS(key.c_str(), value);
-				}
-			}
-			file.close();
-		} catch (const std::exception &e) {
-			logger::write(e.what(), "error");
-			std::cerr << e.what() << std::endl;
-			return false;
-		}
-		return true;
-	}
-
-	bool deleteConfigFile() {
-		return SD.remove(configFilePath);
-	}
 }
 
 namespace config {
@@ -185,17 +155,6 @@ namespace config {
 			}
 		} else {
 			std::cout << "Failed to initialize non-volatile storage" << std::endl;
-		}
-		if (sdcard::isMounted()) {
-			if (readFromConfigFile()) {
-				if (deleteConfigFile()) {
-					std::cout << "Deleted configuration file" << std::endl;
-				} else {
-					std::cout << "Failed to delete configuration file" << std::endl;
-				}
-			} else {
-				std::cout << "Failed to read configurations from file" << std::endl;
-			}
 		}
 		endNVS();
 		// Hard-coded configuration overrides - for development purposes.
