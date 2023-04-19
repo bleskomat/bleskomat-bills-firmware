@@ -9,16 +9,28 @@ namespace {
 	};
 	State state = State::uninitialized;
 
+	// State:
 	std::deque<int> buffer;
 	float accumulatedValue = 0.00;
 	float escrowValue = 0.00;
+	float acceptEscrowValue = 0.00;
+	bool inhibited = false;
+	bool sentInitialCommands = false;
+	unsigned long lastValidatorBusyTime = 0;
+
+	// Configurations:
 	std::vector<float> billValues;
 	unsigned short billTxPin;
 	unsigned short billRxPin;
 	unsigned int billBaudRate;
-	bool ackEnableEscrowMode = false;
-	unsigned long lastSentEnableEscrowMode = 0;
-	unsigned int resendDelay = 500;
+
+	// Ping:
+	unsigned long lastPingSentTime = 0;
+	unsigned long lastPingReceivedTime = 0;
+	unsigned int pingDelay = 1000;
+	unsigned int pingTimeout = 7000;
+	unsigned long lastReconnectTime = 0;
+	unsigned int reconnectDelay = 5000;
 
 	const std::map<const char*, const uint8_t> SIO_Codes = {
 		{ "note_accepted_c1", 1 },
@@ -103,7 +115,7 @@ namespace {
 		if (state == State::initialized) {
 			const uint8_t byteOut = getSIOCodeByte(key);
 			if (byteOut > 0) {
-				logger::write("Sending SIO code to bill acceptor: \"" + std::string(key) + "\"");
+				logger::write("Sending SIO code to bill acceptor: \"" + std::string(key) + "\"", "debug");
 				Serial1.write(byteOut);
 			}
 		}
@@ -126,32 +138,60 @@ namespace {
 		return "";
 	}
 
+	bool validatorBusyRecently() {
+		return lastValidatorBusyTime > 0 && millis() - lastValidatorBusyTime < 2000;
+	}
+
 	void parseBuffer() {
-		while (buffer.size() >= 3) {
-			const uint8_t byteIn1 = buffer.front();
+		while (buffer.size()) {
+			const uint8_t byteIn = buffer.front();
+			const std::string code = getSIOCodeKey(byteIn);
+			logger::write("Bill acceptor code received: " + code, "debug");
 			buffer.pop_front();
-			if (byteIn1 == getSIOCodeByte("validator_busy")) {
-				const uint8_t byteIn2 = buffer.front();
-				buffer.pop_front();
-				if (byteIn2 == getSIOCodeByte("validator_not_busy")) {
-					const uint8_t byteIn3 = buffer.front();
-					buffer.pop_front();
-					if (byteIn3 >= getSIOCodeByte("note_accepted_c1") && byteIn3 <= getSIOCodeByte("note_accepted_c16")) {
-						// The third byte is the number of the bill from the dataset.
-						float billValue = getBillValue(byteIn3);
-						if (billValue > 0) {
-							logger::write("Bill inserted with value = " + std::to_string(billValue));
-							escrowValue += billValue;
-						}
-					}
-				} else if (byteIn2 == getSIOCodeByte("note_not_recognized")) {
-					const uint8_t byteIn3 = buffer.front();
-					if (byteIn3 == getSIOCodeByte("validator_not_busy")) {
-						buffer.pop_front();
-					}
+			if (code == "validator_busy") {
+				lastValidatorBusyTime = millis();
+			} else if (code == "enable_escrow_mode") {
+				lastPingReceivedTime = millis();
+			} else if (
+				validatorBusyRecently()
+				&& byteIn >= getSIOCodeByte("note_accepted_c1")
+				&& byteIn <= getSIOCodeByte("note_accepted_c16")
+			) {
+				float billValue = getBillValue(byteIn);
+				if (billValue > 0) {
+					logger::write("Bill inserted with value = " + std::to_string(billValue));
+					escrowValue += billValue;
 				}
+			} else if (code == "accept_escrow") {
+				accumulatedValue += acceptEscrowValue;
+				acceptEscrowValue = 0;
+			} else if (code == "reject_escrow" || code == "abort_during_escrow") {
+				acceptEscrowValue = 0;
 			}
 		}
+	}
+
+	void connect() {
+		Serial1.begin(billBaudRate, SERIAL_8N1, billTxPin, billRxPin);
+		sentInitialCommands = false;
+	}
+
+	void disconnect() {
+		Serial1.end();
+	}
+
+	void reconnect() {
+		logger::write("Attempting to reconnect to bill acceptor...");
+		lastReconnectTime = millis();
+		disconnect();
+		connect();
+	}
+
+	void sendInitialCommands() {
+		serialWriteSIOCode(inhibited ? "disable_all" : "enable_all");
+		serialWriteSIOCode("enable_escrow_mode");
+		serialWriteSIOCode("enable_escrow_timeout");
+		sentInitialCommands = true;
 	}
 }
 
@@ -166,24 +206,26 @@ namespace billAcceptor {
 
 	void loop() {
 		if (state == State::initialized) {
+			if (!validatorBusyRecently() && millis() - lastPingSentTime > pingDelay) {
+				serialWriteSIOCode("enable_escrow_mode");
+				lastPingSentTime = millis();
+			}
 			while (Serial1.available()) {
-				if (!ackEnableEscrowMode && millis() - lastSentEnableEscrowMode > resendDelay) {
-					billAcceptor::enableEscrow();
-					lastSentEnableEscrowMode = millis();
-				}
 				const uint8_t byteIn = Serial1.read();
 				if (byteIn > 0) {
-					const std::string code = getSIOCodeKey(byteIn);
-					if (code != "") {
-						logger::write("Bill acceptor code received: " + code);
-						buffer.push_back(byteIn);
-						if (code == "enable_escrow_mode") {
-							ackEnableEscrowMode = true;
-						}
-					}
+					buffer.push_back(byteIn);
 				}
 			}
 			parseBuffer();
+			if (billAcceptor::isConnected()) {
+				if (!sentInitialCommands) {
+					logger::write("Connection established with bill acceptor");
+					sendInitialCommands();
+				}
+			} else if (millis() - lastReconnectTime > reconnectDelay) {
+				// Not connected and enough time has passed to try to reconnect.
+				reconnect();
+			}
 		} else if (state == State::uninitialized) {
 			if (!(billRxPin > 0)) {
 				logger::write("Cannot initialize bill acceptor: \"billRxPin\" not set", "warn");
@@ -196,10 +238,20 @@ namespace billAcceptor {
 				state = State::failed;
 			} else {
 				logger::write("Initializing bill acceptor...");
-				Serial1.begin(billBaudRate, SERIAL_8N1, billTxPin, billRxPin);
+				connect();
 				state = State::initialized;
 			}
 		}
+	}
+
+	void disinhibit() {
+		inhibited = false;
+		serialWriteSIOCode("enable_all");
+	}
+
+	void inhibit() {
+		inhibited = true;
+		serialWriteSIOCode("disable_all");
 	}
 
 	float getAccumulatedValue() {
@@ -218,32 +270,18 @@ namespace billAcceptor {
 		accumulatedValue = value;
 	}
 
-	void disinhibit() {
-		serialWriteSIOCode("enable_all");
-	}
-
-	void inhibit() {
-		serialWriteSIOCode("disable_all");
-	}
-
-	void enableEscrow() {
-		serialWriteSIOCode("enable_escrow_mode");
-		serialWriteSIOCode("enable_escrow_timeout");
-	}
-
 	void acceptEscrow() {
 		serialWriteSIOCode("accept_escrow");
-		accumulatedValue += escrowValue;
-		billAcceptor::clearEscrowValue();
+		acceptEscrowValue += escrowValue;
+		escrowValue = 0;
 	}
 
 	void rejectEscrow() {
 		serialWriteSIOCode("reject_escrow");
-		billAcceptor::clearEscrowValue();
+		escrowValue = 0;
 	}
 
-	void clearEscrowValue() {
-		logger::write("Clearing escrow value in bill acceptor");
-		escrowValue = 0.00;
+	bool isConnected() {
+		return lastPingReceivedTime > 0 && millis() - lastPingReceivedTime < pingTimeout;
 	}
 }

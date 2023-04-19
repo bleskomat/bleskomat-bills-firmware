@@ -11,16 +11,15 @@
 namespace billAcceptor {
 	void init();
 	void loop();
+	void inhibit();
+	void disinhibit();
 	float getAccumulatedValue();
 	float getEscrowValue();
-	void clearEscrowValue();
-	void enableEscrow();
 	void acceptEscrow();
 	void rejectEscrow();
 	void resetAccumulatedValue();
 	void setAccumulatedValue(float value);
-	void inhibit();
-	void disinhibit();
+	bool isConnected();
 }
 
 #endif

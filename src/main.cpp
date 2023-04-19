@@ -21,8 +21,7 @@ void setup() {
 }
 
 float getAccumulatedValue() {
-	float accumulatedValue = 0;
-	accumulatedValue += billAcceptor::getAccumulatedValue();
+	float accumulatedValue = billAcceptor::getAccumulatedValue();
 	const float billAcceptorEscrowValue = billAcceptor::getEscrowValue();
 	if (billAcceptorEscrowValue > 0) {
 		const float buyLimit = config::getFloat("buyLimit");
@@ -30,7 +29,6 @@ float getAccumulatedValue() {
 			billAcceptor::rejectEscrow();
 		} else {
 			billAcceptor::acceptEscrow();
-			accumulatedValue += billAcceptorEscrowValue;
 		}
 	}
 	return accumulatedValue;
@@ -91,13 +89,7 @@ void runAppLoop() {
 		initializeScreen = "";
 	}
 	const float accumulatedValue = getAccumulatedValue();
-	const bool tradeInProgress = (
-		accumulatedValue > 0 &&
-		(
-			currentScreen == "insertFiat" ||
-			currentScreen == "tradeComplete"
-		)
-	);
+	const bool tradeInProgress = accumulatedValue > 0 && (currentScreen == "insertFiat" || currentScreen == "tradeComplete");
 	if (
 		// Do not disable device when a trade is in progress.
 		!tradeInProgress &&
@@ -105,7 +97,9 @@ void runAppLoop() {
 			// Device is disabled via configuration option.
 			!config::getBool("enabled") ||
 			// Online-only mode and not connected to platform.
-			config::getBool("onlineOnly") && !platform::isConnected()
+			config::getBool("onlineOnly") && !platform::isConnected() ||
+			// Bill acceptor is not connected.
+			(!billAcceptor::isConnected() && millis() > 10000)
 		)
 	) {
 		// Show device disabled screen and do not allow normal operation.
