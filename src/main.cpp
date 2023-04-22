@@ -1,5 +1,6 @@
 #include "main.h"
 
+float maxCoinValue;
 unsigned int buttonDelay;
 std::string initializeScreen = "";
 
@@ -13,15 +14,18 @@ void setup() {
 	jsonRpc::init();
 	network::init();
 	screen::init();
+	coinAcceptor::init();
 	billAcceptor::init();
 	button::init();
 	initializeScreen = cache::getString("lastScreen");
 	logger::write("Cache loaded lastScreen: " + initializeScreen);
+	maxCoinValue = util::findMaxValueInFloatVector(config::getFloatVector("coinValues"));
 	buttonDelay = config::getUnsignedInt("buttonDelay");
 }
 
 float getAccumulatedValue() {
 	float accumulatedValue = billAcceptor::getAccumulatedValue();
+	accumulatedValue += coinAcceptor::getAccumulatedValue();
 	const float billAcceptorEscrowValue = billAcceptor::getEscrowValue();
 	if (billAcceptorEscrowValue > 0) {
 		const float buyLimit = config::getFloat("buyLimit");
@@ -48,6 +52,7 @@ void runAppLoop() {
 	screen::loop();
 	network::loop();
 	platform::loop();
+	coinAcceptor::loop();
 	billAcceptor::loop();
 	button::loop();
 	const std::string currentScreen = screen::getCurrentScreen();
@@ -59,9 +64,11 @@ void runAppLoop() {
 				if (cacheAccumulatedValue != "") {
 					billAcceptor::setAccumulatedValue(util::stringToFloat(cacheAccumulatedValue));
 					screen::showInsertFiatScreen(util::stringToFloat(cacheAccumulatedValue));
+					coinAcceptor::disinhibit();
 					billAcceptor::disinhibit();
 				} else {
 					screen::showSplashScreen();
+					coinAcceptor::disinhibit();
 					billAcceptor::disinhibit();
 				}
 			} else if (initializeScreen == "tradeComplete") {
@@ -73,17 +80,21 @@ void runAppLoop() {
 				logger::write("Cache loaded referencePhrase: " + cachedReferencePhrase);
 				if (cachedQrcodeData != "" && cachedAccumulatedValue != "" && cachedReferencePhrase != "") {
 					screen::showTradeCompleteScreen(util::stringToFloat(cachedAccumulatedValue), cachedQrcodeData, cachedReferencePhrase);
+					coinAcceptor::inhibit();
 					billAcceptor::inhibit();
 				} else {
 					screen::showSplashScreen();
+					coinAcceptor::disinhibit();
 					billAcceptor::disinhibit();
 				}
 			} else {
 				screen::showSplashScreen();
+				coinAcceptor::disinhibit();
 				billAcceptor::disinhibit();
 			}
 		} else {
 			screen::showDisabledScreen();
+			coinAcceptor::inhibit();
 			billAcceptor::inhibit();
 		}
 		initializeScreen = "";
@@ -104,6 +115,7 @@ void runAppLoop() {
 	) {
 		// Show device disabled screen and do not allow normal operation.
 		if (currentScreen != "disabled") {
+			coinAcceptor::inhibit();
 			billAcceptor::inhibit();
 			screen::showDisabledScreen();
 		}
@@ -112,6 +124,7 @@ void runAppLoop() {
 		if (currentScreen == "disabled") {
 			// Previously disabled, return to normal operation.
 			screen::showSplashScreen();
+			coinAcceptor::disinhibit();
 			billAcceptor::disinhibit();
 		}
 		if (
@@ -153,6 +166,7 @@ void runAppLoop() {
 					qrcodeData += util::toUpperCase(encoded);
 					screen::showTradeCompleteScreen(accumulatedValue, qrcodeData, referencePhrase);
 					writeTradeCompleteLog(accumulatedValue, signedUrl);
+					coinAcceptor::inhibit();
 					billAcceptor::inhibit();
 					tradeCompleteTime = millis();
 				} else {
@@ -171,7 +185,9 @@ void runAppLoop() {
 			if (button::isPressed() && millis() - tradeCompleteTime > buttonDelay) {
 				// Button pushed while showing the transaction complete screen.
 				// Reset accumulated values.
+				coinAcceptor::resetAccumulatedValue();
 				billAcceptor::resetAccumulatedValue();
+				coinAcceptor::disinhibit();
 				billAcceptor::disinhibit();
 				amountShown = 0;
 				screen::showSplashScreen();

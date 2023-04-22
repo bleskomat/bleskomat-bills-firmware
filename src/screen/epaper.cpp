@@ -384,7 +384,7 @@ namespace screen_epaper {
 			int16_t numbering4_y = numbering3_bbox.y + numbering3_bbox.h + line_spacing;
 			BoundingBox numbering4_bbox = renderText(numbering4, numbering_font, numbering1_x, numbering4_y, false);
 			const std::string text4 = i18n::t("Install supported mobile wallet app");
-			const std::string text5 = i18n::t("Insert bills");
+			const std::string text5 = i18n::t("Insert bills and coins");
 			const std::string text6 = i18n::t("Press the button when done");
 			const std::string text7 = i18n::t("Scan QR code with mobile wallet app");
 			const Font text4_font = u8g2_opensans_light_12pt;
@@ -434,7 +434,7 @@ namespace screen_epaper {
 			prevText_bbox = renderText(exchangeRateText, monospaceFontNormal, center_x, exchangeRateText_y);
 		}
 		// Instructional text #1:
-		const std::string text1 = i18n::t("Insert bills");
+		const std::string text1 = i18n::t("Insert bills and coins");
 		const int16_t text1_y = prevText_bbox.y + prevText_bbox.h + (margin * 2);
 		prevText_bbox = renderText(text1, proportionalFontNormal, center_x, text1_y);
 		// Instructional text #2:

@@ -7,7 +7,7 @@ const i18n::Locale locale_en = {
 	{ "Please check again later", "Please check again later" },
 	{ "Scan this QR code to see a list of supported mobile wallet apps", "Scan this QR code to see a list of supported mobile wallet apps" },
 	{ "Install supported mobile wallet app", "Install supported mobile wallet app" },
-	{ "Insert bills", "Insert bills" },
+	{ "Insert bills and coins", "Insert bills and coins" },
 	{ "Press the button when done", "Press the button when done" },
 	{ "Scan QR code with mobile wallet app", "Scan QR code with mobile wallet app" },
 	{ "Limit", "Limit" },

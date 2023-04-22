@@ -23,10 +23,12 @@ The rest of this document details the hardware and software requirements, how to
 	* [Wiring the E-Paper Module](#wiring-the-e-paper-module)
 	* [Wiring the Button](#wiring-the-button)
 	* [Wiring the Bill Acceptor](#wiring-the-bill-acceptor)
+	* [Wiring the Coin Acceptor](#wiring-the-coin-acceptor)
 * [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
 * [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
 * [Generate Font Header Files](#generate-font-header-files)
 * [Configure Bill Acceptor](#configure-bill-acceptor)
+* [Configure and Train Coin Acceptor](#configure-and-train-coin-acceptor)
 * [Configuring the Device](#configuring-the-device)
 	* [List of Configuration Options](#list-of-configuration-options)
 	* [Browser-Based Configuration Tool](#browser-based-configuration-tool)
@@ -52,6 +54,7 @@ Basic components/equipment needed to build your own Bleskomat Bills ATM:
 * Jumper wires (M-F)
 * ESP32 Devkit
 * NV10 Bill Acceptor from Innovative Technologies
+* DG600F Coin Acceptor
 * WaveShare 4.2 inch E-Paper Module (b/w)
 * Button
 * 10k ohm resistor
@@ -122,7 +125,7 @@ Connect the step-down converter's input pins to the 12V DC power rail and common
 Use a soldering iron to solder four 2.54 mm pins to the USB (F) DIP adapter. Insert the pins directly into the breadboard wherever you have space available. Using (M-M) jumper wires, connect the negative and positive pins of the USB (F) DIP adapter to the 5V DC power rail.
 
 Connect the negative pin of the 5V DC power rail to the negative of the 12V DC power rail to ensure that they share a common ground. This is important because without a common ground shared between the coin acceptor and ESP32 devkit, the ESP32 will not receive a clean signal from the coin acceptor.
-
+h
 Use a standard USB to micro USB cable to connect the USB (F) DIP adapter to the ESP32 devkit.
 
 There are other options when powering the ESP32 - e.g via the 3.3V pin or the 5V/VIN pin. You should __never__ power the ESP32 via more than one of these options at the same time. For example, do not power the ESP32 via its 3.3V pin while also connecting the ESP32 via USB to your computer. This can damage the ESP32 and possibly also your computer.
@@ -176,6 +179,18 @@ This project supports the NV10 (USB+) and NV9 bill acceptors. The SIO protocol i
 |              | 15       | + 12V DC      |
 
 Refer to the [ESP32 devkit pinout](#esp32-devkit-pinout) for help identifying the pins on your ESP32.
+
+
+#### Wiring the Coin Acceptor
+
+
+|  ESP32      | DG600F   | Power Supply  |
+|-------------|----------|---------------|
+| GPIO21      | INHIBIT  |               |
+| GPIO16      | SERIAL   |               |
+|             | COUNTER  |               |
+|             | GND      | - Ground      |
+|             | 12V DC   | + 12V DC      |
 
 
 ## Installing Libraries and Dependencies
@@ -251,6 +266,44 @@ Generated font files are written to the ./include/fonts/u8g2 directory.
 
 Please refer to the following user manuals for detailed instructions regarding how to configure the NV10 (USB+) bill acceptor:
 * [NV10 User Manual](docs/NV10-User-Manual-v1.1.pdf)
+
+
+### Configure and Train Coin Acceptor
+
+Physical switches on the DG600F should set as follows:
+
+| Switch           | State         |
+|------------------|---------------|
+| 1 (Port Level)   | Down (NO)     |
+| 2 (Security)     | Down (Normal) |
+| 3 (Transmitting) | Up (RS232)    |
+| 4 (Inhibiting)   | Down (> +3V)  |
+
+![](docs/DG600F-DIP-switch-configuration.png)
+
+Open the [DG600F manual](docs/DG600F-Coin-Acceptor-Technical-Manual.pdf) to "Coin Acceptor Parameters Setting" on page 18. Set the parameters as follows:
+
+| Parameter | Description                      | Value | Meaning                                          |
+|-----------|----------------------------------|-------|--------------------------------------------------|
+| A1        | machine charge amount            | 01    | min. coin value before data sent                 |
+| A2        | serial output signal pulse-width | 01    | 25ms / 9600 bps (RS232 baud rate)                |
+| A3        | faulty alarm option              | 01    | (rings only one time)                            |
+| A4        | serial port RS232 signal length  | 03    | 3 bytes: 0xAA, coin value, XOR of prev two bytes |
+| A5        | serial port output               | 01    | output to serial pin                             |
+
+
+To train the coin acceptor, have a look at "Coin Parameters Setting" on page 16 of the [DG600F manual](docs/DG600F-Coin-Acceptor-Technical-Manual.pdf). Be sure to set the "coin value" for each coin in series, incremented by 1. For example:
+* 1 CZK = 1 coin value
+* 2 CZK = 2 coin value
+* 5 CZK = 3 coin value
+* 10 CZK = 4 coin value
+* 20 CZK = 5 coin value
+* 50 CZK = 6 coin value
+
+Then in bleskomat.conf, set the `coinValues` setting as follows:
+```
+coinValues=1,2,5,10,20,50
+```
 
 
 ## Configuring the Device

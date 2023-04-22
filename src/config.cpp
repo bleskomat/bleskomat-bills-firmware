@@ -18,9 +18,13 @@ namespace {
 		{ "feePercent", "0.00" },
 		{ "buyLimit", "100.00" },
 		{ "billValues", "5,10,20,50,100,200" },
-		{ "billTxPin", "16" },
+		{ "billTxPin", "3" },
 		{ "billRxPin", "17" },
 		{ "billBaudRate", "300" },
+		{ "coinValues", "0.05,0.10,0.20,0.50,1.00,2.00" },
+		{ "coinSignalPin", "16" },
+		{ "coinInhibitPin", "21" },
+		{ "coinBaudRate", "9600" },
 		{ "buttonPin", "33" },
 		{ "buttonDelay", "10000" },
 		{ "buttonDebounce", "100" },
@@ -170,9 +174,13 @@ namespace config {
 		// values["feePercent"] = "0.00";
 		// values["buyLimit"] = "100.00";
 		// values["billValues"] = "5,10,20,50,100,200";
-		// values["billTxPin"] = "16";
+		// values["billTxPin"] = "3";
 		// values["billRxPin"] = "17";
 		// values["billBaudRate"] = "9600";
+		// values["coinValues"] = "0.05,0.10,0.20,0.50,1.00,2.00";
+		// values["coinSignalPin"] = "16";
+		// values["coinInhibitPin"] = "21";
+		// values["coinBaudRate"] = "9600";
 		// values["buttonPin"] = "33";
 		// values["buttonDelay"] = "2000";
 		// values["buttonDebounce"] = "50";

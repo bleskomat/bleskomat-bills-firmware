@@ -3,6 +3,7 @@
 
 #include "cache.h"
 #include "bill-acceptor.h"
+#include "coin-acceptor.h"
 #include "button.h"
 #include "config.h"
 #include "i18n.h"
