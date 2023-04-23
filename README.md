@@ -173,7 +173,7 @@ This project supports the NV10 (USB+) and NV9 bill acceptors. The SIO protocol i
 
 |  ESP32       | NV10/NV9 | Power Supply  |
 |--------------|----------|---------------|
-| GPIO16       | 1 (Tx)   |               |
+| GPIO3        | 1 (Tx)   |               |
 | GPIO17       | 5 (Rx)   |               |
 |              | 16       | - Ground      |
 |              | 15       | + 12V DC      |
@@ -332,6 +332,12 @@ The following is a list of possible configuration options:
 * `billTxPin` - The GPIO connected to the NV10/NV9's Tx pin.
 * `billRxPin` - The GPIO connected to the NV10/NV9's Rx pin.
 * `billBaudRate` - The baud rate of the SIO protocol communication with the NV10/NV9. This value will be `300` or `9600`.
+* `coinValues` - The value of coins for which the coin acceptor has been configured. Each value separated by a comma. Integers and floating point (decimal) values are accepted. Examples:
+	* CZK: `1,2,5,10,20,50`
+	* EUR: `0.05,0.10,0.20,0.50,1,2`
+* `coinSignalPin` - The GPIO connected to the DG600F's "SIGNAL" pin.
+* `coinInhibitPin` - The GPIO connected to the DG600F's "INHIBIT".
+* `coinBaudRate` - The baud rate for serial communication with the DG600F.
 * `logLevel` - Possible values:
 	* `trace` - everything
 	* `debug`
@@ -360,14 +366,14 @@ It is also possible to use the [bleskomat-cli](https://github.com/bleskomat/bles
 
 ### Hard-Coded Configuration
 
-Hard-coded configurations can be set by modifying the source file [config.cpp](https://github.com/bleskomat/bleskomat-bills-firmware/blob/master/src/config.cpp#L201).
+Hard-coded configurations can be set by modifying the source file [config.cpp](https://github.com/bleskomat/bleskomat-bills-firmware/blob/legacy/src/config.cpp#L164).
 
 Each time you make changes to the hard-coded configurations, you will need to re-compile and flash the ESP32's firmware.
 
 
 ## Changelog
 
-See [CHANGELOG.md](https://github.com/bleskomat/bleskomat-bills-firmware/blob/master/CHANGELOG.md)
+See [CHANGELOG.md](https://github.com/bleskomat/bleskomat-bills-firmware/blob/legacy/CHANGELOG.md)
 
 
 ## Support
