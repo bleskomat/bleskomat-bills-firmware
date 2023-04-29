@@ -41,9 +41,8 @@ monitor:
 	-git rev-parse HEAD 2>/dev/null && git rev-parse HEAD > .git-commit-hash
 
 fonts: bdfconv
-	$(SCRIPTS)/generate-font-header-files.sh "$(FONTS)/CheckbookLightning/CheckbookLightning.ttf" 1 32-122 16,20,24,28,32,36,40,44,48
-	$(SCRIPTS)/generate-font-header-files.sh "$(FONTS)/Courier Prime Code/Courier Prime Code.ttf" 2 32-382 8,10,12,16,20,24,28,32,36,40,44,48
-	$(SCRIPTS)/generate-font-header-files.sh "$(FONTS)/OpenSans/Light/OpenSans-Light.ttf" 1 32-382 8,10,12,14,16,18
+	$(SCRIPTS)/generate-font-header-files.sh "$(FONTS)/CheckbookLightning/CheckbookLightning.ttf" 1 32-122 36,40,44,48
+	$(SCRIPTS)/generate-font-header-files.sh "$(FONTS)/Courier Prime Code/Courier Prime Code.ttf" 2 32-382 8,9,10,11,12,14,16,20,24,28,32,36,40,44,48
 
 bdfconv: ./tools/bdfconv/bdfconv
 

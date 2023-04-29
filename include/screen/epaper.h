@@ -10,26 +10,17 @@
 #include "fonts/u8g2/courier_prime_code_24pt.h"
 #include "fonts/u8g2/courier_prime_code_20pt.h"
 #include "fonts/u8g2/courier_prime_code_16pt.h"
+#include "fonts/u8g2/courier_prime_code_14pt.h"
 #include "fonts/u8g2/courier_prime_code_12pt.h"
+#include "fonts/u8g2/courier_prime_code_11pt.h"
 #include "fonts/u8g2/courier_prime_code_10pt.h"
+#include "fonts/u8g2/courier_prime_code_9pt.h"
 #include "fonts/u8g2/courier_prime_code_8pt.h"
-
-#include "fonts/u8g2/opensans_light_18pt.h"
-#include "fonts/u8g2/opensans_light_16pt.h"
-#include "fonts/u8g2/opensans_light_14pt.h"
-#include "fonts/u8g2/opensans_light_12pt.h"
-#include "fonts/u8g2/opensans_light_10pt.h"
-#include "fonts/u8g2/opensans_light_8pt.h"
 
 #include "fonts/u8g2/checkbooklightning_48pt.h"
 #include "fonts/u8g2/checkbooklightning_44pt.h"
 #include "fonts/u8g2/checkbooklightning_40pt.h"
 #include "fonts/u8g2/checkbooklightning_36pt.h"
-#include "fonts/u8g2/checkbooklightning_32pt.h"
-#include "fonts/u8g2/checkbooklightning_28pt.h"
-#include "fonts/u8g2/checkbooklightning_24pt.h"
-#include "fonts/u8g2/checkbooklightning_20pt.h"
-#include "fonts/u8g2/checkbooklightning_16pt.h"
 
 #include "config.h"
 #include "i18n.h"
@@ -77,6 +68,7 @@
 
 #include <cmath>
 #include <stdexcept>
+#include <sstream>
 #include <vector>
 
 namespace screen_epaper {
