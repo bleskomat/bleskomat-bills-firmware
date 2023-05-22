@@ -1,6 +1,9 @@
 # Changelog
 
 * v1.5.0:
+	* Update splash screen
+	* Ping, reconnect to NV10 bill acceptor via serial
+	* Fixup font rendering
 	* Fix locale strings
 	* Remove SD card related code
 	* Cache state to be restored when device restarts in case of a crash, power loss, etc.
