@@ -238,9 +238,8 @@ To manually generate fonts:
 ```
 * `2` - this is the build mode
 	* "Font build mode, 0: proportional, 1: common height, 2: monospace, 3: multiple of 8". Examples:
-		* OpenSans = 1 (common height)
-		* Courier Prime Code = 2 (monospace)
-		* CheckbookLightning = 1 (monospace)
+		* CheckbookLightning = 1
+		* Courier Prime Code = 2
 * `32-382` - this is the character range (e.g. first character = 32, last = 382). More characters = larger header files.
 * `6,7,8,9,10,12,14,16,18,20,22,24,28` - comma-separated list of font sizes
 

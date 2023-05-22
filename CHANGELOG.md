@@ -1,6 +1,6 @@
 # Changelog
 
-* TBD:
+* v1.5.0:
 	* Fix locale strings
 	* Remove SD card related code
 	* Cache state to be restored when device restarts in case of a crash, power loss, etc.

@@ -2,8 +2,6 @@
 
 namespace {
 
-	const char* configFilePath = "/bleskomat.conf";
-
 	const std::map<const char*, const char*> defaultValues = {
 		{ "apiKey.id", "" },
 		{ "apiKey.key", "" },
