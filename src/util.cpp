@@ -48,11 +48,11 @@ namespace util {
 		std::string amount = floatToStringWithPrecision(t_amount, config::getUnsignedInt("fiatPrecision"));
 		params.minWithdrawable = amount;
 		params.maxWithdrawable = amount;
-		params.defaultDescription = "";
 		for (auto const &it : customParams) {
 			params.custom[it.first] = it.second;
 		}
 		params.custom["f"] = config::getString("fiatCurrency");
+		params.defaultDescription = "Bleskomat: " + amount + " " + params.custom["f"];
 		return signer.create_url(params, nonce);
 	}
 
