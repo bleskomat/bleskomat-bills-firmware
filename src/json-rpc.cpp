@@ -243,4 +243,9 @@ namespace jsonRpc {
 		// A JSON-RPC message has been received or we are still waiting for an initial message.
 		return state == State::waiting || state == State::active;
 	}
+
+	void onBleMessage(const std::string &message) {
+		// Use onMessage to receive message from Bluetooth
+		onMessage(message);
+	}
 }
