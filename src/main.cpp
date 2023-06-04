@@ -19,7 +19,10 @@ void setup() {
 	initializeScreen = cache::getString("lastScreen");
 	logger::write("Cache loaded lastScreen: " + initializeScreen);
 	buttonDelay = config::getUnsignedInt("buttonDelay");
-	bluetooth::init();
+	if (button::isPressedAtStartup()) {
+		logger::write("Button pressed during startup, start bluetooth.");
+		bluetooth::init();
+	}
 }
 
 float getAccumulatedValue() {

@@ -55,4 +55,10 @@ namespace button {
 	bool isPressed() {
 		return pressed;
 	}
+
+	// To know if button is pressed at starting up
+	bool isPressedAtStartup() {
+		return digitalRead(pinNumber) == HIGH;
+	}
+
 }
