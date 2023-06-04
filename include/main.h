@@ -8,6 +8,7 @@
 #include "i18n.h"
 #include "logger.h"
 #include "json-rpc.h"
+#include "ble.h"
 #include "network.h"
 #include "platform.h"
 #include "screen.h"

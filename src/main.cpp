@@ -3,6 +3,7 @@
 unsigned int buttonDelay;
 std::string initializeScreen = "";
 
+
 void setup() {
 	Serial.begin(MONITOR_SPEED);
 	spiffs::init();
@@ -18,6 +19,7 @@ void setup() {
 	initializeScreen = cache::getString("lastScreen");
 	logger::write("Cache loaded lastScreen: " + initializeScreen);
 	buttonDelay = config::getUnsignedInt("buttonDelay");
+	bluetooth::init();
 }
 
 float getAccumulatedValue() {
