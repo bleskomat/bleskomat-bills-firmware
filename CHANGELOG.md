@@ -1,5 +1,7 @@
 # Changelog
 
+* TBD:
+	* Wait for JSON-RPC serial interface to time-out before initializing e-paper, bill acceptor
 * v1.5.0:
 	* Update splash screen
 	* Ping, reconnect to NV10 bill acceptor via serial

@@ -25,6 +25,7 @@
 #include "config.h"
 #include "i18n.h"
 #include "logger.h"
+#include "json-rpc.h"
 #include "network.h"
 #include "platform.h"
 #include "util.h"

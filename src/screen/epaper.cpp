@@ -15,7 +15,12 @@
 
 namespace {
 
-	bool initialized = false;
+	enum class State {
+		uninitialized,
+		initialized,
+		failed
+	};
+	State state = State::uninitialized;
 
 	GxEPD2_BW<GxEPD2_420, GxEPD2_420::HEIGHT> display(GxEPD2_420(EPAPER_CS, EPAPER_DC, EPAPER_RST, EPAPER_BUSY));
 	U8G2_FOR_ADAFRUIT_GFX u8g2Fonts;
@@ -252,12 +257,6 @@ namespace {
 		return words;
 	}
 
-	uint16_t utf8Length(const char *s) {
-		uint16_t len = 0;
-		while (*s) len += (*s++ & 0xc0) != 0x80;
-		return len;
-	}
-
 	std::vector<std::string> splitTextIntoLines(const std::string &text, const uint8_t numLines = 2) {
 		std::vector<std::string> lines;
 		std::vector<std::string> words = splitTextIntoWords(text);
@@ -283,28 +282,34 @@ namespace screen_epaper {
 	void init() {}
 
 	void loop() {
-		if (!initialized) {
-			initialized = true;
+		if (state == State::uninitialized && !jsonRpc::inUse()) {
 			logger::write("Initializing e-paper display...");
 			if (display.epd2.panel == GxEPD2::GDEW042T2) {
-				display.init(0);
-				u8g2Fonts.begin(display);// connect u8g2 procedures to Adafruit GFX
-				// It is necessary to stop other SPI device(s) before initializing SPI for the epaper display.
-				SPI.end();
-				SPI.begin(EPAPER_CLK, EPAPER_MISO, EPAPER_DIN, EPAPER_CS);
-				display.setRotation(0);
+				try {
+					display.init(0);
+					u8g2Fonts.begin(display);// connect u8g2 procedures to Adafruit GFX
+					// It is necessary to stop other SPI device(s) before initializing SPI for the epaper display.
+					SPI.end();
+					SPI.begin(EPAPER_CLK, EPAPER_MISO, EPAPER_DIN, EPAPER_CS);
+					display.setRotation(0);
+					state = State::initialized;
+				} catch (const std::exception &e) {
+					logger::write("Failed to initialize e-paper display: " + std::string(e.what()), "error");
+					state = State::failed;
+				}
 			} else {
-				logger::write("Unknown display connected. This device supports WaveShare 4.2 inch e-paper b/w");
+				logger::write("Unknown display connected. This firmware supports WaveShare 4.2 inch e-paper b/w", "warn");
+				state = State::failed;
 			}
 		}
 	}
 
 	bool isReady() {
-		return initialized;
+		return state == State::initialized;
 	}
 
 	void showSplashScreen() {
-		if (!initialized) return;
+		if (!screen_epaper::isReady()) return;
 		logger::write("Show screen: Splash");
 		startNewScreen();
 		const int16_t margin = 20;
@@ -340,7 +345,7 @@ namespace screen_epaper {
 	}
 
 	void showDisabledScreen() {
-		if (!initialized) return;
+		if (!screen_epaper::isReady()) return;
 		logger::write("Show screen: Disabled");
 		startNewScreen();
 		const int16_t margin = 20;
@@ -357,7 +362,7 @@ namespace screen_epaper {
 	}
 
 	void showInstructionsScreen() {
-		if (!initialized) return;
+		if (!screen_epaper::isReady()) return;
 		logger::write("Show screen: Instructions");
 		startNewScreen();
 		const std::string instructionsUrl = getInstructionsUrl();
@@ -425,7 +430,7 @@ namespace screen_epaper {
 	}
 
 	void showInsertFiatScreen(const float &amount) {
-		if (!initialized) return;
+		if (!screen_epaper::isReady()) return;
 		logger::write("Show screen: Insert Fiat");
 		startNewScreen();
 		const int16_t margin = 20;
@@ -482,7 +487,7 @@ namespace screen_epaper {
 		const std::string &qrcodeData,
 		const std::string &t_referencePhrase
 	) {
-		if (!initialized) return;
+		if (!screen_epaper::isReady()) return;
 		logger::write("Show screen: Trade Complete");
 		startNewScreen(0/* always scrub */);
 		// Margin between rendered elements.
