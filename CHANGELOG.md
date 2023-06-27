@@ -1,6 +1,7 @@
 # Changelog
 
-* TBD:
+* v1.5.0:
+	* Ping, reconnect to NV10 bill acceptor via serial
 	* Fix locale strings
 	* Remove SD card related code
 	* Cache state to be restored when device restarts in case of a crash, power loss, etc.
