@@ -199,7 +199,7 @@ void runAppLoop() {
 void loop() {
 	logger::loop();
 	jsonRpc::loop();
-	if (!jsonRpc::hasPinConflict() || !jsonRpc::inUse()) {
+	if (!jsonRpc::inUse()) {
 		runAppLoop();
 	}
 }

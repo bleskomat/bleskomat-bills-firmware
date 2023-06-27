@@ -3,6 +3,7 @@
 
 #include "config.h"
 #include "logger.h"
+#include "json-rpc.h"
 #include "util.h"
 #include <HardwareSerial.h>
 #include <deque>

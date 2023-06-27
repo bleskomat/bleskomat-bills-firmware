@@ -2,11 +2,15 @@
 
 namespace {
 
-	uint32_t initTime;
+	enum class State {
+		uninitialized,
+		waiting,
+		active,
+		timedOut
+	};
+	State state = State::uninitialized;
+
 	const uint32_t maxInitialMessageWaitTime = 3000;// milliseconds
-	bool sentWaitingMessage = false;
-	bool receivedMessage = false;
-	bool timedOut = false;
 
 	// https://arduinojson.org/
 	// https://www.jsonrpc.org/specification
@@ -46,9 +50,9 @@ namespace {
 		std::string method;
 		try {
 			if (message == "" || message.substr(0, 1) != "{") return;
-			if (!receivedMessage) {
+			if (state == State::waiting) {
 				logger::write("JSON-RPC serial interface active");
-				receivedMessage = true;
+				state = State::active;
 			}
 			// !! Important !!
 			// Keep the JsonDocument instance until done reading from the deserialized document; more info:
@@ -207,22 +211,6 @@ namespace {
 		}
 	}
 
-	bool pinConflict = false;
-	void checkForPinConflicts() {
-		const std::vector<const char*> pinConfigKeys = {
-			"billTxPin", "billRxPin",
-			"buttonPin"
-		};
-		for (int index = 0; index < pinConfigKeys.size(); index++) {
-			const char* key = pinConfigKeys[index];
-			const unsigned short value = config::getUnsignedShort(key);
-			if (value == 3 || value == 1) {
-				logger::write("GPIO conflict detected (\"" + std::string(key) + "\" = " + std::to_string(value) + "). Do not use GPIO3 or GPIO1.", "warn");
-				pinConflict = true;
-			}
-		}
-	}
-
 	void parseSerialInput() {
 		if (Serial.available() > 0) {
 			onMessage(std::string(Serial.readStringUntil('\n').c_str()));
@@ -232,30 +220,20 @@ namespace {
 
 namespace jsonRpc {
 
-	void init() {
-		logger::write("Initializing JSON-RPC serial interface...");
-		checkForPinConflicts();
-		if (!pinConflict) {
-			logger::write("JSON-RPC serial interface now listening...");
-		}
-		initTime = millis();
-	}
+	void init() {}
 
 	void loop() {
-		if (pinConflict) {
-			if (!sentWaitingMessage) {
-				sentWaitingMessage = true;
-				logger::write("JSON-RPC serial interface now listening...");
-			}
-			if (!timedOut && !receivedMessage && millis() - initTime > maxInitialMessageWaitTime) {
-				timedOut = true;
+		if (state == State::uninitialized) {
+			state = State::waiting;
+			logger::write("Initializing JSON-RPC serial interface...");
+		} else if (state == State::waiting) {
+			if (millis() > maxInitialMessageWaitTime) {
+				state = State::timedOut;
 				logger::write("Timed-out while waiting for initial JSON-RPC message");
 				delay(50);// Allow some time to finish writing the above log message.
 			}
-			if (jsonRpc::inUse()) {
-				parseSerialInput();
-			}
-		} else {
+			parseSerialInput();
+		} else if (state == State::active) {
 			parseSerialInput();
 		}
 	}
@@ -263,10 +241,6 @@ namespace jsonRpc {
 	bool inUse() {
 		// Consider JSON-RPC interface to be "in-use" when either:
 		// A JSON-RPC message has been received or we are still waiting for an initial message.
-		return receivedMessage || !timedOut;
-	}
-
-	bool hasPinConflict() {
-		return pinConflict;
+		return state == State::waiting || state == State::active;
 	}
 }
