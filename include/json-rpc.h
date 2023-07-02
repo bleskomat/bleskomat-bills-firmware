@@ -6,6 +6,7 @@
 #include "logger.h"
 #include "main.h"
 #include "spiffs.h"
+#include "bluetooth.h"
 
 #include <ArduinoJson.h>
 #include <string>

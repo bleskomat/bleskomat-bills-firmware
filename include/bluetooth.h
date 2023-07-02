@@ -13,6 +13,7 @@ namespace bluetooth {
     void init();
     void loop();
     bool isConnected();
+    bool sendMessage(const std::string &message);
 }
 
 #endif
