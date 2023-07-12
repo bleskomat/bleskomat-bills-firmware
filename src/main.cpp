@@ -1,6 +1,7 @@
 #include "main.h"
 
 unsigned int buttonDelay;
+unsigned int hideQrAfter;
 std::string initializeScreen = "";
 
 void setup() {
@@ -18,6 +19,7 @@ void setup() {
 	initializeScreen = cache::getString("lastScreen");
 	logger::write("Cache loaded lastScreen: " + initializeScreen);
 	buttonDelay = config::getUnsignedInt("buttonDelay");
+	hideQrAfter = config::getUnsignedInt("hideQrAfter");
 }
 
 float getAccumulatedValue() {
@@ -168,7 +170,8 @@ void runAppLoop() {
 				}
 			}
 		} else if (currentScreen == "tradeComplete") {
-			if (button::isPressed() && millis() - tradeCompleteTime > buttonDelay) {
+			//Trade complete, show QR code for max 5 minutes
+			if ((button::isPressed() && millis() - tradeCompleteTime > buttonDelay) || (hideQrAfter > 0 && millis() - tradeCompleteTime > hideQrAfter) ) {
 				// Button pushed while showing the transaction complete screen.
 				// Reset accumulated values.
 				billAcceptor::resetAccumulatedValue();
