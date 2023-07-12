@@ -236,7 +236,7 @@ namespace billAcceptor {
 			} else if (!(billBaudRate > 0)) {
 				logger::write("Cannot initialize bill acceptor: \"billBaudRate\" not set", "warn");
 				state = State::failed;
-			} else {
+			} else if (!jsonRpc::inUse()) {
 				logger::write("Initializing bill acceptor...");
 				connect();
 				state = State::initialized;
