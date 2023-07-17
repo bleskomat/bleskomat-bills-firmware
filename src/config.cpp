@@ -19,6 +19,7 @@ namespace {
 		{ "billBaudRate", "300" },
 		{ "buttonPin", "33" },
 		{ "buttonDelay", "10000" },
+		{ "hideQrAfter", "0" },
 		{ "buttonDebounce", "100" },
 		{ "webUrl", "https://www.bleskomat.com" },
 		{ "platformSockUri", "wss://p.bleskomat.com/device" },
@@ -154,6 +155,7 @@ namespace config {
 		// values["billBaudRate"] = "9600";
 		// values["buttonPin"] = "33";
 		// values["buttonDelay"] = "2000";
+		// values["hideQrAfter"] = "300000";
 		// values["buttonDebounce"] = "50";
 		// values["webUrl"] = "https://www.bleskomat.com";
 		// values["platformSockUri"] = "wss://www.bleskomat.com/device";
