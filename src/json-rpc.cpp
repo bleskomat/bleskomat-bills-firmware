@@ -15,6 +15,7 @@ namespace {
 	// https://arduinojson.org/
 	// https://www.jsonrpc.org/specification
 	const char* jsonRpcVersion = "2.0";
+	const size_t JSON_DOC_SIZE = 8192;
 
 	std::string escapeLine(const std::string &line) {
 		const unsigned int numBytes = line.size();
@@ -68,7 +69,7 @@ namespace {
 			// !! Important !!
 			// Keep the JsonDocument instance until done reading from the deserialized document; more info:
 			// https://arduinojson.org/v6/issues/garbage-out/
-			DynamicJsonDocument docIn(8192);
+			DynamicJsonDocument docIn(JSON_DOC_SIZE);
 			const DeserializationError deserializationError = deserializeJson(docIn, message);
 			if (deserializationError) {
 				std::cerr << "deserializeJson error: " << deserializationError.c_str();
@@ -120,10 +121,24 @@ namespace {
 				docOut["result"] = docInfo;
 				sendToInterfaces(docOut);
 			} else if (method == "getconfig") {
-				DynamicJsonDocument docOut(8192);
+				const std::string paramsText = data["params"][0].as<const char*>();
+				DynamicJsonDocument docOut(JSON_DOC_SIZE);
 				docOut["jsonrpc"] = jsonRpcVersion;
 				docOut["id"] = id;
-				docOut["result"] = config::getConfigurations();
+				DynamicJsonDocument requestedConfigs(JSON_DOC_SIZE);
+				if (data["params"].is<JsonArray>()) {
+					const JsonArray params = data["params"].as<JsonArray>();
+					for (const auto param : params) {
+						const std::string key = param.as<const char*>();
+						if (config::isConfigKey(key.c_str())) {
+							requestedConfigs[key] = config::getString(key.c_str());
+						}
+					}
+					docOut["result"] = requestedConfigs.as<JsonObject>();
+				} else {
+					docOut["result"] = config::getConfigurations();
+				}
+
 				sendToInterfaces(docOut);
 			} else if (method == "setconfig") {
 				logger::write("Saving configurations...");
