@@ -4,15 +4,15 @@ BLECharacteristic *pCharacteristic;
 bool deviceConnected = false;
 std::string receivedMessage;
 
-	class BleskomatServerCallbacks : public BLEServerCallbacks {
-		void onConnect(BLEServer *pServer) {
-			deviceConnected = true;
-		}
+class BleskomatServerCallbacks : public BLEServerCallbacks {
+	void onConnect(BLEServer *pServer) {
+		deviceConnected = true;
+	}
 
-		void onDisconnect(BLEServer *pServer) {
-			deviceConnected = false;
-		}
-	};
+	void onDisconnect(BLEServer *pServer) {
+		deviceConnected = false;
+	}
+};
 
 class BleskomatCharacteristicCallbacks : public BLECharacteristicCallbacks {
 	void onWrite(BLECharacteristic *pCharacteristic) {
@@ -35,18 +35,24 @@ namespace {
 		characteristic->notify();         // Notify connected devices of the new value
 	}
 
-	void sendLongMessage(BLECharacteristic* characteristic, const std::string& message, size_t chunkSize) {
+	void sendLongMessage(BLECharacteristic* characteristic, const std::string& message) {
+		// Bluetooth only allow sending 20 bytes at a time.
+		// https://stackoverflow.com/questions/38913743/maximum-packet-length-for-bluetooth-le
+		// https://stackoverflow.com/questions/24135682/android-sending-data-20-bytes-by-ble/24178409#24178409
+		size_t chunkSize = 20;
+		size_t chunkDelay = 100;
 		size_t messageLength = message.length();
-		size_t numChunks = (messageLength + chunkSize - 1) / chunkSize;  // Calculate the number of chunks needed
-
+		// Calculate the number of chunks needed to send the message.
+		size_t numChunks = (messageLength + chunkSize - 1) / chunkSize;
 		for (size_t i = 0; i < numChunks; i++) {
 			size_t startIndex = i * chunkSize;
 			size_t endIndex = std::min(startIndex + chunkSize, messageLength);
 			std::string chunk = message.substr(startIndex, endIndex - startIndex);
 
 			logger::write(std::string("Sending chunk: ") + chunk.c_str(), "debug");
-			sendChunk(characteristic, chunk);  // Send each chunk of the message
-			delay(10);  // Add a small delay between sending chunks (adjust as needed)
+			// Send each chunk of the message with a small delay between each chunk.
+			sendChunk(characteristic, chunk);
+			delay(chunkDelay);
 		}
 	}
 
@@ -63,7 +69,6 @@ namespace bluetooth {
 		BLEService *pService = pServer->createService(SERVICE_UUID);
 		pCharacteristic = pService->createCharacteristic(
 			CHARACTERISTIC_UUID,
-			// TODO: probably not all those properties are required.
 			BLECharacteristic::PROPERTY_READ |
 			BLECharacteristic::PROPERTY_WRITE |
 			BLECharacteristic::PROPERTY_NOTIFY |
@@ -85,8 +90,7 @@ namespace bluetooth {
 		logger::write("Sending message over Bluetooth: ");
 		logger::write(message.c_str());
 		if (deviceConnected) {
-			size_t chunkSize = 100;  // Set the desired chunk size
-			sendLongMessage(pCharacteristic, message.c_str(), chunkSize);
+			sendLongMessage(pCharacteristic, message.c_str());
 			return true;
 		}
 		return false;
