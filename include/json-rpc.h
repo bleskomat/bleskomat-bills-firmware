@@ -15,7 +15,6 @@ namespace jsonRpc {
 	void init();
 	void loop();
 	bool inUse();
-	bool hasPinConflict();
 	void onBleMessage(const std::string &message);
 }
 
