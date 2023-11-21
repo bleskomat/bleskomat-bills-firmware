@@ -188,7 +188,15 @@ void runAppLoop() {
 void loop() {
 	logger::loop();
 	jsonRpc::loop();
-	if (!jsonRpc::inUse()) {
+	if (!jsonRpc::inUse() && !bluetooth::isInitialized()) {
 		runAppLoop();
+	} else if (bluetooth::isInitialized()) {
+		screen::loop();
+		if (screen::isReady()) {
+			const std::string currentScreen = screen::getCurrentScreen();
+			if (currentScreen != "waitingToConnect") {
+				screen::showWaitingToConnectScreen();
+			}
+		}
 	}
 }
