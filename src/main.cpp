@@ -192,9 +192,11 @@ void loop() {
 		runAppLoop();
 	} else if (bluetooth::isInitialized()) {
 		screen::loop();
+		billAcceptor::loop();
 		if (screen::isReady()) {
 			const std::string currentScreen = screen::getCurrentScreen();
 			if (currentScreen != "waitingToConnect") {
+				billAcceptor::inhibit();
 				screen::showWaitingToConnectScreen();
 			}
 		}
