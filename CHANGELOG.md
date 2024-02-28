@@ -1,6 +1,7 @@
 # Changelog
 
-* TBD:
+* v1.6.0:
+	* Bluetooth JSON-RPC interface enabled when button pressed at boot
 	* Wait for JSON-RPC serial interface to time-out before initializing e-paper, bill acceptor
 * v1.5.0:
 	* Update splash screen
