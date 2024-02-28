@@ -85,6 +85,7 @@ namespace screen_epaper {
 		const std::string &qrcodeData,
 		const std::string &referencePhrase = ""
 	);
+	void showWaitingToConnectScreen();
 }
 
 #endif

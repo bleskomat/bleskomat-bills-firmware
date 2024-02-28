@@ -552,4 +552,31 @@ namespace screen_epaper {
 		}
 		finishNewScreen("tradeComplete");
 	}
+
+	void showWaitingToConnectScreen() {
+		if (!screen_epaper::isReady()) return;
+		logger::write("Show screen: Waiting to Connect");
+		startNewScreen();
+		const int16_t margin = 20;
+		const int16_t line_spacing = 8;
+		const std::string text = i18n::t("Waiting to Connect");
+		const int16_t text_x = (display.epd2.WIDTH / 2);// center
+		const int16_t text_y = (display.epd2.HEIGHT / 2) - (margin * 2);
+		const Font font = getBestFitFont(text, monospaceFonts);
+		const BoundingBox text_bbox = renderText(text, font, text_x, text_y);
+		const std::string text2 = i18n::t("Bluetooth initialized.");
+		const int16_t text2_x = display.epd2.WIDTH / 2;// center
+		const int16_t text2_y = text_bbox.h + text_bbox.y + margin;// below previous text
+		const BoundingBox text2_bbox = renderText(text2, monospaceFontSmall, text2_x, text2_y);
+		{
+			std::vector<std::string> lines = splitTextIntoLines(i18n::t("Press \"Connect\" button in app to continue."), 2);
+			const int16_t line1_x = display.epd2.WIDTH / 2;// center
+			const int16_t line1_y = text2_bbox.h + text2_bbox.y + margin;// below previous text
+			BoundingBox prevText_bbox;
+			prevText_bbox = renderText(lines[0], monospaceFontSmall, line1_x, line1_y);
+			const int16_t line2_y = prevText_bbox.y + prevText_bbox.h + line_spacing;
+			prevText_bbox = renderText(lines[1], monospaceFontSmall, line1_x, line2_y);
+		}
+		finishNewScreen("waitingToConnect");
+	}
 }

@@ -55,6 +55,11 @@ namespace screen {
 		cache::save("accumulatedValue", util::floatToStringWithPrecision(amount), "qrcodeData", qrcodeData, "referencePhrase", referencePhrase);
 	}
 
+	void showWaitingToConnectScreen() {
+		screen_epaper::showWaitingToConnectScreen();
+		setCurrentScreen("waitingToConnect");
+	}
+
 	std::string getCurrentScreen() {
 		return currentScreen;
 	}

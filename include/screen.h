@@ -20,6 +20,7 @@ namespace screen {
 		const std::string &qrcodeData,
 		const std::string &referencePhrase = ""
 	);
+	void showWaitingToConnectScreen();
 }
 
 #endif

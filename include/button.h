@@ -9,6 +9,7 @@ namespace button {
 	void init();
 	void loop();
 	bool isPressed();
+	bool isPressedAtStartup();
 }
 
 #endif

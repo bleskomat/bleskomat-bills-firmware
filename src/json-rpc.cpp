@@ -15,6 +15,7 @@ namespace {
 	// https://arduinojson.org/
 	// https://www.jsonrpc.org/specification
 	const char* jsonRpcVersion = "2.0";
+	const size_t JSON_DOC_SIZE = 8192;
 
 	std::string escapeLine(const std::string &line) {
 		const unsigned int numBytes = line.size();
@@ -45,6 +46,17 @@ namespace {
 		return this->message.c_str();
 	}
 
+	void sendToInterfaces(const JsonDocument& jsonDoc) {
+		logger::write("Sending JSON-RPC message to serial interface");
+
+		String jsonString;
+		serializeJson(jsonDoc, jsonString);
+
+		Serial.println(jsonString);
+
+		bluetooth::sendMessage(jsonString.c_str());
+	}
+
 	void onMessage(const std::string &message) {
 		std::string id;
 		std::string method;
@@ -57,7 +69,7 @@ namespace {
 			// !! Important !!
 			// Keep the JsonDocument instance until done reading from the deserialized document; more info:
 			// https://arduinojson.org/v6/issues/garbage-out/
-			DynamicJsonDocument docIn(8192);
+			DynamicJsonDocument docIn(JSON_DOC_SIZE);
 			const DeserializationError deserializationError = deserializeJson(docIn, message);
 			if (deserializationError) {
 				std::cerr << "deserializeJson error: " << deserializationError.c_str();
@@ -86,8 +98,7 @@ namespace {
 				docOut["jsonrpc"] = jsonRpcVersion;
 				docOut["id"] = id;
 				docOut["result"] = true;
-				serializeJson(docOut, Serial);
-				Serial.println();
+				sendToInterfaces(docOut);
 				delay(500);// wait before restarting...
 				esp_restart();
 			} else if (method == "echo") {
@@ -96,8 +107,7 @@ namespace {
 				docOut["jsonrpc"] = jsonRpcVersion;
 				docOut["id"] = id;
 				docOut["result"] = text;
-				serializeJson(docOut, Serial);
-				Serial.println();
+				sendToInterfaces(docOut);
 			} else if (method == "getinfo") {
 				DynamicJsonDocument docOut(1024);
 				docOut["jsonrpc"] = jsonRpcVersion;
@@ -109,15 +119,27 @@ namespace {
 				docInfo["spiffsInitialized"] = spiffs::isInitialized();
 				docInfo["supportedLocales"] = i18n::getSupportedLocales();
 				docOut["result"] = docInfo;
-				serializeJson(docOut, Serial);
-				Serial.println();
+				sendToInterfaces(docOut);
 			} else if (method == "getconfig") {
-				DynamicJsonDocument docOut(8192);
+				const std::string paramsText = data["params"][0].as<const char*>();
+				DynamicJsonDocument docOut(JSON_DOC_SIZE);
 				docOut["jsonrpc"] = jsonRpcVersion;
 				docOut["id"] = id;
-				docOut["result"] = config::getConfigurations();
-				serializeJson(docOut, Serial);
-				Serial.println();
+				DynamicJsonDocument requestedConfigs(JSON_DOC_SIZE);
+				if (data["params"].is<JsonArray>()) {
+					const JsonArray params = data["params"].as<JsonArray>();
+					for (const auto param : params) {
+						const std::string key = param.as<const char*>();
+						if (config::isConfigKey(key.c_str())) {
+							requestedConfigs[key] = config::getString(key.c_str());
+						}
+					}
+					docOut["result"] = requestedConfigs.as<JsonObject>();
+				} else {
+					docOut["result"] = config::getConfigurations();
+				}
+
+				sendToInterfaces(docOut);
 			} else if (method == "setconfig") {
 				logger::write("Saving configurations...");
 				config::saveConfigurations(data["params"].as<JsonObject>());
@@ -125,8 +147,7 @@ namespace {
 				docOut["jsonrpc"] = jsonRpcVersion;
 				docOut["id"] = id;
 				docOut["result"] = true;
-				serializeJson(docOut, Serial);
-				Serial.println();
+				sendToInterfaces(docOut);
 			} else if (method == "getlogs") {
 				if (!spiffs::isInitialized()) {
 					throw JsonRpcError("SPIFFS file system not initialized. Reformat SPIFFS then try again.");
@@ -163,8 +184,7 @@ namespace {
 				docOut["jsonrpc"] = jsonRpcVersion;
 				docOut["id"] = id;
 				docOut["result"] = true;
-				serializeJson(docOut, Serial);
-				Serial.println();
+				sendToInterfaces(docOut);
 			} else if (method == "spiffs_reformat") {
 				logger::write("Reformatting SPIFFS file system...");
 				if (!SPIFFS.format()) {
@@ -175,8 +195,7 @@ namespace {
 				docOut["jsonrpc"] = jsonRpcVersion;
 				docOut["id"] = id;
 				docOut["result"] = true;
-				serializeJson(docOut, Serial);
-				Serial.println();
+				sendToInterfaces(docOut);
 			} else {
 				throw JsonRpcError("Unknown method");
 			}
@@ -187,8 +206,7 @@ namespace {
 				docOut["id"] = id;
 			}
 			docOut["error"] = e.what();
-			serializeJson(docOut, Serial);
-			Serial.println();
+			sendToInterfaces(docOut);
 			if (method != "") {
 				logger::write("JSON-RPC Error (" + method + "): " + std::string(e.what()), "error");
 			} else {
@@ -201,8 +219,7 @@ namespace {
 				docOut["id"] = id;
 			}
 			docOut["error"] = "Unexpected error";
-			serializeJson(docOut, Serial);
-			Serial.println();
+			sendToInterfaces(docOut);
 			if (method != "") {
 				logger::write("JSON-RPC Exception (" + method + "): " + std::string(e.what()), "error");
 			} else {
@@ -242,5 +259,10 @@ namespace jsonRpc {
 		// Consider JSON-RPC interface to be "in-use" when either:
 		// A JSON-RPC message has been received or we are still waiting for an initial message.
 		return state == State::waiting || state == State::active;
+	}
+
+	void onBleMessage(const std::string &message) {
+		// Use onMessage to receive message from Bluetooth
+		onMessage(message);
 	}
 }

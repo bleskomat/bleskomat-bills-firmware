@@ -3,6 +3,7 @@
 unsigned int buttonDelay;
 std::string initializeScreen = "";
 
+
 void setup() {
 	Serial.begin(MONITOR_SPEED);
 	spiffs::init();
@@ -18,6 +19,10 @@ void setup() {
 	initializeScreen = cache::getString("lastScreen");
 	logger::write("Cache loaded lastScreen: " + initializeScreen);
 	buttonDelay = config::getUnsignedInt("buttonDelay");
+	if (button::isPressedAtStartup()) {
+		logger::write("Button pressed during startup, start bluetooth.");
+		bluetooth::init();
+	}
 }
 
 float getAccumulatedValue() {
@@ -183,7 +188,17 @@ void runAppLoop() {
 void loop() {
 	logger::loop();
 	jsonRpc::loop();
-	if (!jsonRpc::inUse()) {
+	if (!jsonRpc::inUse() && !bluetooth::isInitialized()) {
 		runAppLoop();
+	} else if (bluetooth::isInitialized()) {
+		screen::loop();
+		billAcceptor::loop();
+		if (screen::isReady()) {
+			const std::string currentScreen = screen::getCurrentScreen();
+			if (currentScreen != "waitingToConnect") {
+				billAcceptor::inhibit();
+				screen::showWaitingToConnectScreen();
+			}
+		}
 	}
 }

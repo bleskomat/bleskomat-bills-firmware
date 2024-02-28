@@ -46,16 +46,9 @@ namespace {
 	Preferences nvs_prefs;
 	bool nvs_available = false;
 
-	bool isConfigKey(const char* key) {
-		if (values.containsKey(key)) {
-			return true;
-		}
-		const auto pos = defaultValues.find(key);
-		return pos != defaultValues.end();
-	}
 
 	bool setConfigValue(const char* key, const std::string &value) {
-		if (isConfigKey(key)) {
+		if (config::isConfigKey(key)) {
 			values[key] = value;
 			return true;
 		}
@@ -213,6 +206,15 @@ namespace config {
 		const std::string value = getConfigValue(key);
 		return (value == "true" || value == "1");
 	}
+
+	bool isConfigKey(const char* key) {
+		if (values.containsKey(key)) {
+			return true;
+		}
+		const auto pos = defaultValues.find(key);
+		return pos != defaultValues.end();
+	}
+
 
 	JsonObject getConfigurations() {
 		DynamicJsonDocument docConfigs(8192);
