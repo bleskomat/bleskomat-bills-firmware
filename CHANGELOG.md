@@ -1,5 +1,7 @@
 # Changelog
 
+* v1.6.1:
+	* Fix JSON-RPC getconfig when called with empty array should return all configurations
 * v1.6.0:
 	* Bluetooth JSON-RPC interface enabled when button pressed at boot
 	* Wait for JSON-RPC serial interface to time-out before initializing e-paper, bill acceptor
