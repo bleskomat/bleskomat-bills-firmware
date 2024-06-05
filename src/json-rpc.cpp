@@ -125,7 +125,7 @@ namespace {
 				docOut["jsonrpc"] = jsonRpcVersion;
 				docOut["id"] = id;
 				DynamicJsonDocument requestedConfigs(JSON_DOC_SIZE);
-				if (data.containsKey("params") && data["params"].is<JsonArray>() && data["params"].as<JsonArray>().size() > 0)) {
+				if (data.containsKey("params") && data["params"].is<JsonArray>() && data["params"].as<JsonArray>().size() > 0) {
 					const JsonArray params = data["params"].as<JsonArray>();
 					for (const auto param : params) {
 						const std::string key = param.as<const char*>();
