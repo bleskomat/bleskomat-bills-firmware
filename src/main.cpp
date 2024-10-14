@@ -12,9 +12,7 @@ void setup() {
 	logger::write(firmwareName + ": Firmware version = " + firmwareVersion + ", commit hash = " + firmwareCommitHash);
 	logger::write(config::getConfigurationsAsString());
 	jsonRpc::init();
-	network::init();
 	screen::init();
-	billAcceptor::init();
 	button::init();
 	initializeScreen = cache::getString("lastScreen");
 	logger::write("Cache loaded lastScreen: " + initializeScreen);
@@ -22,6 +20,9 @@ void setup() {
 	if (button::isPressedAtStartup()) {
 		logger::write("Button pressed during startup, start bluetooth.");
 		bluetooth::init();
+	} else {
+		billAcceptor::init();
+		network::init();
 	}
 }
 
